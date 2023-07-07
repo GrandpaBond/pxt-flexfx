@@ -105,7 +105,7 @@ namespace flexFX {
 
         // methods...  
         // Sets up Part A:  (Point0)--(PartA)--(Point1)...
-        // This implicitly sets start values for Part B (unless skipped)
+        // This implicitly sets the start values for any Part B that follows
         setPartA(freq0: number, vol0: number, wave: WaveShape, shape: InterpolationCurve, fx: SoundExpressionEffect, freq1: number, vol1: number, ms1: number) {
             this.freqRatio0 = freq0;
             this.volRatio0 = vol0;
@@ -116,17 +116,9 @@ namespace flexFX {
             this.partA.src = music.createSoundEffect(wave, 333, 333, 666, 666, 999, fx, shape);
             this.playPartA = true;
         }
-        // Adds a silent Part B:  (Point0)--(PartA)--(Point1)--(silence)--(Point2)
-        // This also implicitly sets start values for Part C
-        silentPartB(freq2: number, vol2: number, ms2: number) {
-            this.freqRatio2 = freq2;
-            this.volRatio2 = vol2;
-            this.timeRatioB = ms2;
-            this.skipPartB = true;
-        }
-        // Adds a non-silent Part B, implicitly setting start values for Part C
+        // Adds a  Part B:  (Point0)--(PartA)--(Point1)--(PartB)--(Point2)...
+        // This also implicitly sets the start values for any Part C that follows
         setPartB(wave: WaveShape, shape: InterpolationCurve, fx: SoundExpressionEffect, freq2: number, vol2: number, ms2: number) {
-            // we have a PartB:  (Point0)--(PartA)--(Point1)--(PartB)--(Point2)
             this.freqRatio2 = freq2;
             this.volRatio2 = vol2;
             this.timeRatioB = ms2;
@@ -134,6 +126,14 @@ namespace flexFX {
             this.partB.src = music.createSoundEffect(wave, 333, 333, 666, 666, 999, fx, shape);
             this.playPartB = true
             this.usesPoint2 = true;
+        }
+        // Adds a silent Part B:  (Point0)--(PartA)--(Point1)--(silence)--(Point2)...
+        // This implicitly sets start values for the Part C that follows
+        silentPartB(freq2: number, vol2: number, ms2: number) {
+            this.freqRatio2 = freq2;
+            this.volRatio2 = vol2;
+            this.timeRatioB = ms2;
+            this.skipPartB = true;
         }
 
         // Adds an optional part C: (Point0)--(PartA)--(Point1)--(PartB)--(Point2)--(PartC)--(Point3)
@@ -151,7 +151,6 @@ namespace flexFX {
 
         performUsing(freq: number, vol: number, ms: number) {
             let loud = vol * 4 // map from [0...255] into range [0...1023]
-
             // Point 0
             let f0 = this.formatNumber(freq * this.freqRatio0, 4);
             let v0 = this.formatNumber(loud * this.volRatio0, 4);
@@ -220,23 +219,33 @@ namespace flexFX {
             control.raiseEvent(FLEXFX_ACTIVITY_id, Status.FINISHED); // e.g. to synchronise closing displayed mouth
         }
     }
+    // Central array of currently defined FlexFX objects 
     let flexFXList: FlexFX[] = [];
 
+    export function performFlexFX(id: string, pitch: number, vol: number, ms: number) {
+
+        let target: FlexFX = flexFXList.find(i => i.id === id)
+        if (target != null) {
+            target.performUsing(pitch, vol, ms);
+        }
+
+    }
+
     export function createFlexFX(
-            id: string,
-            startPitchRatio: number,
-            startVolRatio: number,
-            wave: WaveShape,
-            attack: InterpolationCurve,
-            effect: SoundExpressionEffect,
-            endPitchRatio: number,
-            endVolRatio: number) {
+        id: string,
+        startPitchRatio: number,
+        startVolRatio: number,
+        wave: WaveShape,
+        attack: InterpolationCurve,
+        effect: SoundExpressionEffect,
+        endPitchRatio: number,
+        endVolRatio: number) {
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id)
-        if (target == null){
+        if (target == null) {
             flexFXList.push(new FlexFX(id));
         }
-        target.setPartA(startPitchRatio,startVolRatio,wave,attack,effect,endPitchRatio,endVolRatio,1.0);
+        target.setPartA(startPitchRatio, startVolRatio, wave, attack, effect, endPitchRatio, endVolRatio, 1.0);
     }
 
 
@@ -261,7 +270,7 @@ namespace flexFX {
             flexFXList.push(new FlexFX(id));
         }
         target.setPartA(startPitchRatio, startVolRatio, waveA, attackA, effectA, midPitchRatio, midVolRatio, timeRatioA);
-        target.setPartB( waveB, attackB, effectB, endPitchRatio, endVolRatio, 1.0-timeRatioA);
+        target.setPartB(waveB, attackB, effectB, endPitchRatio, endVolRatio, 1.0 - timeRatioA);
 
     }
 
@@ -317,7 +326,7 @@ namespace flexFX {
         effectB: SoundExpressionEffect,
         endPitchBRatio: number,
         endVolBRatio: number) {
-    
+
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id)
         if (target == null) {
@@ -328,7 +337,4 @@ namespace flexFX {
         target.setPartC(waveB, attackB, effectB, endPitchBRatio, endVolBRatio, 1.0 - timeRatioA - timeGapRatio);
 
     }
-
-
-
 }

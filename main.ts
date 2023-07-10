@@ -25,11 +25,73 @@ in our three-part FlexFX, to "tune" its pitch and volume as we require.
 
 */
 
+
+// NOTE: The built-in enums for sound effect parameters are hardly beginner-friendly!
+//       By renaming them we can expose somewhat simpler concepts. 
+//       (This only works if we pass them over a function-call as arguments of type: number.)
+// simplify the selection of wave-shape...
+enum Wave {
+    //%block="Pure"
+    SINE = WaveShape.Sine,
+    //%block="Harsh"
+    SAWTOOTH = WaveShape.Sawtooth,
+    //%block="Mellow"
+    TRIANGLE = WaveShape.Triangle,
+    //%block="Buzzy"
+    SQUARE = WaveShape.Square,
+    //%block="Noisy"
+    NOISE = WaveShape.Noise,
+}
+// simplify the selection of frequency-trajectory...
+enum Attack {
+    //% block="Slow"
+    SLOW = InterpolationCurve.Linear,
+    //% block="Medium"
+    MEDIUM = InterpolationCurve.Curve,
+    //% block="Fast"
+    FAST = InterpolationCurve.Logarithmic
+}
+// Simplify (slightly) the selection of modulation-style...
+enum Effect {
+    //% block="None"
+    NONE = SoundExpressionEffect.None,
+    //% block="Vibrato"
+    VIBRATO = SoundExpressionEffect.Vibrato,
+    //% block="Tremolo"
+    TREMOLO = SoundExpressionEffect.Tremolo,
+    //% block="Warble"
+    WARBLE = SoundExpressionEffect.Warble
+}
+// provide enum for UI drop-down to select built-in flexFX samples
+enum MoodSound {
+    //% block="Tweet"
+    TWEET = 1,
+    //% block="Laugh"
+    LAUGH = 2,
+    //% block="Snore"
+    SNORE = 3,
+    //% block="Doo"
+    DOO = 4,
+    //% block="Eh?"
+    QUERY = 5,
+    //% block="Uh-oh"
+    UHOH = 6,
+    //% block="Moan"
+    MOAN = 7,
+    //% block="Duh!"
+    DUH = 8,
+    //% block="Waah"
+    WAAH = 9,
+    //% block="Growl"
+    GROWL = 10
+}
+
+
 /**
  * Tools for creating composite sound-effects (of class FlexFX) that can be performed with
  * dynamically-specified pitch, volume and duration. Provides a built-in list of samples.
  */
-//% color=0#7eff33 weight=100 icon="\uf4ad" block="FlexFX"
+//% color=#7eff33 weight=100 icon="\uf4ad" block="FlexFX"
 //% groups=['Simple', 'Advanced']
 namespace flexFX {
     // We identify field-offsets defensively, just in case SoundExpression field-locations should 
@@ -39,43 +101,6 @@ namespace flexFX {
     const durationPos = 9
     const endVolPos = 26
     const endFreqPos = 18
-
-    // NOTE: The built-in enums for sound effect parameters are hardly beginner-friendly!
-    //       By renaming them we can expose somewhat simpler concepts. 
-    //       (This only works if we pass them over a function-call as arguments of type: number.)
-    // simplify the selection of wave-shape...
-    enum Wave {
-        //%block="Pure"
-        SINE = WaveShape.Sine,
-        //%block="Harsh"
-        SAWTOOTH = WaveShape.Sawtooth,
-        //%block="Mellow"
-        TRIANGLE = WaveShape.Triangle,
-        //%block="Buzzy"
-        SQUARE = WaveShape.Square,
-        //%block="Noisy"
-        NOISE = WaveShape.Noise,
-    }
-    // simplify the selection of frequency-trajectory...
-    enum Attack {
-        //% block="Slow"
-        SLOW = InterpolationCurve.Linear,
-        //% block="Medium"
-        MEDIUM = InterpolationCurve.Curve,
-        //% block="Fast"
-        FAST = InterpolationCurve.Logarithmic
-    }
-    // Simplify (slightly) the selection of modulation-style...
-    enum Effect {
-        //% block="None"
-        NONE = SoundExpressionEffect.None,
-        //% block="Vibrato"
-        VIBRATO = SoundExpressionEffect.Vibrato,
-        //% block="Tremolo"
-        TREMOLO = SoundExpressionEffect.Tremolo,
-        //% block="Warble"
-        WARBLE = SoundExpressionEffect.Warble
-    }
 
 
     // provide activity events (for other components to synchronise with)
@@ -352,29 +377,6 @@ namespace flexFX {
         target.setPartC(waveB, attackB, effectB, endPitchBRatio, endVolBRatio, 1.0 - timeRatioA - timeGapRatio);
 
     }
-    enum MoodSound {
-        //% block="Tweet"
-        TWEET = "TWEET",
-        //% block="Laugh"
-        LAUGH = "LAUGH",
-        //% block="Snore"
-        SNORE = "SNORE",
-        //% block="Doo"
-        DOO = "DOO",
-        //% block="Eh?"
-        QUERY = "QUERY",
-        //% block="Uh-oh"
-        UHOH = "UHOH",
-        //% block="Moan"
-        MOAN = "MOAN",
-        //% block="Duh!"
-        DUH = "DUH",
-        //% block="Waah"
-        WAAH = "WAAH",
-        //% block="Growl"
-        GROWL = "GROWL"
-    }
-
     // *******************Create Built-in FlexFXs************************************
 
     /*
@@ -391,7 +393,7 @@ namespace flexFX {
     TWEET         80% 45% 
     SIN LOG NONE 100% 80%    | 100%
     */
-    createFlexFX("TWEET", 0.8, 0.45, Wave.SINE, Attack.FAST, Effect.NONE, 1.00, 0.8);
+    createFlexFX(MoodSound.TWEET.toString(), 0.8, 0.45, Wave.SINE, Attack.FAST, Effect.NONE, 1.00, 0.8);
 
 
     /*
@@ -399,7 +401,7 @@ namespace flexFX {
     SAW LOG NONE 100% 100%   | 90%
     SQU LIN NONE  70%  75%   | 10%
     */
-    create2PartFlexFX("LAUGH", 0.70, 0.4,
+    create2PartFlexFX(MoodSound.LAUGH.toString(), 0.70, 0.4,
         Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.00, 1.0,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.7, 0.75, 0.9);
 
@@ -410,7 +412,7 @@ namespace flexFX {
     NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, and these strange values have been experimentally derived.
     By always invoking Snore.performUsing() with the scaling-factor (freq=1), these literal frequencies will get used as specified here!
     */
-    create2PartFlexFX("SNORE", 3508, 0.1,
+    create2PartFlexFX(MoodSound.TWEET.toString(), 3508, 0.1,
         Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 715, 1.0,
         Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 5008, 0, 0.50);
 
@@ -419,7 +421,7 @@ namespace flexFX {
     SAW NONE LOG 100% 90%   |  5%
     SQU NONE LIN 100% 70%   | 95%
     */
-    create2PartFlexFX("DOO", 3.00, 0.8,
+    create2PartFlexFX(MoodSound.DOO.toString(), 3.00, 0.8,
         Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.00, 0.9,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.00, 0.7, 0.05);
 
@@ -428,7 +430,7 @@ namespace flexFX {
     SQU NONE LIN 100% 100%   | 20%
     SQU NONE CUR 150%  20%   | 80%
     */
-    create2PartFlexFX("QUERY", 1.10, 0.2,
+    create2PartFlexFX(MoodSound.QUERY.toString(), 1.10, 0.2,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.00, 1.0,
         Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 1.50, 0.2, 0.2);
 
@@ -440,7 +442,7 @@ namespace flexFX {
                  100%  80% 
     SQU NONE LIN  80%  75%   | 55%
     */
-    createDoubleFlexFX("UHOH",
+    createDoubleFlexFX(MoodSound.UHOH.toString(),
         1.10, 0.4, Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.40, 1.0,
         1.00, 0.8, Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.80, 0.75,
         0.25, 0.2);
@@ -451,7 +453,7 @@ namespace flexFX {
     TRI NONE CUR  95%  80%   | 60%
     TRI NONE LIN 115%  55%   | 10%
     */
-    create3PartFlexFX("MOAN", 1.30, 0.6,
+    create3PartFlexFX(MoodSound.MOAN.toString(), 1.30, 0.6,
         Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 1.00, 1.0,
         Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 0.95, 0.8,
         Wave.TRIANGLE, Attack.SLOW, Effect.NONE, 1.15, 0.55, 0.3, 0.6);
@@ -462,7 +464,7 @@ namespace flexFX {
     SQU NONE LIN 110% 100%   | 30%
     SQU NONE LIN  66%  40%   | 60%
     */
-    create3PartFlexFX("DUH", 1.00, 0.6,
+    create3PartFlexFX(MoodSound.DUH.toString(), 1.00, 0.6,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.95, 0.8,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.10, 1.0,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.66, 0.4, 0.1, 0.3);
@@ -473,7 +475,7 @@ namespace flexFX {
     SAW NONE LIN 110% 20%   | 70%
     SAW NONE LIN  30%  5%   | 10%
     */
-    create3PartFlexFX("WAAH", 1.00, 0.1,
+    create3PartFlexFX(MoodSound.WAAH.toString(), 1.00, 0.1,
         Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 1.40, 0.9,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 1.10, 0.2,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.3, 0.05, 0.20, 0.70);
@@ -484,25 +486,12 @@ namespace flexFX {
     SAW NONE LIN  90% 100%   | 60%
     SAW NONE LIN  30%  75%   | 15%
     */
-    create3PartFlexFX("GROWL", 0.30, 0.5,
+    create3PartFlexFX(MoodSound.GROWL.toString(), 0.30, 0.5,
         Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.00, 0.8,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.90, 1.0,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.30, 0.75, 0.15, 0.60);
 
-/*** SIMPLE UI BLOCKS ***/
-
-    //% block="emit $builtin || at pitch $pitch with strength $strength for $duration ms"
-    //% expandableArgumentMode="toggle"
-    //% pitch.min=100 pitch.max=800 pitch.defl=300
-    //% strength.min=0 strength.max=255 strength.defl=180
-    //% duration.min=50 duration.max=9999 duration.defl=1000
-    export function emit(builtIn:MoodSound, pitch: number, strength: number, duration: number) {
-        // select builtin target... 
-        let target: FlexFX = flexFXList.find(i => i.id === builtIn)
-        if (target != null) {
-            target.performUsing(pitch, strength, duration);
-        }
-    }
+    /*** SIMPLE UI BLOCKS ***/
 
     //% block="hum || $repeat times with strength $strength over $duration ms"
     //% expandableArgumentMode="toggle"
@@ -659,6 +648,21 @@ namespace flexFX {
             quiet = true
         }
     }
+
+    //% block="emit $builtIn ||at pitch $pitch with strength $strength for $duration ms"
+    //% inlineInputMode=inline
+    //% expandableArgumentMode="toggle"
+    //% pitch.min=100 pitch.max=800 pitch.defl=300
+    //% strength.min=0 strength.max=255 strength.defl=180
+    //% duration.min=50 duration.max=9999 duration.defl=1000
+    export function emit(builtIn: MoodSound, pitch: number, strength: number, duration: number) {
+        // select builtin target... 
+        let target: FlexFX = flexFXList.find(i => i.id === builtIn.toString())
+        if (target != null) {
+            target.performUsing(pitch, strength, duration);
+        }
+    }
+
 }
 // *********** test codes **********
 

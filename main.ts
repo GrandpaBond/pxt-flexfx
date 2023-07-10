@@ -307,7 +307,7 @@ namespace flexFX {
     //% advanced=true
     export function createFlexFX(
         id: string, startPitchRatio: number, startVolRatio: number,
-        wave: number, attack: number, effect: number, endPitchRatio: number, endVolRatio: number) {
+        wave: Wave, attack: Attack, effect: Effect, endPitchRatio: number, endVolRatio: number) {
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id)
         if (target == null) {
@@ -323,8 +323,8 @@ namespace flexFX {
     //% advanced=true
     export function create2PartFlexFX(
         id: string, startPitchRatio: number, startVolRatio: number,
-        waveA: number, attackA: number, effectA: number, midPitchRatio: number, midVolRatio: number,
-        waveB: number, attackB: number, effectB: number, endPitchRatio: number, endVolRatio: number, timeRatioA: number) {
+        waveA: Wave, attackA: Attack, effectA: Effect, midPitchRatio: number, midVolRatio: number,
+        waveB: Wave, attackB: Attack, effectB: Effect, endPitchRatio: number, endVolRatio: number, timeRatioA: number) {
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id)
         if (target == null) {
@@ -336,14 +336,14 @@ namespace flexFX {
 
     }
 
-    //% block="create 3-part FlexFX called $id first using wave-shape $waveA with attack $attackA and effect $effectA|then using wave-shape $waveB with attack $attackB and effect $effectB|then using wave-shape $waveC with attack $attackC and effect $effectC|pitch profile goes from $startPitchRatio to $pitchABRatio to $pitchBCRatio to $endPitchRatio|volume profile goes from $startVolRatio to $volABRatio to $volBCRatio to $endVolRatio|first part uses $timeRatioA of duration, second part uses $timeratioB of it"
+    //% block="create 3-part FlexFX called $id first using wave-shape $waveA with attack $attackA and effect $effectA|then using wave-shape $waveB with attack $attackB and effect $effectB|then using wave-shape $waveC with attack $attackC and effect $effectC|pitch profile goes from $startPitchRatio to $pitchABRatio to $pitchBCRatio to $endPitchRatio|volume profile goes from $startVolRatio to $volABRatio to $volBCRatio to $endVolRatio|first part uses $timeRatioA of duration, second part uses $timeRatioB of it"
     //% group="Advanced"
     //% advanced=true
     export function create3PartFlexFX(
         id: string, startPitchRatio: number, startVolRatio: number,
-        waveA: number, attackA: number, effectA: number, pitchABRatio: number, volABRatio: number,
-        waveB: number, attackB: number, effectB: number, pitchBCRatio: number, volBCRatio: number,
-        waveC: number, attackC: number, effectC: number, endPitchRatio: number, endVolRatio: number,
+        waveA: Wave, attackA: Attack, effectA: Effect, pitchABRatio: number, volABRatio: number,
+        waveB: Wave, attackB: Attack, effectB: Effect, pitchBCRatio: number, volBCRatio: number,
+        waveC: Wave, attackC: Attack, effectC: Effect, endPitchRatio: number, endVolRatio: number,
         timeRatioA: number, timeRatioB: number) {
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id)
@@ -361,9 +361,9 @@ namespace flexFX {
     // two FlexFx parts, separated by a silence.
     export function createDoubleFlexFX(
         id: string, startPitchARatio: number, startVolARatio: number,
-        waveA: number, attackA: number, effectA: number, endPitchARatio: number, endVolARatio: number,
+        waveA: Wave, attackA: Attack, effectA: Effect, endPitchARatio: number, endVolARatio: number,
         startPitchBRatio: number, startVolBRatio: number,
-        waveB: number, attackB: number, effectB: number, endPitchBRatio: number, endVolBRatio: number,
+        waveB: Wave, attackB: Attack, effectB: Effect, endPitchBRatio: number, endVolBRatio: number,
         timeRatioA: number, timeGapRatio: number) {
 
         // select or create target...        

@@ -30,6 +30,7 @@ in our three-part FlexFX, to "tune" its pitch and volume as we require.
  * dynamically-specified pitch, volume and duration. Provides a built-in list of samples.
  */
 //% color=0#7eff33 weight=100 icon="\uf4ad" block="FlexFX"
+//% groups=['Simple', 'Advanced']
 namespace flexFX {
     // We identify field-offsets defensively, just in case SoundExpression field-locations should 
     // change in future. (We presume their width will always be 4 digits)
@@ -39,10 +40,10 @@ namespace flexFX {
     const endVolPos = 26
     const endFreqPos = 18
 
-// NOTE: The built-in enums for sound effect parameters are hardly beginner-friendly!
-//       By renaming them we can expose somewhat simpler concepts. 
-//       (This only works if we pass them over a function-call as arguments of type: number.)
-// simplify the selection of wave-shape...
+    // NOTE: The built-in enums for sound effect parameters are hardly beginner-friendly!
+    //       By renaming them we can expose somewhat simpler concepts. 
+    //       (This only works if we pass them over a function-call as arguments of type: number.)
+    // simplify the selection of wave-shape...
     enum Wave {
         //%block="Pure"
         SINE = WaveShape.Sine,
@@ -55,7 +56,7 @@ namespace flexFX {
         //%block="Noisy"
         NOISE = WaveShape.Noise,
     }
-// simplify the selection of frequency-trajectory...
+    // simplify the selection of frequency-trajectory...
     enum Attack {
         //% block="Slow"
         SLOW = InterpolationCurve.Linear,
@@ -263,8 +264,10 @@ namespace flexFX {
     // ***** Central array of currently defined FlexFX objects *****
     let flexFXList: FlexFX[] = [];
 
-    //% block="perform FlexFX $id|from low $fromLow|high $fromHigh|to low $toLow|high $toHigh"
-    //% inlineInputMode=inline
+    /*** ADVANCED UI BLOCKS ***/
+    //% block="perform FlexFX $id at pitch $pitch with strength $strength for $ms ms"
+    //% group="Advanced"
+    //% advanced=true
     export function performFlexFX(id: string, pitch: number, vol: number, ms: number) {
 
         let target: FlexFX = flexFXList.find(i => i.id === id)
@@ -274,6 +277,9 @@ namespace flexFX {
 
     }
 
+    //% block="create simple FlexFX called $id using wave-shape $wave with attack $attack and effect $effect|pitch profile goes from $startPitchRatio to $endPitchRatio|volume profile goes from $startVolRatio to $endVolRatio"
+    //% group="Advanced"
+    //% advanced=true
     export function createFlexFX(
         id: string, startPitchRatio: number, startVolRatio: number,
         wave: number, attack: number, effect: number, endPitchRatio: number, endVolRatio: number) {
@@ -286,6 +292,9 @@ namespace flexFX {
     }
 
 
+    //% block="create 2-part FlexFX called $id first using wave-shape $waveA with attack $attackA and effect $effectA|then using wave-shape $waveB with attack $attackB and effect $effectB|pitch profile goes from $startPitchRatio to $midPitchRatio to $endPitchRatio|volume profile goes from $startVolRatio to $midVolRatio to $endVolRatio|first part uses timeRatioA of duration"
+    //% group="Advanced"
+    //% advanced=true
     export function create2PartFlexFX(
         id: string, startPitchRatio: number, startVolRatio: number,
         waveA: number, attackA: number, effectA: number, midPitchRatio: number, midVolRatio: number,
@@ -300,11 +309,14 @@ namespace flexFX {
 
     }
 
+    //% block="create 3-part FlexFX called $id first using wave-shape $waveA with attack $attackA and effect $effectA|then using wave-shape $waveB with attack $attackB and effect $effectB|then using wave-shape $waveC with attack $attackC and effect $effectC|pitch profile goes from $startPitchRatio to $pitchABRatio to $pitchBCRatio to $endPitchRatio|volume profile goes from $startVolRatio to $volABRatio to $volBCRatio to $endVolRatio|first part uses $timeRatioA of duration, second part uses $timeratioB of it"
+    //% group="Advanced"
+    //% advanced=true
     export function create3PartFlexFX(
         id: string, startPitchRatio: number, startVolRatio: number,
         waveA: number, attackA: number, effectA: number, pitchABRatio: number, volABRatio: number,
         waveB: number, attackB: number, effectB: number, pitchBCRatio: number, volBCRatio: number,
-        waveC: number, attackC: number, effectC: number, endPitchRatio: number, endVolRatio: number, 
+        waveC: number, attackC: number, effectC: number, endPitchRatio: number, endVolRatio: number,
         timeRatioA: number, timeRatioB: number) {
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id)
@@ -323,7 +335,7 @@ namespace flexFX {
         id: string, startPitchARatio: number, startVolARatio: number,
         waveA: number, attackA: number, effectA: number, endPitchARatio: number, endVolARatio: number,
         startPitchBRatio: number, startVolBRatio: number,
-        waveB: number, attackB: number, effectB: number, endPitchBRatio: number, endVolBRatio: number, 
+        waveB: number, attackB: number, effectB: number, endPitchBRatio: number, endVolBRatio: number,
         timeRatioA: number, timeGapRatio: number) {
 
         // select or create target...        
@@ -352,295 +364,298 @@ namespace flexFX {
         //% block="Moan"
         MOAN = "MOAN",
         //% block="Duh!"
-        DUH= "DUH",
+        DUH = "DUH",
         //% block="Waah"
         WAAH = "WAAH",
         //% block="Growl"
         GROWL = "GROWL"
     }
 
-// *******************Create Built-in FlexFXs************************************
+    // *******************Create Built-in FlexFXs************************************
 
-/*
-    Short-hand definitions are laid out as follows:
-    <name>             <%Freq,%vol>    at start of PartA
-    <PartA wave-style> <%Freq,%vol>    at end of PartA & start of PartB (if used)
-    <PartB wave-style> <%Freq,%vol>    at end of PartB & start of PartC (if used)
-    <PartC wave-style> <%Freq,%vol>    at end of PartC (if used)
-
-    The right-hand column shows the timing breakdown
+    /*
+        Short-hand definitions are laid out as follows:
+        <name>             <%Freq,%vol>    at start of PartA
+        <PartA wave-style> <%Freq,%vol>    at end of PartA & start of PartB (if used)
+        <PartB wave-style> <%Freq,%vol>    at end of PartB & start of PartC (if used)
+        <PartC wave-style> <%Freq,%vol>    at end of PartC (if used)
+    
+        The right-hand column shows the timing breakdown
+        */
+    /*
+    
+    TWEET         80% 45% 
+    SIN LOG NONE 100% 80%    | 100%
     */
-/*
-
-TWEET         80% 45% 
-SIN LOG NONE 100% 80%    | 100%
-*/
-    createFlexFX("TWEET",0.8, 0.45, Wave.SINE, Attack.FAST, Effect.NONE, 1.00, 0.8);
+    createFlexFX("TWEET", 0.8, 0.45, Wave.SINE, Attack.FAST, Effect.NONE, 1.00, 0.8);
 
 
-/*
-LAUGH         70%  40%  
-SAW LOG NONE 100% 100%   | 90%
-SQU LIN NONE  70%  75%   | 10%
-*/
-    create2PartFlexFX("LAUGH", 0.70, 0.4, 
+    /*
+    LAUGH         70%  40%  
+    SAW LOG NONE 100% 100%   | 90%
+    SQU LIN NONE  70%  75%   | 10%
+    */
+    create2PartFlexFX("LAUGH", 0.70, 0.4,
         Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.00, 1.0,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.7, 0.75, 0.9);
 
-/*
-SNORE       3508  10% 
-NOI VIB LIN  715 100%   | 50%
-NOI VIB LIN 5008   0%   | 50%
-NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, and these strange values have been experimentally derived.
-By always invoking Snore.performUsing() with the scaling-factor (freq=1), these literal frequencies will get used as specified here!
-*/
-create2PartFlexFX("SNORE", 3508, 0.1, 
+    /*
+    SNORE       3508  10% 
+    NOI VIB LIN  715 100%   | 50%
+    NOI VIB LIN 5008   0%   | 50%
+    NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, and these strange values have been experimentally derived.
+    By always invoking Snore.performUsing() with the scaling-factor (freq=1), these literal frequencies will get used as specified here!
+    */
+    create2PartFlexFX("SNORE", 3508, 0.1,
         Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 715, 1.0,
         Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 5008, 0, 0.50);
 
-/*
-DOO          300% 80% 
-SAW NONE LOG 100% 90%   |  5%
-SQU NONE LIN 100% 70%   | 95%
-*/
-    create2PartFlexFX("DOO", 3.00, 0.8, 
-    Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.00, 0.9,
-    Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.00, 0.7, 0.05);
+    /*
+    DOO          300% 80% 
+    SAW NONE LOG 100% 90%   |  5%
+    SQU NONE LIN 100% 70%   | 95%
+    */
+    create2PartFlexFX("DOO", 3.00, 0.8,
+        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.00, 0.9,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.00, 0.7, 0.05);
 
-/*
-QUERY        110%  20% 
-SQU NONE LIN 100% 100%   | 20%
-SQU NONE CUR 150%  20%   | 80%
-*/
-    create2PartFlexFX("QUERY", 1.10, 0.2, 
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.00, 1.0, 
+    /*
+    QUERY        110%  20% 
+    SQU NONE LIN 100% 100%   | 20%
+    SQU NONE CUR 150%  20%   | 80%
+    */
+    create2PartFlexFX("QUERY", 1.10, 0.2,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.00, 1.0,
         Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 1.50, 0.2, 0.2);
 
-/*
-
-UHOH         110%  40% 
-SAW NONE LOG 140% 100%   | 25%
-SILENCE                  | 20%
-             100%  80% 
-SQU NONE LIN  80%  75%   | 55%
-*/
+    /*
+    
+    UHOH         110%  40% 
+    SAW NONE LOG 140% 100%   | 25%
+    SILENCE                  | 20%
+                 100%  80% 
+    SQU NONE LIN  80%  75%   | 55%
+    */
     createDoubleFlexFX("UHOH",
-        1.10, 0.4, Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.40, 1.0, 
-        1.00, 0.8, Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.80, 0.75, 
+        1.10, 0.4, Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.40, 1.0,
+        1.00, 0.8, Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.80, 0.75,
         0.25, 0.2);
 
-/*
-MOAN         130%  60%
-TRI NONE CUR 100% 100%   | 30%
-TRI NONE CUR  95%  80%   | 60%
-TRI NONE LIN 115%  55%   | 10%
-*/
-    create3PartFlexFX("MOAN", 1.30, 0.6, 
+    /*
+    MOAN         130%  60%
+    TRI NONE CUR 100% 100%   | 30%
+    TRI NONE CUR  95%  80%   | 60%
+    TRI NONE LIN 115%  55%   | 10%
+    */
+    create3PartFlexFX("MOAN", 1.30, 0.6,
         Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 1.00, 1.0,
-        Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE,  0.95, 0.8,
+        Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 0.95, 0.8,
         Wave.TRIANGLE, Attack.SLOW, Effect.NONE, 1.15, 0.55, 0.3, 0.6);
 
-/*
-DUH          100%  60%
-SQU NONE LIN  95%  80%   | 10%
-SQU NONE LIN 110% 100%   | 30%
-SQU NONE LIN  66%  40%   | 60%
-*/
-    create3PartFlexFX("DUH", 1.00, 0.6, 
-    Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.95, 0.8,
-    Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.10, 1.0,
-    Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.66, 0.4, 0.1, 0.3);
+    /*
+    DUH          100%  60%
+    SQU NONE LIN  95%  80%   | 10%
+    SQU NONE LIN 110% 100%   | 30%
+    SQU NONE LIN  66%  40%   | 60%
+    */
+    create3PartFlexFX("DUH", 1.00, 0.6,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.95, 0.8,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.10, 1.0,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.66, 0.4, 0.1, 0.3);
 
-/*
-WAAH         100% 10%
-SAW NONE CUR 140% 90%   | 20%
-SAW NONE LIN 110% 20%   | 70%
-SAW NONE LIN  30%  5%   | 10%
-*/
-    create3PartFlexFX("WAAH", 1.00, 0.1, 
-    Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 1.40, 0.9,
-    Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 1.10, 0.2,
-    Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.3, 0.05, 0.20, 0.70);
+    /*
+    WAAH         100% 10%
+    SAW NONE CUR 140% 90%   | 20%
+    SAW NONE LIN 110% 20%   | 70%
+    SAW NONE LIN  30%  5%   | 10%
+    */
+    create3PartFlexFX("WAAH", 1.00, 0.1,
+        Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 1.40, 0.9,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 1.10, 0.2,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.3, 0.05, 0.20, 0.70);
 
-/*
-GROWL         30%  50%
-SAW NONE LOG 100%  80%   | 15%
-SAW NONE LIN  90% 100%   | 60%
-SAW NONE LIN  30%  75%   | 15%
-*/
-create3PartFlexFX("GROWL", 0.30, 0.5, 
-Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.00, 0.8,
-Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.90, 1.0,
-Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.30, 0.75, 0.15, 0.60);
+    /*
+    GROWL         30%  50%
+    SAW NONE LOG 100%  80%   | 15%
+    SAW NONE LIN  90% 100%   | 60%
+    SAW NONE LIN  30%  75%   | 15%
+    */
+    create3PartFlexFX("GROWL", 0.30, 0.5,
+        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.00, 0.8,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.90, 1.0,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.30, 0.75, 0.15, 0.60);
 
+/*** SIMPLE UI BLOCKS ***/
 
-//% block="emit $FlexFX at pitch $pitch with strength $strength for $duration ms"
-//% inlineInputMode=inline  
-//% advanced=true 
-//% pitch.min=100 pitch.max=800 pitch.defl=300
-//% strength.min=0 strength.max=255 strength.defl=180
-//% duration.min=50 duration.max=9999 duration.defl=1000
-export function emit(id: string, pitch: number, strength: number, duration: number) {
-    // select or create target...        
-    let target: FlexFX = flexFXList.find(i => i.id === id)
-    if (target != null) {
-        target.performUsing(pitch, strength, duration);
-    }
-}
-
-// ******************* SIMPLE RANDOM INVOCATION BLOCKS ******************
-
-//% block="hum || $repeat times with strength $strength over $duration ms"
-//% repeat.min=1 repeat.max=100 repeat.defl=10
-//% strength.min=0 strength.max=255 strength.defl=180
-//% duration.min=1 duration.max= 100 duration.defl=2000
-export function hum(repeat: number = 10, strength: number = 180, duration: number = 2000) {
-    quiet = false
-    ave = duration / repeat
-    pitch = randint(200, 350)
-    let skip = true
-    for (let index = 0; index < repeat; index++) {
-        span = randint(0.2 * ave, 1.8 * ave)
-        if ((span > 0.6 * ave) || (skip)) {
-            // mostly "Dum"...
-            emit("DOO", randint(150, 300), strength, span)
-            basic.pause(100)
-            skip = false
-        } else {
-            // .. with occasional short, higher-pitched "Di"
-            emit("DOO", randint(350, 500), strength, 0.25 * ave)
-            basic.pause(50)
-            skip = true
+    //% block="emit $builtin || at pitch $pitch with strength $strength for $duration ms"
+    //% expandableArgumentMode="toggle"
+    //% pitch.min=100 pitch.max=800 pitch.defl=300
+    //% strength.min=0 strength.max=255 strength.defl=180
+    //% duration.min=50 duration.max=9999 duration.defl=1000
+    export function emit(builtIn:MoodSound, pitch: number, strength: number, duration: number) {
+        // select builtin target... 
+        let target: FlexFX = flexFXList.find(i => i.id === builtIn)
+        if (target != null) {
+            target.performUsing(pitch, strength, duration);
         }
     }
-    quiet = true
-}
 
-//% block="grumble || $repeat times with strength $strength over $duration ms"
-//% repeat.min=1 repeat.max=100 repeat.defl=5
-//% strength.min=0 strength.max=255 strength.defl=250
-//% duration.min=1 duration.max= 100 duration.defl=3000
-export function grumble(repeat: number = 5, strength: number = 250, duration: number = 3000) {
-    quiet = false
-    ave = duration / repeat
-    basic.showIcon(IconNames.Sad)
-    for (let index = 0; index < repeat; index++) {
-        span = randint(0.4 * ave, 1.8 * ave)
-        if (span > 1.0 * ave) {
-            emit("DUH", randint(150, 300), strength, 0.5 * span)
-        } else {
-            emit("UHOH", randint(100, 200), strength, 2 * span)
-        }
-        pause(0.5 * span)
-    }
-    quiet = true
-}
-
-//% block="giggle || $repeat times with strength $strength over $duration ms"
-//% repeat.min=1 repeat.max=100 repeat.defl=12
-//% strength.min=0 strength.max=255 strength.defl=200
-//% duration.min=1 duration.max= 100 duration.defl=4000
-export function giggle(repeat: number = 12, strength: number = 200, duration: number = 2000) {
-    quiet = false
-    ave = duration / repeat
-    pitch = randint(500, 700)
-    for (let index = 0; index < repeat; index++) {
-        span = randint(0.4 * ave, 1.8 * ave)
-        emit("LAUGH", pitch, strength, span)
-        pitch = 0.9 * pitch
-        basic.pause(100)
-    }
-    quiet = true
-}
-
-//% block="whistle || $repeat times with strength $strength over $duration ms"
-//% repeat.min=1 repeat.max=100 repeat.defl=8
-//% strength.min=0 strength.max=255 strength.defl=180
-//% duration.min=1 duration.max= 100 duration.defl=2500
-export function whistle(repeat: number = 8, strength: number = 180, duration: number = 2500) {
-    quiet = false
-    ave = duration / repeat
-    for (let index = 0; index < repeat; index++) {
-        span = randint(0.4 * ave, 1.8 * ave)
-        emit("TWEET", randint(600, 1200), strength, span)
-        basic.pause(100)
-    }
-    quiet = true
-}
-
-//% block="snore || $repeat times with strength $strength over $duration ms"
-//% repeat.min=1 repeat.max=100 repeat.defl=8
-//% strength.min=0 strength.max=255 strength.defl=150
-//% duration.min=1 duration.max= 100 duration.defl=5000
-export function snore(repeat: number = 8, strength: number = 150, duration: number = 5000) {
-    quiet = false
-    ave = duration / repeat
-    for (let index = 0; index < repeat; index++) {
-        span = randint(0.9 * ave, 1.1 * ave)
-        emit("SNORE", 1, 80, 0.3 * span);
-        pause(300);
-        emit("SNORE", 1, 150, 0.7 * span);
-        pause(500);
-    }
-    quiet = true
-}
-
-//% block="whimper || $repeat times with strength $strength over $duration ms"
-//% repeat.min=1 repeat.max=100 repeat.defl=10
-//% strength.min=0 strength.max=255 strength.defl=100
-//% duration.min=1 duration.max= 100 duration.defl=4000
-export function whimper(repeat: number = 10, strength: number = 100, duration: number = 4000) {
-    if (quiet) {
+    //% block="hum || $repeat times with strength $strength over $duration ms"
+    //% expandableArgumentMode="toggle"
+    //% repeat.min=1 repeat.max=100 repeat.defl=10
+    //% strength.min=0 strength.max=255 strength.defl=180
+    //% duration.min=1 duration.max=9999 duration.defl=2000
+    export function hum(repeat: number = 10, strength: number = 180, duration: number = 2000) {
         quiet = false
         ave = duration / repeat
+        pitch = randint(200, 350)
+        let skip = true
         for (let index = 0; index < repeat; index++) {
-            emit("MOAN", randint(250, 400), strength, randint(0.7 * ave, 1.3 * ave))
-            basic.pause(300)
-        }
-        quiet = true
-    }
-}
-
-//% block="cry || $repeat times with strength $strength over $duration ms"
-//% repeat.min=1 repeat.max=100 repeat.defl=8
-//% strength.min=0 strength.max=255 strength.defl=200
-//% duration.min=1 duration.max= 100 duration.defl=3000
-export function cry(repeat: number = 8, strength: number = 200, duration: number = 3500) {
-    if (quiet) {
-        quiet = false
-        ave = duration / repeat
-        for (let index = 0; index < repeat; index++) {
-            span = randint(0.6 * ave, 1.5 * ave)
-            if (span > 0.9 * ave) {
-                emit("MOAN", randint(200, 350), 1.5 * strength, 0.5 * span)
+            span = randint(0.2 * ave, 1.8 * ave)
+            if ((span > 0.6 * ave) || (skip)) {
+                // mostly "Dum"...
+                performFlexFX("DOO", randint(150, 300), strength, span)
+                basic.pause(100)
+                skip = false
             } else {
-                emit("WAAH", randint(250, 400), 0.05 * strength, 1.3 * span)
+                // .. with occasional short, higher-pitched "Di"
+                performFlexFX("DOO", randint(350, 500), strength, 0.25 * ave)
+                basic.pause(50)
+                skip = true
             }
-            basic.pause(200)
         }
         quiet = true
     }
-}
 
-//% block="shout || $repeat times with strength $strength over $duration ms"
-//% expandableArgumentMode="toggle"
-//% repeat.min=1 repeat.max=100 repeat.defl=5
-//% strength.min=0 strength.max=255 strength.defl=250
-//% duration.min=1 duration.max= 100 duration.defl=2500
-export function shout(repeat: number = 5, strength: number = 250, duration: number = 2500) {
-    if (quiet) {
+    //% block="grumble || $repeat times with strength $strength over $duration ms"
+    //% expandableArgumentMode="toggle"
+    //% repeat.min=1 repeat.max=100 repeat.defl=5
+    //% strength.min=0 strength.max=255 strength.defl=250
+    //% duration.min=1 duration.max=9999 duration.defl=3000
+    export function grumble(repeat: number = 5, strength: number = 250, duration: number = 3000) {
+        quiet = false
+        ave = duration / repeat
+        basic.showIcon(IconNames.Sad)
+        for (let index = 0; index < repeat; index++) {
+            span = randint(0.4 * ave, 1.8 * ave)
+            if (span > 1.0 * ave) {
+                performFlexFX("DUH", randint(150, 300), strength, 0.5 * span)
+            } else {
+                performFlexFX("UHOH", randint(100, 200), strength, 2 * span)
+            }
+            pause(0.5 * span)
+        }
+        quiet = true
+    }
+
+    //% block="giggle || $repeat times with strength $strength over $duration ms"
+    //% expandableArgumentMode="toggle"
+    //% repeat.min=1 repeat.max=100 repeat.defl=12
+    //% strength.min=0 strength.max=255 strength.defl=200
+    //% duration.min=1 duration.max=9999 duration.defl=4000
+    export function giggle(repeat: number = 12, strength: number = 200, duration: number = 2000) {
+        quiet = false
+        ave = duration / repeat
+        pitch = randint(500, 700)
+        for (let index = 0; index < repeat; index++) {
+            span = randint(0.4 * ave, 1.8 * ave)
+            performFlexFX("LAUGH", pitch, strength, span)
+            pitch = 0.9 * pitch
+            basic.pause(100)
+        }
+        quiet = true
+    }
+
+    //% block="whistle || $repeat times with strength $strength over $duration ms"
+    //% expandableArgumentMode="toggle"
+    //% repeat.min=1 repeat.max=100 repeat.defl=8
+    //% strength.min=0 strength.max=255 strength.defl=180
+    //% duration.min=1 duration.max=9999 duration.defl=2500
+    export function whistle(repeat: number = 8, strength: number = 180, duration: number = 2500) {
         quiet = false
         ave = duration / repeat
         for (let index = 0; index < repeat; index++) {
-            emit("GROWL", randint(320, 400), strength, randint(0.8 * ave, 1.2 * ave))
-            basic.pause(300)
+            span = randint(0.4 * ave, 1.8 * ave)
+            performFlexFX("TWEET", randint(600, 1200), strength, span)
+            basic.pause(100)
         }
         quiet = true
     }
 
-}
-}
+    //% block="snore || $repeat times with strength $strength over $duration ms"
+    //% expandableArgumentMode="toggle"
+    //% repeat.min=1 repeat.max=100 repeat.defl=8
+    //% strength.min=0 strength.max=255 strength.defl=150
+    //% duration.min=1 duration.max=9999 duration.defl=5000
+    export function snore(repeat: number = 8, strength: number = 150, duration: number = 5000) {
+        quiet = false
+        ave = duration / repeat
+        for (let index = 0; index < repeat; index++) {
+            span = randint(0.9 * ave, 1.1 * ave)
+            performFlexFX("SNORE", 1, 80, 0.3 * span);
+            pause(300);
+            performFlexFX("SNORE", 1, 150, 0.7 * span);
+            pause(500);
+        }
+        quiet = true
+    }
 
+    //% block="whimper || $repeat times with strength $strength over $duration ms"
+    //% expandableArgumentMode="toggle"
+    //% repeat.min=1 repeat.max=100 repeat.defl=10
+    //% strength.min=0 strength.max=255 strength.defl=100
+    //% duration.min=1 duration.max=9999 duration.defl=4000
+    export function whimper(repeat: number = 10, strength: number = 100, duration: number = 4000) {
+        if (quiet) {
+            quiet = false
+            ave = duration / repeat
+            for (let index = 0; index < repeat; index++) {
+                performFlexFX("MOAN", randint(250, 400), strength, randint(0.7 * ave, 1.3 * ave))
+                basic.pause(300)
+            }
+            quiet = true
+        }
+    }
+
+    //% block="cry || $repeat times with strength $strength over $duration ms"
+    //% expandableArgumentMode="toggle"
+    //% repeat.min=1 repeat.max=100 repeat.defl=8
+    //% strength.min=0 strength.max=255 strength.defl=200
+    //% duration.min=1 duration.max=9999 duration.defl=3000
+    export function cry(repeat: number = 8, strength: number = 200, duration: number = 3500) {
+        if (quiet) {
+            quiet = false
+            ave = duration / repeat
+            for (let index = 0; index < repeat; index++) {
+                span = randint(0.6 * ave, 1.5 * ave)
+                if (span > 0.9 * ave) {
+                    performFlexFX("MOAN", randint(200, 350), 1.5 * strength, 0.5 * span)
+                } else {
+                    performFlexFX("WAAH", randint(250, 400), 0.05 * strength, 1.3 * span)
+                }
+                basic.pause(200)
+            }
+            quiet = true
+        }
+    }
+
+    //% block="shout || $repeat times with strength $strength over $duration ms"
+    //% expandableArgumentMode="toggle"
+    //% repeat.min=1 repeat.max=100 repeat.defl=5
+    //% strength.min=0 strength.max=255 strength.defl=250
+    //% duration.min=1 duration.max=9999 duration.defl=2500
+    export function shout(repeat: number = 5, strength: number = 250, duration: number = 2500) {
+        if (quiet) {
+            quiet = false
+            ave = duration / repeat
+            for (let index = 0; index < repeat; index++) {
+                performFlexFX("GROWL", randint(320, 400), strength, randint(0.8 * ave, 1.2 * ave))
+                basic.pause(300)
+            }
+            quiet = true
+        }
+    }
+}
 // *********** test codes **********
 
 function doSound(choice: number) {

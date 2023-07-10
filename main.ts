@@ -286,7 +286,8 @@ namespace flexFX {
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id)
         if (target == null) {
-            flexFXList.push(new FlexFX(id));
+            target = new FlexFX(id);
+            flexFXList.push(target);
         }
         target.setPartA(startPitchRatio, startVolRatio, wave, attack, effect, endPitchRatio, endVolRatio, 1.0);
     }
@@ -302,7 +303,8 @@ namespace flexFX {
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id)
         if (target == null) {
-            flexFXList.push(new FlexFX(id));
+            target = new FlexFX(id);
+            flexFXList.push(target);
         }
         target.setPartA(startPitchRatio, startVolRatio, waveA, attackA, effectA, midPitchRatio, midVolRatio, timeRatioA);
         target.setPartB(waveB, attackB, effectB, endPitchRatio, endVolRatio, 1.0 - timeRatioA);
@@ -321,7 +323,8 @@ namespace flexFX {
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id)
         if (target == null) {
-            flexFXList.push(new FlexFX(id));
+            target = new FlexFX(id);
+            flexFXList.push(target);
         }
         target.setPartA(startPitchRatio, startVolRatio, waveA, attackA, effectA, pitchABRatio, volABRatio, timeRatioA);
         target.setPartB(waveB, attackB, effectB, pitchBCRatio, volBCRatio, timeRatioB);
@@ -341,7 +344,8 @@ namespace flexFX {
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id)
         if (target == null) {
-            flexFXList.push(new FlexFX(id));
+            target = new FlexFX(id);
+            flexFXList.push(target);
         }
         target.setPartA(startPitchARatio, startVolARatio, waveA, attackA, effectA, endPitchARatio, endVolARatio, timeRatioA);
         target.silentPartB(startPitchBRatio, startVolBRatio, timeGapRatio);

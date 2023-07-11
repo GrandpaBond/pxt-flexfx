@@ -284,14 +284,12 @@ namespace flexFX {
         }
     }
 
-
-
     // ***** Central array of currently defined FlexFX objects *****
     let flexFXList: FlexFX[] = [];
 
     /*** ADVANCED UI BLOCKS ***/
     //% block="perform FlexFX $id at pitch $pitch with strength $strength for $ms ms"
-    //% group="Advanced"
+    //% inlineInputMode=inline
     //% advanced=true
     export function performFlexFX(id: string, pitch: number, vol: number, ms: number) {
 
@@ -303,7 +301,7 @@ namespace flexFX {
     }
 
     //% block="create simple FlexFX called $id using wave-shape $wave with attack $attack and effect $effect|pitch profile goes from $startPitchRatio to $endPitchRatio|volume profile goes from $startVolRatio to $endVolRatio"
-    //% group="Advanced"
+    //% inlineInputMode=external
     //% advanced=true
     export function createFlexFX(
         id: string, startPitchRatio: number, startVolRatio: number,
@@ -319,7 +317,7 @@ namespace flexFX {
 
 
     //% block="create 2-part FlexFX called $id first using wave-shape $waveA with attack $attackA and effect $effectA|then using wave-shape $waveB with attack $attackB and effect $effectB|pitch profile goes from $startPitchRatio to $midPitchRatio to $endPitchRatio|volume profile goes from $startVolRatio to $midVolRatio to $endVolRatio|first part uses timeRatioA of duration"
-    //% group="Advanced"
+    //% inlineInputMode=external
     //% advanced=true
     export function create2PartFlexFX(
         id: string, startPitchRatio: number, startVolRatio: number,
@@ -336,8 +334,8 @@ namespace flexFX {
 
     }
 
-    //% block="create 3-part FlexFX called $id first using wave-shape $waveA with attack $attackA and effect $effectA|then using wave-shape $waveB with attack $attackB and effect $effectB|then using wave-shape $waveC with attack $attackC and effect $effectC|pitch profile goes from $startPitchRatio to $pitchABRatio to $pitchBCRatio to $endPitchRatio|volume profile goes from $startVolRatio to $volABRatio to $volBCRatio to $endVolRatio|first part uses $timeRatioA of duration, second part uses $timeRatioB of it"
-    //% group="Advanced"
+    //% block="create 3-part FlexFX called $id first using wave-shape $waveA     with attack $attackA     and effect $effectA|then using wave-shape $waveB     with attack $attackB     and effect $effectB|lastly using wave-shape $waveC     with attack $attackC     and effect $effectC|pitch profile goes from $startPitchRatio     to $pitchABRatio     to $pitchBCRatio     to $endPitchRatio|volume profile goes from $startVolRatio     to $volABRatio     to $volBCRatio     to $endVolRatio|duration is split as follows:|      first part:$timeRatioA     second part: $timeRatioB"
+    //% inlineInputMode=external
     //% advanced=true
     export function create3PartFlexFX(
         id: string, startPitchRatio: number, startVolRatio: number,
@@ -359,6 +357,9 @@ namespace flexFX {
 
 
     // two FlexFx parts, separated by a silence.
+    //% block="create double FlexFX called $id first using wave-shape $waveA with attack $attackA and effect $effectA|then using wave-shape $waveB with attack $attackB and effect $effectB|then using wave-shape $waveC with attack $attackC and effect $effectC|pitch profile goes from $startPitchRatio to $pitchABRatio to $pitchBCRatio to $endPitchRatio|volume profile goes from $startVolRatio to $volABRatio to $volBCRatio to $endVolRatio|first part uses $timeRatioA of duration, second part uses $timeRatioB of it"
+    //% inlineInputMode=external
+    //% advanced=true
     export function createDoubleFlexFX(
         id: string, startPitchARatio: number, startVolARatio: number,
         waveA: Wave, attackA: Attack, effectA: Effect, endPitchARatio: number, endVolARatio: number,

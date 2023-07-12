@@ -291,7 +291,7 @@ namespace flexFX {
     /**
     Perform a custom FlexFX 
      */
-    //% block="perform FlexFX $id at pitch $pitch with strength $strength for $ms ms"
+    //% block="perform FlexFX $id at pitch $pitch with strength $vol for $ms ms"
     //% inlineInputMode=inline
     //% advanced=true
     //% weight=150
@@ -373,7 +373,7 @@ namespace flexFX {
     /**
     Create a FlexFx with two parts parts, separated by a silence.
     */
-    //% block="create doublee FlexFX called $id using wave-shape $waveA            with attack $attackA             and effect $effectA|pitch profile goes from $startPitchARatio                     to $endPitchARatio|volume profile goes from $startVolARatio                     to $endVolARatio|fraction of duration: $timeRatioA|Silent for duration fraction:$timeRatioB|second part using wave-shape $waveB            with attack $attackB             and effect $effectB|pitch profile goes from $startPitchBRatio                     to $endPitchBRatio|volume profile goes from $startVolBRatio                     to $endVolBRatio"
+    //% block="create doublee FlexFX called $id using wave-shape $waveA            with attack $attackA             and effect $effectA|pitch profile goes from $startPitchARatio                     to $endPitchARatio|volume profile goes from $startVolARatio                     to $endVolARatio|fraction of duration: $timeRatioA|Silent for duration fraction:$timeGapRatio|second part using wave-shape $waveB            with attack $attackB             and effect $effectB|pitch profile goes from $startPitchBRatio                     to $endPitchBRatio|volume profile goes from $startVolBRatio                     to $endVolBRatio"
     //% inlineInputMode=external
     //% advanced=true
     //% weight=110

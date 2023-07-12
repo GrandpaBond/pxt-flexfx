@@ -91,7 +91,7 @@ enum MoodSound {
  * Tools for creating composite sound-effects (of class FlexFX) that can be performed with
  * dynamically-specified pitch, volume and duration. Provides a built-in list of samples.
  */
-//% color=#7eff33 weight=100 icon="\uf4ad" block="FlexFX"
+//% color=#7eff33 weight=100 icon="\uf0a1 block="FlexFX"
 //% groups=['Simple', 'Advanced']
 namespace flexFX {
     // We identify field-offsets defensively, just in case SoundExpression field-locations should 
@@ -288,9 +288,13 @@ namespace flexFX {
     let flexFXList: FlexFX[] = [];
 
     /*** ADVANCED UI BLOCKS ***/
+    /**
+    Perform a custom FlexFX 
+     */
     //% block="perform FlexFX $id at pitch $pitch with strength $strength for $ms ms"
     //% inlineInputMode=inline
     //% advanced=true
+    //% weight=150
     export function performFlexFX(id: string, pitch: number, vol: number, ms: number) {
 
         let target: FlexFX = flexFXList.find(i => i.id === id)
@@ -300,9 +304,12 @@ namespace flexFX {
 
     }
 
-    //% block="create simple FlexFX called $id using wave-shape $wave with attack $attack and effect $effect|pitch profile goes from $startPitchRatio to $endPitchRatio|volume profile goes from $startVolRatio to $endVolRatio"
-    //% inlineInputMode=external
+    /**
+    Create a simple custom FlexFX 
+     */
+    //% block="create simple FlexFX called $id using wave-shape $waveA            with attack $attackA             and effect $effectA|pitch profile goes from $startPitchRatio                     to $endPitchRatio|volume profile goes from $startVolRatio                     to $endVolRatio"//% inlineInputMode=external
     //% advanced=true
+    //% weight=140
     export function createFlexFX(
         id: string, startPitchRatio: number, startVolRatio: number,
         wave: Wave, attack: Attack, effect: Effect, endPitchRatio: number, endVolRatio: number) {
@@ -316,9 +323,12 @@ namespace flexFX {
     }
 
 
-    //% block="create 2-part FlexFX called $id first using wave-shape $waveA with attack $attackA and effect $effectA|then using wave-shape $waveB with attack $attackB and effect $effectB|pitch profile goes from $startPitchRatio to $midPitchRatio to $endPitchRatio|volume profile goes from $startVolRatio to $midVolRatio to $endVolRatio|first part uses timeRatioA of duration"
-    //% inlineInputMode=external
+    /**
+    Create a more complex two-part custom FlexFX 
+     */
+    //% block="create 2-part FlexFX called $id first using wave-shape $waveA            with attack $attackA             and effect $effectA|  then using wave-shape $waveB            with attack $attackB             and effect $effectB|pitch profile goes from $startPitchRatio                     to $midPitchRatio                     to $endPitchRatio|volume profile goes from $startVolRatio                     to $midVolRatio                     to $endVolRatio|duration fraction for first part: $timeRatioA"    //% inlineInputMode=external
     //% advanced=true
+    //% weight=130
     export function create2PartFlexFX(
         id: string, startPitchRatio: number, startVolRatio: number,
         waveA: Wave, attackA: Attack, effectA: Effect, midPitchRatio: number, midVolRatio: number,
@@ -334,9 +344,13 @@ namespace flexFX {
 
     }
 
+    /**
+    Create a very complex three-part custom FlexFX 
+     */
     //% block="create 3-part FlexFX called $id first using wave-shape $waveA     with attack $attackA     and effect $effectA|then using wave-shape $waveB     with attack $attackB     and effect $effectB|lastly using wave-shape $waveC     with attack $attackC     and effect $effectC|pitch profile goes from $startPitchRatio     to $pitchABRatio     to $pitchBCRatio     to $endPitchRatio|volume profile goes from $startVolRatio     to $volABRatio     to $volBCRatio     to $endVolRatio|duration is split as follows:|      first part:$timeRatioA     second part: $timeRatioB"
     //% inlineInputMode=external
     //% advanced=true
+    //% weight=120
     export function create3PartFlexFX(
         id: string, startPitchRatio: number, startVolRatio: number,
         waveA: Wave, attackA: Attack, effectA: Effect, pitchABRatio: number, volABRatio: number,
@@ -356,10 +370,13 @@ namespace flexFX {
     }
 
 
-    // two FlexFx parts, separated by a silence.
-    //% block="create double FlexFX called $id first using wave-shape $waveA with attack $attackA and effect $effectA|then using wave-shape $waveB with attack $attackB and effect $effectB|then using wave-shape $waveC with attack $attackC and effect $effectC|pitch profile goes from $startPitchRatio to $pitchABRatio to $pitchBCRatio to $endPitchRatio|volume profile goes from $startVolRatio to $volABRatio to $volBCRatio to $endVolRatio|first part uses $timeRatioA of duration, second part uses $timeRatioB of it"
+    /**
+    Create a FlexFx with two parts parts, separated by a silence.
+    */
+    //% block="create doublee FlexFX called $id using wave-shape $waveA            with attack $attackA             and effect $effectA|pitch profile goes from $startPitchARatio                     to $endPitchARatio|volume profile goes from $startVolARatio                     to $endVolARatio|fraction of duration: $timeRatioA|Silent for duration fraction:$timeRatioB|second part using wave-shape $waveB            with attack $attackB             and effect $effectB|pitch profile goes from $startPitchBRatio                     to $endPitchBRatio|volume profile goes from $startVolBRatio                     to $endVolBRatio"
     //% inlineInputMode=external
     //% advanced=true
+    //% weight=110
     export function createDoubleFlexFX(
         id: string, startPitchARatio: number, startVolARatio: number,
         waveA: Wave, attackA: Attack, effectA: Effect, endPitchARatio: number, endVolARatio: number,
@@ -492,13 +509,35 @@ namespace flexFX {
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.90, 1.0,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.30, 0.75, 0.15, 0.60);
 
-    /*** SIMPLE UI BLOCKS ***/
+    // *** SIMPLE UI BLOCKS ***
 
+    /** 
+    Emit a built-in FlexFX Sound
+    */
+    //% block="emit $builtIn ||at pitch $pitch with strength $strength for $duration ms"
+    //% expandableArgumentMode="toggle"
+    //% inlineInputMode=inline
+    //% pitch.min=100 pitch.max=800 pitch.defl=300
+    //% strength.min=0 strength.max=255 strength.defl=180
+    //% duration.min=50 duration.max=9999 duration.defl=1000
+    //% weight=300
+    export function emit(builtIn: MoodSound, pitch: number, strength: number, duration: number) {
+        // select builtin target... 
+        let target: FlexFX = flexFXList.find(i => i.id === builtIn.toString())
+        if (target != null) {
+            target.performUsing(pitch, strength, duration);
+        }
+    }
+
+    /** 
+    Hum randomly for a while...
+    */
     //% block="hum || $repeat times with strength $strength over $duration ms"
     //% expandableArgumentMode="toggle"
     //% repeat.min=1 repeat.max=100 repeat.defl=10
     //% strength.min=0 strength.max=255 strength.defl=180
     //% duration.min=1 duration.max=9999 duration.defl=2000
+    //% weight=250
     export function hum(repeat: number = 10, strength: number = 180, duration: number = 2000) {
         quiet = false
         ave = duration / repeat
@@ -521,11 +560,15 @@ namespace flexFX {
         quiet = true
     }
 
+    /** 
+    Complain randomly for a while...
+    */
     //% block="grumble || $repeat times with strength $strength over $duration ms"
     //% expandableArgumentMode="toggle"
     //% repeat.min=1 repeat.max=100 repeat.defl=5
     //% strength.min=0 strength.max=255 strength.defl=250
     //% duration.min=1 duration.max=9999 duration.defl=3000
+    //% weight=245
     export function grumble(repeat: number = 5, strength: number = 250, duration: number = 3000) {
         quiet = false
         ave = duration / repeat
@@ -542,11 +585,15 @@ namespace flexFX {
         quiet = true
     }
 
+    /**
+    Giggle for a bit...
+    */
     //% block="giggle || $repeat times with strength $strength over $duration ms"
     //% expandableArgumentMode="toggle"
     //% repeat.min=1 repeat.max=100 repeat.defl=12
     //% strength.min=0 strength.max=255 strength.defl=200
     //% duration.min=1 duration.max=9999 duration.defl=4000
+    //% weight=240
     export function giggle(repeat: number = 12, strength: number = 200, duration: number = 2000) {
         quiet = false
         ave = duration / repeat
@@ -560,11 +607,16 @@ namespace flexFX {
         quiet = true
     }
 
+
+    /** 
+    Whistle a happy tune...
+    */
     //% block="whistle || $repeat times with strength $strength over $duration ms"
     //% expandableArgumentMode="toggle"
     //% repeat.min=1 repeat.max=100 repeat.defl=8
     //% strength.min=0 strength.max=255 strength.defl=180
     //% duration.min=1 duration.max=9999 duration.defl=2500
+    //% weight=235
     export function whistle(repeat: number = 8, strength: number = 180, duration: number = 2500) {
         quiet = false
         ave = duration / repeat
@@ -576,11 +628,16 @@ namespace flexFX {
         quiet = true
     }
 
+
+    /** 
+    Sleep rather noisily...
+    */
     //% block="snore || $repeat times with strength $strength over $duration ms"
     //% expandableArgumentMode="toggle"
     //% repeat.min=1 repeat.max=100 repeat.defl=8
     //% strength.min=0 strength.max=255 strength.defl=150
     //% duration.min=1 duration.max=9999 duration.defl=5000
+    //% weight=230
     export function snore(repeat: number = 8, strength: number = 150, duration: number = 5000) {
         quiet = false
         ave = duration / repeat
@@ -594,11 +651,16 @@ namespace flexFX {
         quiet = true
     }
 
+
+    /** 
+    Be just a bit frightened...
+    */
     //% block="whimper || $repeat times with strength $strength over $duration ms"
     //% expandableArgumentMode="toggle"
     //% repeat.min=1 repeat.max=100 repeat.defl=10
     //% strength.min=0 strength.max=255 strength.defl=100
     //% duration.min=1 duration.max=9999 duration.defl=4000
+    //% weight=225
     export function whimper(repeat: number = 10, strength: number = 100, duration: number = 4000) {
         if (quiet) {
             quiet = false
@@ -611,11 +673,15 @@ namespace flexFX {
         }
     }
 
+    /** 
+    Be really sad...
+    */
     //% block="cry || $repeat times with strength $strength over $duration ms"
     //% expandableArgumentMode="toggle"
     //% repeat.min=1 repeat.max=100 repeat.defl=8
     //% strength.min=0 strength.max=255 strength.defl=200
     //% duration.min=1 duration.max=9999 duration.defl=3000
+    //% weight=220
     export function cry(repeat: number = 8, strength: number = 200, duration: number = 3500) {
         if (quiet) {
             quiet = false
@@ -633,11 +699,15 @@ namespace flexFX {
         }
     }
 
+    /** 
+    Be a bit grumpy...
+    */
     //% block="shout || $repeat times with strength $strength over $duration ms"
     //% expandableArgumentMode="toggle"
     //% repeat.min=1 repeat.max=100 repeat.defl=5
     //% strength.min=0 strength.max=255 strength.defl=250
     //% duration.min=1 duration.max=9999 duration.defl=2500
+    //% weight=215
     export function shout(repeat: number = 5, strength: number = 250, duration: number = 2500) {
         if (quiet) {
             quiet = false
@@ -650,19 +720,6 @@ namespace flexFX {
         }
     }
 
-    //% block="emit $builtIn ||at pitch $pitch with strength $strength for $duration ms"
-    //% inlineInputMode=inline
-    //% expandableArgumentMode="toggle"
-    //% pitch.min=100 pitch.max=800 pitch.defl=300
-    //% strength.min=0 strength.max=255 strength.defl=180
-    //% duration.min=50 duration.max=9999 duration.defl=1000
-    export function emit(builtIn: MoodSound, pitch: number, strength: number, duration: number) {
-        // select builtin target... 
-        let target: FlexFX = flexFXList.find(i => i.id === builtIn.toString())
-        if (target != null) {
-            target.performUsing(pitch, strength, duration);
-        }
-    }
 
 }
 // *********** test codes **********

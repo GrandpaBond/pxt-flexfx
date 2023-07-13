@@ -89,22 +89,21 @@ enum MoodSound {
 
 /**
  * Tools for creating composite sound-effects (of class FlexFX) that can be performed with
- * dynamically-specified pitch, volume and duration. Provides a built-in list of samples.
+ * dynamically-specified pitch, volume and duration. Provides a built-in set of samples.
  */
 //% color=#7eff33 weight=100 icon="\uf0a1 block="FlexFX"
-//% groups=['Simple', 'Advanced']
 namespace flexFX {
-    // We identify field-offsets defensively, just in case SoundExpression field-locations should 
-    // change in future. (We presume their width will always be 4 digits)
-    const startVolPos = 1
-    const startFreqPos = 5
-    const durationPos = 9
-    const endVolPos = 26
-    const endFreqPos = 18
+    // In case SoundExpression field-locations should change in future, identify field-offsets defensively.
+    // (We presume their width will always remain 4 digits)
+    const startVolPos = 1;
+    const startFreqPos = 5;
+    const durationPos = 9;
+    const endVolPos = 26;
+    const endFreqPos = 18;
 
 
     // provide activity events (for other components to synchronise with)
-    const FLEXFX_ACTIVITY_id = 1234 // TODO: Check this is a permissable value!
+    const FLEXFX_ACTIVITY_ID = 1234 // TODO: Check this is a permissable value!
     enum Status {
         STARTING = 1,
         FINISHED = 2
@@ -188,7 +187,7 @@ namespace flexFX {
             this.timeRatioB = ms2;
             this.partB = new soundExpression.Sound;
             this.partB.src = music.createSoundEffect(wave, 333, 333, 666, 666, 999, fx, shape);
-            this.playPartB = true
+            this.playPartB = true;
             this.usesPoint2 = true;
         }
         // Adds a silent Part B:  (Point0)--(PartA)--(Point1)--(silence)--(Point2)...
@@ -202,7 +201,6 @@ namespace flexFX {
 
         // Adds an optional part C: (Point0)--(PartA)--(Point1)--(PartB)--(Point2)--(PartC)--(Point3)
         setPartC(wave: number, shape: number, fx: number, freq3: number, vol3: number, ms3: number) {
-            // we have a PartC as well...
             this.freqRatio3 = freq3;
             this.volRatio3 = vol3;
             this.timeRatioC = ms3;
@@ -221,7 +219,7 @@ namespace flexFX {
             // Point 1
             let f1 = this.formatNumber(freq * this.freqRatio1, 4);
             let v1 = this.formatNumber(loud * this.volRatio1, 4);
-            let ms1 = this.formatNumber(ms * this.timeRatioA, 4)
+            let ms1 = this.formatNumber(ms * this.timeRatioA, 4);
             // declarations required, even if unused...
             let f2 = "";
             let v2 = "";
@@ -233,13 +231,13 @@ namespace flexFX {
             if (this.usesPoint2) {
                 let f2 = this.formatNumber(freq * this.freqRatio2, 4);
                 let v2 = this.formatNumber(loud * this.volRatio2, 4);
-                let ms2 = this.formatNumber(ms * this.timeRatioB, 4)
+                let ms2 = this.formatNumber(ms * this.timeRatioB, 4);
             }
             // Point 3
             if (this.usesPoint3) {
                 let f3 = this.formatNumber(freq * this.freqRatio3, 4);
                 let v3 = this.formatNumber(loud * this.volRatio3, 4);
-                let ms3 = this.formatNumber(ms * this.timeRatioC, 4)
+                let ms3 = this.formatNumber(ms * this.timeRatioC, 4);
             }
 
             // adjust PartA frequencies, volumes and duration 
@@ -266,7 +264,7 @@ namespace flexFX {
             }
 
             // now for the actual performance...
-            control.raiseEvent(FLEXFX_ACTIVITY_id, Status.STARTING) // e.g. to synchronise opening displayed mouth
+            control.raiseEvent(FLEXFX_ACTIVITY_ID, Status.STARTING); // e.g. to synchronise opening displayed mouth
             if (this.playPartA) {
                 music.playSoundEffect(this.partA.src, SoundExpressionPlayMode.UntilDone);
             }
@@ -274,20 +272,20 @@ namespace flexFX {
                 music.playSoundEffect(this.partB.src, SoundExpressionPlayMode.UntilDone);
             } else {
                 if (this.skipPartB) {   //   ...a silent gap in the middle...
-                    basic.pause(ms * this.timeRatioB)
+                    basic.pause(ms * this.timeRatioB);
                 }
             }
             if (this.playPartC) {
                 music.playSoundEffect(this.partC.src, SoundExpressionPlayMode.UntilDone);
             }
-            control.raiseEvent(FLEXFX_ACTIVITY_id, Status.FINISHED); // e.g. to synchronise closing displayed mouth
+            control.raiseEvent(FLEXFX_ACTIVITY_ID, Status.FINISHED); // e.g. to synchronise closing displayed mouth
         }
     }
 
-    // ***** Central array of currently defined FlexFX objects *****
+    // ---- Central array of currently defined FlexFX objects ----
     let flexFXList: FlexFX[] = [];
 
-    /*** ADVANCED UI BLOCKS ***/
+    // ---- ADVANCED UI BLOCKS ----
     /**
     Perform a custom FlexFX 
      */
@@ -296,12 +294,10 @@ namespace flexFX {
     //% advanced=true
     //% weight=150
     export function performFlexFX(id: string, pitch: number, vol: number, ms: number) {
-
-        let target: FlexFX = flexFXList.find(i => i.id === id)
+        let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
             target.performUsing(pitch, vol, ms);
         }
-
     }
 
     /**
@@ -314,7 +310,7 @@ namespace flexFX {
         id: string, startPitchRatio: number, startVolRatio: number,
         wave: Wave, attack: Attack, effect: Effect, endPitchRatio: number, endVolRatio: number) {
         // select or create target...        
-        let target: FlexFX = flexFXList.find(i => i.id === id)
+        let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target == null) {
             target = new FlexFX(id);
             flexFXList.push(target);
@@ -334,7 +330,7 @@ namespace flexFX {
         waveA: Wave, attackA: Attack, effectA: Effect, midPitchRatio: number, midVolRatio: number,
         waveB: Wave, attackB: Attack, effectB: Effect, endPitchRatio: number, endVolRatio: number, timeRatioA: number) {
         // select or create target...        
-        let target: FlexFX = flexFXList.find(i => i.id === id)
+        let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target == null) {
             target = new FlexFX(id);
             flexFXList.push(target);
@@ -345,7 +341,7 @@ namespace flexFX {
     }
 
     /**
-    Create a very complex three-part custom FlexFX 
+    Create a really complex three-part custom FlexFX 
      */
     //% block="create 3-part FlexFX called $id first using wave-shape $waveA     with attack $attackA     and effect $effectA|then using wave-shape $waveB     with attack $attackB     and effect $effectB|lastly using wave-shape $waveC     with attack $attackC     and effect $effectC|pitch profile goes from $startPitchRatio     to $pitchABRatio     to $pitchBCRatio     to $endPitchRatio|volume profile goes from $startVolRatio     to $volABRatio     to $volBCRatio     to $endVolRatio|duration is split as follows:|      first part:$timeRatioA     second part: $timeRatioB"
     //% inlineInputMode=external
@@ -358,7 +354,7 @@ namespace flexFX {
         waveC: Wave, attackC: Attack, effectC: Effect, endPitchRatio: number, endVolRatio: number,
         timeRatioA: number, timeRatioB: number) {
         // select or create target...        
-        let target: FlexFX = flexFXList.find(i => i.id === id)
+        let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target == null) {
             target = new FlexFX(id);
             flexFXList.push(target);
@@ -371,9 +367,9 @@ namespace flexFX {
 
 
     /**
-    Create a FlexFx with two parts parts, separated by a silence.
+    Create a FlexFx with two parts separated by a silence.
     */
-    //% block="create doublee FlexFX called $id using wave-shape $waveA            with attack $attackA             and effect $effectA|pitch profile goes from $startPitchARatio                     to $endPitchARatio|volume profile goes from $startVolARatio                     to $endVolARatio|fraction of duration: $timeRatioA|Silent for duration fraction:$timeGapRatio|second part using wave-shape $waveB            with attack $attackB             and effect $effectB|pitch profile goes from $startPitchBRatio                     to $endPitchBRatio|volume profile goes from $startVolBRatio                     to $endVolBRatio"
+    //% block="create double FlexFX called $id using wave-shape $waveA            with attack $attackA             and effect $effectA|pitch profile goes from $startPitchARatio                     to $endPitchARatio|volume profile goes from $startVolARatio                     to $endVolARatio|fraction of duration: $timeRatioA|Silent for duration fraction:$timeGapRatio|second part using wave-shape $waveB            with attack $attackB             and effect $effectB|pitch profile goes from $startPitchBRatio                     to $endPitchBRatio|volume profile goes from $startVolBRatio                     to $endVolBRatio"
     //% inlineInputMode=external
     //% advanced=true
     //% weight=110
@@ -385,7 +381,7 @@ namespace flexFX {
         timeRatioA: number, timeGapRatio: number) {
 
         // select or create target...        
-        let target: FlexFX = flexFXList.find(i => i.id === id)
+        let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target == null) {
             target = new FlexFX(id);
             flexFXList.push(target);
@@ -395,7 +391,7 @@ namespace flexFX {
         target.setPartC(waveB, attackB, effectB, endPitchBRatio, endVolBRatio, 1.0 - timeRatioA - timeGapRatio);
 
     }
-    // *******************Create Built-in FlexFXs************************************
+    // ---Create Built-in FlexFXs----
 
     /*
         Short-hand definitions are laid out as follows:
@@ -405,14 +401,13 @@ namespace flexFX {
         <PartC wave-style> <%Freq,%vol>    at end of PartC (if used)
     
         The right-hand column shows the timing breakdown
-        */
+    */
+
     /*
-    
     TWEET         80% 45% 
     SIN LOG NONE 100% 80%    | 100%
     */
     createFlexFX(MoodSound.TWEET.toString(), 0.8, 0.45, Wave.SINE, Attack.FAST, Effect.NONE, 1.00, 0.8);
-
 
     /*
     LAUGH         70%  40%  
@@ -523,7 +518,7 @@ namespace flexFX {
     //% weight=300
     export function emit(builtIn: MoodSound, pitch: number, strength: number, duration: number) {
         // select builtin target... 
-        let target: FlexFX = flexFXList.find(i => i.id === builtIn.toString())
+        let target: FlexFX = flexFXList.find(i => i.id === builtIn.toString());
         if (target != null) {
             target.performUsing(pitch, strength, duration);
         }
@@ -539,25 +534,26 @@ namespace flexFX {
     //% duration.min=1 duration.max=9999 duration.defl=2000
     //% weight=250
     export function hum(repeat: number = 10, strength: number = 180, duration: number = 2000) {
-        quiet = false
-        ave = duration / repeat
-        pitch = randint(200, 350)
-        let skip = true
+        quiet = false;
+        ave = duration / repeat;
+        gap = 0.2 * ave;
+        pitch = randint(200, 350);
+        let skip = true;
         for (let index = 0; index < repeat; index++) {
-            span = randint(0.2 * ave, 1.8 * ave)
+            span = randint(0.2 * ave, 1.8 * ave);
             if ((span > 0.6 * ave) || (skip)) {
                 // mostly "Dum"...
-                performFlexFX("DOO", randint(150, 300), strength, span)
-                basic.pause(100)
-                skip = false
+                performFlexFX("DOO", randint(150, 300), strength, span);
+                basic.pause(gap);
+                skip = false;
             } else {
                 // .. with occasional short, higher-pitched "Di"
-                performFlexFX("DOO", randint(350, 500), strength, 0.25 * ave)
-                basic.pause(50)
-                skip = true
+                performFlexFX("DOO", randint(350, 500), strength, 0.25 * ave);
+                basic.pause(gap/2);
+                skip = true;
             }
         }
-        quiet = true
+        quiet = true;
     }
 
     /** 
@@ -570,19 +566,19 @@ namespace flexFX {
     //% duration.min=1 duration.max=9999 duration.defl=3000
     //% weight=245
     export function grumble(repeat: number = 5, strength: number = 250, duration: number = 3000) {
-        quiet = false
-        ave = duration / repeat
-        basic.showIcon(IconNames.Sad)
+        quiet = false;
+        ave = duration / repeat;
+        gap = 0.2 * ave;
         for (let index = 0; index < repeat; index++) {
-            span = randint(0.4 * ave, 1.8 * ave)
+            span = randint(0.4 * ave, 1.8 * ave);
             if (span > 1.0 * ave) {
-                performFlexFX("DUH", randint(150, 300), strength, 0.5 * span)
+                performFlexFX("DUH", randint(150, 300), strength, 0.5 * span);
             } else {
-                performFlexFX("UHOH", randint(100, 200), strength, 2 * span)
+                performFlexFX("UHOH", randint(100, 200), strength, 2 * span);
             }
-            pause(0.5 * span)
+            pause(gap);
         }
-        quiet = true
+        quiet = true;
     }
 
     /**
@@ -595,16 +591,17 @@ namespace flexFX {
     //% duration.min=1 duration.max=9999 duration.defl=4000
     //% weight=240
     export function giggle(repeat: number = 12, strength: number = 200, duration: number = 2000) {
-        quiet = false
-        ave = duration / repeat
-        pitch = randint(500, 700)
+        quiet = false;
+        ave = duration / repeat;
+        gap = 0.2 * ave;
+        pitch = randint(500, 800);
         for (let index = 0; index < repeat; index++) {
-            span = randint(0.4 * ave, 1.8 * ave)
-            performFlexFX("LAUGH", pitch, strength, span)
-            pitch = 0.9 * pitch
-            basic.pause(100)
+            span = randint(0.4 * ave, 1.8 * ave);
+            performFlexFX("LAUGH", pitch, strength, span);
+            pitch = 0.9 * pitch;
+            basic.pause(gap);
         }
-        quiet = true
+        quiet = true;
     }
 
 
@@ -618,14 +615,15 @@ namespace flexFX {
     //% duration.min=1 duration.max=9999 duration.defl=2500
     //% weight=235
     export function whistle(repeat: number = 8, strength: number = 180, duration: number = 2500) {
-        quiet = false
-        ave = duration / repeat
+        quiet = false;
+        ave = duration / repeat;
+        gap = 0.2 * ave;
         for (let index = 0; index < repeat; index++) {
-            span = randint(0.4 * ave, 1.8 * ave)
-            performFlexFX("TWEET", randint(600, 1200), strength, span)
-            basic.pause(100)
+            span = randint(0.4 * ave, 1.8 * ave);
+            performFlexFX("TWEET", randint(800, 1600), strength, span);
+            basic.pause(gap);
         }
-        quiet = true
+        quiet = true;
     }
 
 
@@ -639,16 +637,16 @@ namespace flexFX {
     //% duration.min=1 duration.max=9999 duration.defl=5000
     //% weight=230
     export function snore(repeat: number = 8, strength: number = 150, duration: number = 5000) {
-        quiet = false
-        ave = duration / repeat
+        quiet = false;
+        ave = duration / repeat;
         for (let index = 0; index < repeat; index++) {
-            span = randint(0.9 * ave, 1.1 * ave)
-            performFlexFX("SNORE", 1, 80, 0.3 * span);
-            pause(300);
-            performFlexFX("SNORE", 1, 150, 0.7 * span);
-            pause(500);
+            span = randint(0.9 * ave, 1.1 * ave);
+            performFlexFX("SNORE", 1, 80, 0.2 * span);
+            pause(0.1 * ave);
+            performFlexFX("SNORE", 1, 150, 0.4 * span);
+            pause(0.3 * ave);
         }
-        quiet = true
+        quiet = true;
     }
 
 
@@ -663,13 +661,14 @@ namespace flexFX {
     //% weight=225
     export function whimper(repeat: number = 10, strength: number = 100, duration: number = 4000) {
         if (quiet) {
-            quiet = false
-            ave = duration / repeat
+            quiet = false;
+            ave = duration / repeat;
+            gap = 0.7 * ave;
             for (let index = 0; index < repeat; index++) {
-                performFlexFX("MOAN", randint(250, 400), strength, randint(0.7 * ave, 1.3 * ave))
-                basic.pause(300)
+                performFlexFX("MOAN", randint(250, 400), strength, randint(0.2 * ave, 0.4 * ave));
+                basic.pause(gap);
             }
-            quiet = true
+            quiet = true;
         }
     }
 
@@ -684,18 +683,19 @@ namespace flexFX {
     //% weight=220
     export function cry(repeat: number = 8, strength: number = 200, duration: number = 3500) {
         if (quiet) {
-            quiet = false
-            ave = duration / repeat
+            quiet = false;
+            ave = duration / repeat;
+            gap = 0.3 * ave;
             for (let index = 0; index < repeat; index++) {
-                span = randint(0.6 * ave, 1.5 * ave)
-                if (span > 0.9 * ave) {
-                    performFlexFX("MOAN", randint(200, 350), 1.5 * strength, 0.5 * span)
+                span = randint(0.3 * ave, 1.1 * ave);
+                if (span > 0.7 * ave) {
+                    performFlexFX("MOAN", randint(200, 350), 1.5 * strength, 0.7 * span);
                 } else {
-                    performFlexFX("WAAH", randint(250, 400), 0.05 * strength, 1.3 * span)
+                    performFlexFX("WAAH", randint(250, 400), 0.05 * strength, 1.3 * span);
                 }
-                basic.pause(200)
+                basic.pause(gap);
             }
-            quiet = true
+            quiet = true;
         }
     }
 
@@ -710,13 +710,14 @@ namespace flexFX {
     //% weight=215
     export function shout(repeat: number = 5, strength: number = 250, duration: number = 2500) {
         if (quiet) {
-            quiet = false
-            ave = duration / repeat
+            quiet = false;
+            ave = duration / repeat;
+            gap = 0.3 * ave;
             for (let index = 0; index < repeat; index++) {
-                performFlexFX("GROWL", randint(320, 400), strength, randint(0.8 * ave, 1.2 * ave))
-                basic.pause(300)
+                performFlexFX("GROWL", randint(320, 400), strength, randint(0.5 * ave, 0.9 * ave));
+                basic.pause(gap);
             }
-            quiet = true
+            quiet = true;
         }
     }
 
@@ -740,17 +741,18 @@ function doSound(choice: number) {
             break;
         case 7: flexFX.grumble();
             break;
-        case 8: flexFX.hum()
+        case 8: flexFX.hum();
     }
-    basic.pause(1000)
+    basic.pause(1000);
 }
 
-let quiet = true
-let span = 0
-let pitch = 0
-let ave = 0
-let choice = 7
-music.setBuiltInSpeakerEnabled(false)
+let quiet = true;
+let span = 0;
+let pitch = 0;
+let ave = 0;
+let gap = 0;
+let choice = 7;
+music.setBuiltInSpeakerEnabled(false);
 
 input.onButtonPressed(Button.A, function () {
     choice = (++choice) % 8;

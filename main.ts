@@ -407,7 +407,8 @@ namespace flexFX {
     TWEET         80% 45% 
     SIN LOG NONE 100% 80%    | 100%
     */
-    createFlexFX(MoodSound.TWEET.toString(), 0.8, 0.45, Wave.SINE, Attack.FAST, Effect.NONE, 1.00, 0.8);
+    createFlexFX(MoodSound.TWEET.toString(), 0.8, 0.45, 
+        Wave.SINE, Attack.FAST, Effect.NONE, 1.00, 0.8);
 
     /*
     LAUGH         70%  40%  
@@ -543,12 +544,12 @@ namespace flexFX {
             span = randint(0.2 * ave, 1.8 * ave);
             if ((span > 0.6 * ave) || (skip)) {
                 // mostly "Dum"...
-                performFlexFX("DOO", randint(150, 300), strength, span);
+                performFlexFX(MoodSound.DOO.toString(), randint(150, 300), strength, span);
                 basic.pause(gap);
                 skip = false;
             } else {
                 // .. with occasional short, higher-pitched "Di"
-                performFlexFX("DOO", randint(350, 500), strength, 0.25 * ave);
+                performFlexFX(MoodSound.DOO.toString(), randint(350, 500), strength, 0.25 * ave);
                 basic.pause(gap/2);
                 skip = true;
             }
@@ -572,9 +573,9 @@ namespace flexFX {
         for (let index = 0; index < repeat; index++) {
             span = randint(0.4 * ave, 1.8 * ave);
             if (span > 1.0 * ave) {
-                performFlexFX("DUH", randint(150, 300), strength, 0.5 * span);
+                performFlexFX(MoodSound.DUH.toString(), randint(150, 300), strength, 0.5 * span);
             } else {
-                performFlexFX("UHOH", randint(100, 200), strength, 2 * span);
+                performFlexFX(MoodSound.UHOH.toString(), randint(100, 200), strength, 2 * span);
             }
             pause(gap);
         }
@@ -597,7 +598,7 @@ namespace flexFX {
         pitch = randint(500, 800);
         for (let index = 0; index < repeat; index++) {
             span = randint(0.4 * ave, 1.8 * ave);
-            performFlexFX("LAUGH", pitch, strength, span);
+            performFlexFX(MoodSound.LAUGH.toString(), pitch, strength, span);
             pitch = 0.9 * pitch;
             basic.pause(gap);
         }
@@ -620,7 +621,7 @@ namespace flexFX {
         gap = 0.2 * ave;
         for (let index = 0; index < repeat; index++) {
             span = randint(0.4 * ave, 1.8 * ave);
-            performFlexFX("TWEET", randint(800, 1600), strength, span);
+            performFlexFX(MoodSound.TWEET.toString(), randint(800, 1600), strength, span);
             basic.pause(gap);
         }
         quiet = true;
@@ -641,9 +642,9 @@ namespace flexFX {
         ave = duration / repeat;
         for (let index = 0; index < repeat; index++) {
             span = randint(0.9 * ave, 1.1 * ave);
-            performFlexFX("SNORE", 1, 80, 0.2 * span);
+            performFlexFX(MoodSound.SNORE.toString(), 1, 80, 0.2 * span);
             pause(0.1 * ave);
-            performFlexFX("SNORE", 1, 150, 0.4 * span);
+            performFlexFX(MoodSound.SNORE.toString(), 1, 150, 0.4 * span);
             pause(0.3 * ave);
         }
         quiet = true;
@@ -665,7 +666,7 @@ namespace flexFX {
             ave = duration / repeat;
             gap = 0.7 * ave;
             for (let index = 0; index < repeat; index++) {
-                performFlexFX("MOAN", randint(250, 400), strength, randint(0.2 * ave, 0.4 * ave));
+                performFlexFX(MoodSound.MOAN.toString(), randint(250, 400), strength, randint(0.2 * ave, 0.4 * ave));
                 basic.pause(gap);
             }
             quiet = true;
@@ -689,9 +690,9 @@ namespace flexFX {
             for (let index = 0; index < repeat; index++) {
                 span = randint(0.3 * ave, 1.1 * ave);
                 if (span > 0.7 * ave) {
-                    performFlexFX("MOAN", randint(200, 350), 1.5 * strength, 0.7 * span);
+                    performFlexFX(MoodSound.MOAN.toString(), randint(200, 350), 1.5 * strength, 0.7 * span);
                 } else {
-                    performFlexFX("WAAH", randint(250, 400), 0.05 * strength, 1.3 * span);
+                    performFlexFX(MoodSound.WAAH.toString(), randint(250, 400), 0.05 * strength, 1.3 * span);
                 }
                 basic.pause(gap);
             }
@@ -714,7 +715,7 @@ namespace flexFX {
             ave = duration / repeat;
             gap = 0.3 * ave;
             for (let index = 0; index < repeat; index++) {
-                performFlexFX("GROWL", randint(320, 400), strength, randint(0.5 * ave, 0.9 * ave));
+                performFlexFX(MoodSound.GROWL.toString(), randint(320, 400), strength, randint(0.5 * ave, 0.9 * ave));
                 basic.pause(gap);
             }
             quiet = true;
@@ -725,7 +726,7 @@ namespace flexFX {
 }
 // *********** test codes **********
 
-function doSound(choice: number) {
+function doMood(choice: number) {
     switch (choice) {
         case 1: flexFX.shout();
             break;
@@ -745,7 +746,26 @@ function doSound(choice: number) {
     }
     basic.pause(1000);
 }
-
+function doSound(choice: number) {
+    switch (choice) {
+        case 1: flexFX.performFlexFX(MoodSound.TWEET.toString(),400,200,1000);
+            break;
+        case 2: flexFX.performFlexFX(MoodSound.LAUGH.toString(), 400, 200, 1000);
+            break;
+        case 3: flexFX.performFlexFX(MoodSound.SNORE.toString(), 400, 200, 1000);
+            break;
+        case 4: flexFX.performFlexFX(MoodSound.DOO.toString(), 400, 200, 1000);
+            break;
+        case 5: flexFX.performFlexFX(MoodSound.QUERY.toString(), 400, 200, 1000);
+            break;
+        case 6: flexFX.performFlexFX(MoodSound.UHOH.toString(), 400, 200, 1000);
+            break;
+        case 7: flexFX.performFlexFX(MoodSound.MOAN.toString(), 400, 200, 1000);
+            break;
+        case 8: flexFX.performFlexFX(MoodSound.DUH.toString(), 400, 200, 1000);
+    }
+    basic.pause(1000);
+}
 let quiet = true;
 let span = 0;
 let pitch = 0;
@@ -753,6 +773,11 @@ let ave = 0;
 let gap = 0;
 let choice = 7;
 music.setBuiltInSpeakerEnabled(false);
+
+flexFX.createFlexFX("TEST", 0.5, 0.45,
+    Wave.SINE, Attack.FAST, Effect.NONE, 1.00, 0.8);
+
+flexFX.performFlexFX("TEST",400,250,1000)
 
 input.onButtonPressed(Button.A, function () {
     choice = (++choice) % 8;

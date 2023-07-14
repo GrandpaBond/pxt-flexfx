@@ -85,7 +85,17 @@ enum MoodSound {
     //% block="Growl"
     GROWL = 10
 }
-
+// In case SoundExpression field-locations should change in future, identify field-offsets defensively.
+// (We presume their width will always remain 4 digits)
+const wavePos       = 0;  // 1 digit
+const startVolPos   = 1;  // 4 digits
+const startFreqPos  = 5;  // 4 digits
+const durationPos   = 9;  // 4 digits
+//  other stuff from 13      5 digits
+const endFreqPos   = 18;  // 4 digits
+//  other stuff from 22      4 digits
+const endVolPos    = 26;  // 4 digits
+//  other stuff from 30      42 digits
 
 /**
  * Tools for creating composite sound-effects (of class FlexFX) that can be performed with
@@ -93,14 +103,6 @@ enum MoodSound {
  */
 //% color=#7eff33 weight=100 icon="\uf0a1 block="FlexFX"
 namespace flexFX {
-    // In case SoundExpression field-locations should change in future, identify field-offsets defensively.
-    // (We presume their width will always remain 4 digits)
-    const startVolPos = 1;
-    const startFreqPos = 5;
-    const durationPos = 9;
-    const endVolPos = 26;
-    const endFreqPos = 18;
-
 
     // provide activity events (for other components to synchronise with)
     const FLEXFX_ACTIVITY_ID = 1234 // TODO: Check this is a permissable value!
@@ -166,6 +168,16 @@ namespace flexFX {
             return expression.substr(0, offset) + digits + expression.substr(offset + digits.length);
         }
 
+
+        protected assemble(old: string, startFreq: string, startVol: string, endFreq: string, endVol: string, ms: string):string {
+            let from13 = old.substr(13, 5);
+            let from22 = old.substr(22, 4);
+            let from30 = old.substr(30, 42);
+            let result = old[0] + startVol + startFreq + ms + from13 + endFreq + from22 + endVol + from30;
+            return result;
+        }
+
+
         // methods...  
         // Sets up Part A:  (Point0)--(PartA)--(Point1)...
         // This implicitly sets the start values for any Part B that follows
@@ -176,7 +188,7 @@ namespace flexFX {
             this.volRatio1 = vol1;
             this.timeRatioA = ms1;
             this.partA = new soundExpression.Sound;
-            this.partA.src = music.createSoundEffect(wave, 333, 333, 666, 666, 999, fx, shape);
+            this.partA.src = music.createSoundEffect(wave, 100, 101, 102, 103, 104, fx, shape);
             this.playPartA = true;
         }
         // Adds a  Part B:  (Point0)--(PartA)--(Point1)--(PartB)--(Point2)...
@@ -186,7 +198,7 @@ namespace flexFX {
             this.volRatio2 = vol2;
             this.timeRatioB = ms2;
             this.partB = new soundExpression.Sound;
-            this.partB.src = music.createSoundEffect(wave, 333, 333, 666, 666, 999, fx, shape);
+            this.partB.src = music.createSoundEffect(wave, 200, 201, 202, 203, 204, fx, shape);
             this.playPartB = true;
             this.usesPoint2 = true;
         }
@@ -205,7 +217,7 @@ namespace flexFX {
             this.volRatio3 = vol3;
             this.timeRatioC = ms3;
             this.partC = new soundExpression.Sound;
-            this.partC.src = music.createSoundEffect(wave, 333, 333, 666, 666, 999, fx, shape);
+            this.partC.src = music.createSoundEffect(wave, 300, 301, 302, 303, 304, fx, shape);
             this.playPartC = true;
             this.usesPoint2 = true;
             this.usesPoint3 = true;
@@ -229,38 +241,24 @@ namespace flexFX {
             let ms3 = "";
             // Point 2
             if (this.usesPoint2) {
-                let f2 = this.formatNumber(freq * this.freqRatio2, 4);
-                let v2 = this.formatNumber(loud * this.volRatio2, 4);
-                let ms2 = this.formatNumber(ms * this.timeRatioB, 4);
+                f2 = this.formatNumber(freq * this.freqRatio2, 4);
+                v2 = this.formatNumber(loud * this.volRatio2, 4);
+                ms2 = this.formatNumber(ms * this.timeRatioB, 4);
             }
             // Point 3
             if (this.usesPoint3) {
-                let f3 = this.formatNumber(freq * this.freqRatio3, 4);
-                let v3 = this.formatNumber(loud * this.volRatio3, 4);
-                let ms3 = this.formatNumber(ms * this.timeRatioC, 4);
+                f3 = this.formatNumber(freq * this.freqRatio3, 4);
+                v3 = this.formatNumber(loud * this.volRatio3, 4);
+                ms3 = this.formatNumber(ms * this.timeRatioC, 4);
             }
 
             // adjust PartA frequencies, volumes and duration 
-            this.partA.src = this.insert(this.partA.src, startFreqPos, f0);
-            this.partA.src = this.insert(this.partA.src, startVolPos, v0);
-            this.partA.src = this.insert(this.partA.src, endFreqPos, f1);
-            this.partA.src = this.insert(this.partA.src, endVolPos, v1);
-            this.partA.src = this.insert(this.partA.src, durationPos, ms1);
-
+            this.partA.src = this.assemble(this.partA.src, f0, v0, f1, v1, ms1);
             if (this.playPartB) {   // adjust PartB frequencies, volumes and duration 
-                this.partB.src = this.insert(this.partA.src, startFreqPos, f1);
-                this.partB.src = this.insert(this.partA.src, startVolPos, v1);
-                this.partB.src = this.insert(this.partA.src, endFreqPos, f2);
-                this.partB.src = this.insert(this.partA.src, endVolPos, v2);
-                this.partB.src = this.insert(this.partA.src, durationPos, ms2);
+                this.partB.src = this.assemble(this.partB.src, f1, v1, f2, v2, ms2);
             }
-            if (this.playPartC) {   // adjust PartC frequencies, volumes and duration 
-                this.partC.src = this.insert(this.partA.src, startFreqPos, f2);
-                this.partC.src = this.insert(this.partA.src, startVolPos, v2);
-                this.partC.src = this.insert(this.partA.src, endFreqPos, f3);
-                this.partC.src = this.insert(this.partA.src, endVolPos, v3);
-                this.partC.src = this.insert(this.partA.src, durationPos, ms3);
-
+            if (this.playPartC) {   // adjust PartC frequencies, volumes and duration
+                this.partC.src = this.assemble(this.partC.src, f2, v2, f3, v3, ms3);
             }
 
             // now for the actual performance...
@@ -404,19 +402,19 @@ namespace flexFX {
     */
 
     /*
-    TWEET         80% 45% 
-    SIN LOG NONE 100% 80%    | 100%
+    TWEET         80%  45% 
+    SIN LOG NONE 100% 100%   | 100%
     */
     createFlexFX(MoodSound.TWEET.toString(), 0.8, 0.45, 
-        Wave.SINE, Attack.FAST, Effect.NONE, 1.00, 0.8);
+        Wave.SINE, Attack.FAST, Effect.NONE, 1.00, 1.0);
 
     /*
     LAUGH         70%  40%  
-    SAW LOG NONE 100% 100%   | 90%
-    SQU LIN NONE  70%  75%   | 10%
+    SAW LOG NONE 100% 100%   | 10%
+    SQU LIN NONE  70%  75%   | 90%
     */
     create2PartFlexFX(MoodSound.LAUGH.toString(), 0.70, 0.4,
-        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.00, 1.0,
+        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.0, 1.0,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.7, 0.75, 0.9);
 
     /*
@@ -426,23 +424,23 @@ namespace flexFX {
     NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, and these strange values have been experimentally derived.
     By always invoking Snore.performUsing() with the scaling-factor (freq=1), these literal frequencies will get used as specified here!
     */
-    create2PartFlexFX(MoodSound.TWEET.toString(), 3508, 0.1,
+    create2PartFlexFX(MoodSound.SNORE.toString(), 3508, 0.1,
         Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 715, 1.0,
-        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 5008, 0, 0.50);
+        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 5008, 0, 0.5);
 
     /*
     DOO          300% 80% 
-    SAW NONE LOG 100% 90%   |  5%
-    SQU NONE LIN 100% 70%   | 95%
+    SAW LOG NONE 100% 90%   | 10%
+    SQU LIN NONE 100% 70%   | 90%
     */
-    create2PartFlexFX(MoodSound.DOO.toString(), 3.00, 0.8,
+    create2PartFlexFX(MoodSound.DOO.toString(), 3.00, 0.7,
         Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.00, 0.9,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.00, 0.7, 0.05);
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.00, 0.6, 0.1);
 
     /*
     QUERY        110%  20% 
-    SQU NONE LIN 100% 100%   | 20%
-    SQU NONE CUR 150%  20%   | 80%
+    SQU LIN NONE 100% 100%   | 20%
+    SQU CUR NONE 150%  20%   | 80%
     */
     create2PartFlexFX(MoodSound.QUERY.toString(), 1.10, 0.2,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.00, 1.0,
@@ -451,59 +449,59 @@ namespace flexFX {
     /*
     
     UHOH         110%  40% 
-    SAW NONE LOG 140% 100%   | 25%
+    SAW LOG NONE 120% 100%   | 20%
     SILENCE                  | 20%
                  100%  80% 
-    SQU NONE LIN  80%  75%   | 55%
+    SQU LIN NONE  90%  75%   | 60%
     */
     createDoubleFlexFX(MoodSound.UHOH.toString(),
-        1.10, 0.4, Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.40, 1.0,
-        1.00, 0.8, Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.80, 0.75,
-        0.25, 0.2);
+        1.10, 0.4, Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.20, 1.0,
+        1.00, 0.8, Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.90, 0.75,
+        0.2, 0.2);
 
     /*
-    MOAN         130%  60%
-    TRI NONE CUR 100% 100%   | 30%
-    TRI NONE CUR  95%  80%   | 60%
-    TRI NONE LIN 115%  55%   | 10%
+    MOAN         120%  60%
+    TRI CUR NONE 100% 100%   | 60%
+    TRI CUR NONE  95%  80%   | 30%
+    TRI LIN NONE 115%  55%   | 10%
     */
-    create3PartFlexFX(MoodSound.MOAN.toString(), 1.30, 0.6,
+    create3PartFlexFX(MoodSound.MOAN.toString(), 1.20, 0.6,
         Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 1.00, 1.0,
         Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 0.95, 0.8,
-        Wave.TRIANGLE, Attack.SLOW, Effect.NONE, 1.15, 0.55, 0.3, 0.6);
+        Wave.TRIANGLE, Attack.SLOW, Effect.NONE, 1.15, 0.55, 0.6, 0.3);
 
     /*
     DUH          100%  60%
-    SQU NONE LIN  95%  80%   | 10%
-    SQU NONE LIN 110% 100%   | 30%
-    SQU NONE LIN  66%  40%   | 60%
+    SQU LIN NONE  95% 100%   | 30%
+    SQU LIN NONE 110%  80%   | 10%
+    SQU LIN NONE  66%  40%   | 60%
     */
     create3PartFlexFX(MoodSound.DUH.toString(), 1.00, 0.6,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.95, 0.8,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.10, 1.0,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.66, 0.4, 0.1, 0.3);
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.95, 1.0,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.10, 0.8,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.66, 0.4, 0.3, 0.1);
 
     /*
     WAAH         100% 10%
-    SAW NONE CUR 140% 90%   | 20%
-    SAW NONE LIN 110% 20%   | 70%
-    SAW NONE LIN  30%  5%   | 10%
+    SAW CUR NONE 140% 90%   | 70%
+    SAW LIN NONE 110% 20%   | 20%
+    SAW LIN NONE  30%  5%   | 10%
     */
     create3PartFlexFX(MoodSound.WAAH.toString(), 1.00, 0.1,
         Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 1.40, 0.9,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 1.10, 0.2,
-        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.3, 0.05, 0.20, 0.70);
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.3, 0.05, 0.70, 0.20);
 
     /*
     GROWL         30%  50%
-    SAW NONE LOG 100%  80%   | 15%
-    SAW NONE LIN  90% 100%   | 60%
-    SAW NONE LIN  30%  75%   | 15%
+    SAW LOG NONE 100%  80%   | 60%
+    SAW LIN NONE  90% 100%   | 15%
+    SAW LIN NONE  30%  75%   | 15%
     */
     create3PartFlexFX(MoodSound.GROWL.toString(), 0.30, 0.5,
         Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.00, 0.8,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.90, 1.0,
-        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.30, 0.75, 0.15, 0.60);
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.30, 0.75, 0.60, 0.15);
 
     // *** SIMPLE UI BLOCKS ***
 
@@ -748,21 +746,25 @@ function doMood(choice: number) {
 }
 function doSound(choice: number) {
     switch (choice) {
-        case 1: flexFX.performFlexFX(MoodSound.TWEET.toString(),400,200,1000);
+        case 1: flexFX.performFlexFX(MoodSound.TWEET.toString(),800,200,400);
             break;
-        case 2: flexFX.performFlexFX(MoodSound.LAUGH.toString(), 400, 200, 1000);
+        case 2: flexFX.performFlexFX(MoodSound.LAUGH.toString(), 400, 200, 400);
             break;
-        case 3: flexFX.performFlexFX(MoodSound.SNORE.toString(), 400, 200, 1000);
+        case 3: flexFX.performFlexFX(MoodSound.SNORE.toString(), 1, 200, 400);
             break;
-        case 4: flexFX.performFlexFX(MoodSound.DOO.toString(), 400, 200, 1000);
+        case 4: flexFX.performFlexFX(MoodSound.DOO.toString(), 500, 200, 300);
             break;
-        case 5: flexFX.performFlexFX(MoodSound.QUERY.toString(), 400, 200, 1000);
+        case 5: flexFX.performFlexFX(MoodSound.QUERY.toString(), 400, 200, 700);
             break;
-        case 6: flexFX.performFlexFX(MoodSound.UHOH.toString(), 400, 200, 1000);
+        case 6: flexFX.performFlexFX(MoodSound.UHOH.toString(), 350, 200, 650);
             break;
-        case 7: flexFX.performFlexFX(MoodSound.MOAN.toString(), 400, 200, 1000);
+        case 7: flexFX.performFlexFX(MoodSound.MOAN.toString(), 500, 200, 700);
             break;
-        case 8: flexFX.performFlexFX(MoodSound.DUH.toString(), 400, 200, 1000);
+        case 8: flexFX.performFlexFX(MoodSound.DUH.toString(), 400, 200, 700);
+            break;
+        case 9: flexFX.performFlexFX(MoodSound.WAAH.toString(), 600, 200, 1100);
+            break;
+        case 10: flexFX.performFlexFX(MoodSound.GROWL.toString(), 250, 200, 700);
     }
     basic.pause(1000);
 }
@@ -771,16 +773,19 @@ let span = 0;
 let pitch = 0;
 let ave = 0;
 let gap = 0;
-let choice = 7;
+let choice = 6;
+basic.showNumber(choice + 1);
 music.setBuiltInSpeakerEnabled(false);
 
-flexFX.createFlexFX("TEST", 0.5, 0.45,
-    Wave.SINE, Attack.FAST, Effect.NONE, 1.00, 0.8);
-
-flexFX.performFlexFX("TEST",400,250,1000)
-
+flexFX.create3PartFlexFX("TEST", 0.5, 0.5,
+    Wave.SINE, Attack.SLOW, Effect.NONE, 2, 1.0,
+    Wave.SINE, Attack.SLOW, Effect.NONE, 1.00, 1.0,
+    Wave.SINE, Attack.SLOW, Effect.NONE, 2, 0.5, 0.33, 0.33);
+pause(500);
+flexFX.performFlexFX("TEST",800,250,1000)
+let all = 10;
 input.onButtonPressed(Button.A, function () {
-    choice = (++choice) % 8;
+    choice = (++choice) % all;
     basic.showNumber(choice + 1);
 })
 input.onButtonPressed(Button.B, function () {

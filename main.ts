@@ -329,7 +329,7 @@ namespace flexFX {
     /**
     Create a simple custom FlexFX 
      */
-    //% block="create simple FlexFX called $id using wave-shape $waveA            with attack $attackA             and effect $effectA|pitch profile goes from $startPitchRatio                     to $endPitchRatio|volume profile goes from $startVolRatio                     to $endVolRatio"//% inlineInputMode=external
+    //% block="create simple FlexFX called $id using wave-shape $wave            with attack $attack             and effect $effect|pitch profile goes from $startPitchRatio                     to $endPitchRatio|volume profile goes from $startVolRatio                     to $endVolRatio"//% inlineInputMode=external
     //% advanced=true
     //% weight=140
     export function createFlexFX(

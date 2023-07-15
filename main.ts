@@ -10,36 +10,38 @@ It can involve up to three separate sound parts that will then be played consecu
 to give a smoothly varying result when spliced together.
 
 Internally, sound effects are specified by a string of 72 decimal digits, broken into several 
-fields (many of which appear to be either obsolete or redundant). On each invocation the core 
-function createSoundEffect() takes eight arguments and works quite hard to encode them into their
-respective fields.
+fields (many of which appear to be either obsolete or redundant). 
 
 Notable SoundExpression string fields are laid out as follows:
         [0]:        Wave            (1 digit)
         [1-3]:      Start Volume    (4 digits)
         [5-8]:      Start Frequency (4 digits)
         [9-12]:     Duration        (4 digits)
-        [13-17]:    other stuff     (5 digits)
+        [13-17]:    Interpolation   (5 digits)
         [18-21]:    End Frequency   (4 digits)
-        [22-25]:    other stuff     (4 digits)
+        [22-25]:    --other stuff-- (4 digits)
         [26-29]:    End Volume      (4 digits)
-        [30-71]:    other stuff     (42 digits)
+        [30-71]:    --other stuff-- (42 digits)
+        
+On each invocation the core function createSoundEffect() takes eight arguments and works quite hard 
+to encode them into their respective fields. 
 
 We would like to be able to repeatedly vary the overall pitch or volume of any given FlexFX.
 Conventionally, that would require reconstructing all three sound effects from scratch for each 
 performance (or saving a wide range of 3*72-character strings we had prepared earlier).
 Instead we choose to selectively overwrite certain 4-digit fields within the three soundExpressions 
 in our three-part FlexFX, to "tune" its pitch and volume as we require.
+
 *** It is acknowledged that this is a DANGEROUS PRACTICE that relies on the internal
 *** representation not changing, but it is believed that the performance gains justify it!
 
 */
+/* NOTE:    The built-in enums for sound effect parameters are hardly beginner-friendly!
+            By renaming them we can expose somewhat simpler concepts, but this only works 
+            if we pass them over a function-call as arguments of type: number.
+*/
 
-
-// NOTE: The built-in enums for sound effect parameters are hardly beginner-friendly!
-//       By renaming them we can expose somewhat simpler concepts. 
-//       (This only works if we pass them over a function-call as arguments of type: number.)
-// simplify the selection of wave-shape...
+// Simplify the selection of wave-shape...
 enum Wave {
     //%block="Pure"
     SINE = WaveShape.Sine,
@@ -52,7 +54,7 @@ enum Wave {
     //%block="Noisy"
     NOISE = WaveShape.Noise,
 }
-// simplify the selection of frequency-trajectory...
+// Simplify the selection of frequency interpolation trajectory...
 enum Attack {
     //% block="Slow"
     SLOW = InterpolationCurve.Linear,
@@ -456,33 +458,33 @@ namespace flexFX {
 
     /*
     DOO          300% 80% 
-    SAW LOG NONE 100% 90%   | 10%
-    SQU LIN NONE 100% 70%   | 90%
+    SAW LOG NONE 100% 90%   | 15%
+    SQU LIN NONE 105% 70%   | 85%
     */
     create2PartFlexFX(MoodSound.DOO.toString(), 3.00, 0.7,
         Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.00, 0.9,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.00, 0.6, 0.1);
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.05, 0.6, 0.15);
 
     /*
     QUERY        110%  20% 
     SQU LIN NONE 100% 100%   | 20%
-    SQU CUR NONE 150%  20%   | 80%
+    SQU CUR NONE 150%  30%   | 80%
     */
     create2PartFlexFX(MoodSound.QUERY.toString(), 1.10, 0.2,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.00, 1.0,
-        Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 1.50, 0.2, 0.2);
+        Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 1.50, 0.3, 0.2);
 
     /*
     
     UHOH         110%  40% 
     SAW LOG NONE 120% 100%   | 20%
     SILENCE                  | 20%
-                 100%  80% 
-    SQU LIN NONE  90%  75%   | 60%
+                  95% 100% 
+    SQU LIN NONE  85%  75%   | 60%
     */
     createDoubleFlexFX(MoodSound.UHOH.toString(),
         1.10, 0.4, Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.20, 1.0,
-        1.00, 0.8, Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.90, 0.75,
+        0.95, 1.0, Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.85, 0.75,
         0.2, 0.2);
 
     /*
@@ -498,23 +500,23 @@ namespace flexFX {
 
     /*
     DUH          100%  60%
-    SQU LIN NONE  95% 100%   | 30%
-    SQU LIN NONE 110%  80%   | 10%
+    SQU LIN NONE  95% 100%   | 10%
+    SQU LIN NONE 110%  80%   | 30%
     SQU LIN NONE  66%  40%   | 60%
     */
     create3PartFlexFX(MoodSound.DUH.toString(), 1.00, 0.6,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.95, 1.0,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.10, 0.8,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.66, 0.4, 0.3, 0.1);
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.66, 0.4, 0.1, 0.3);
 
     /*
-    WAAH         100% 10%
-    SAW CUR NONE 140% 90%   | 70%
-    SAW LIN NONE 110% 20%   | 20%
-    SAW LIN NONE  30%  5%   | 10%
+    WAAH         100%  10%
+    SAW CUR NONE 140% 100%   | 70%
+    SAW LIN NONE 110%  20%   | 20%
+    SAW LIN NONE  30%   5%   | 10%
     */
     create3PartFlexFX(MoodSound.WAAH.toString(), 1.00, 0.1,
-        Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 1.40, 0.9,
+        Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 1.40, 1.0,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 1.10, 0.2,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.3, 0.05, 0.70, 0.20);
 
@@ -786,7 +788,7 @@ function doSound(choice: number) {
             break;
         case 7: flexFX.performFlexFX(MoodSound.MOAN.toString(), 500, 200, 700);
             break;
-        case 8: flexFX.performFlexFX(MoodSound.DUH.toString(), 400, 200, 700);
+        case 8: flexFX.performFlexFX(MoodSound.DUH.toString(), 300, 200, 500);
             break;
         case 9: flexFX.performFlexFX(MoodSound.WAAH.toString(), 600, 200, 1100);
             break;
@@ -799,7 +801,7 @@ let span = 0;
 let pitch = 0;
 let ave = 0;
 let gap = 0;
-let choice = 6;
+let choice = 8;
 basic.showNumber(choice + 1);
 music.setBuiltInSpeakerEnabled(false);
 

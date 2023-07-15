@@ -14,12 +14,22 @@ fields (many of which appear to be either obsolete or redundant). On each invoca
 function createSoundEffect() takes eight arguments and works quite hard to encode them into their
 respective fields.
 
+Notable SoundExpression string fields are laid out as follows:
+        [0]:        Wave            (1 digit)
+        [1-3]:      Start Volume    (4 digits)
+        [5-8]:      Start Frequency (4 digits)
+        [9-12]:     Duration        (4 digits)
+        [13-17]:    other stuff     (5 digits)
+        [18-21]:    End Frequency   (4 digits)
+        [22-25]:    other stuff     (4 digits)
+        [26-29]:    End Volume      (4 digits)
+        [30-71]:    other stuff     (42 digits)
+
 We would like to be able to repeatedly vary the overall pitch or volume of any given FlexFX.
 Conventionally, that would require reconstructing all three sound effects from scratch for each 
 performance (or saving a wide range of 3*72-character strings we had prepared earlier).
 Instead we choose to selectively overwrite certain 4-digit fields within the three soundExpressions 
 in our three-part FlexFX, to "tune" its pitch and volume as we require.
-
 *** It is acknowledged that this is a DANGEROUS PRACTICE that relies on the internal
 *** representation not changing, but it is believed that the performance gains justify it!
 
@@ -85,18 +95,6 @@ enum MoodSound {
     //% block="Growl"
     GROWL = 10
 }
-// In case SoundExpression field-locations should change in future, identify field-offsets defensively.
-// (We presume their width will always remain 4 digits)
-const wavePos       = 0;  // 1 digit
-const startVolPos   = 1;  // 4 digits
-const startFreqPos  = 5;  // 4 digits
-const durationPos   = 9;  // 4 digits
-//  other stuff from 13      5 digits
-const endFreqPos   = 18;  // 4 digits
-//  other stuff from 22      4 digits
-const endVolPos    = 26;  // 4 digits
-//  other stuff from 30      42 digits
-
 /**
  * Tools for creating composite sound-effects (of class FlexFX) that can be performed with
  * dynamically-specified pitch, volume and duration. Provides a built-in set of samples.
@@ -121,15 +119,27 @@ namespace flexFX {
         // Points are defined to be fixed ratios of the "performance" [frequency,volume,duration] arguments
         playPartA: boolean;
         partA: soundExpression.Sound;
+        waveA: string;
+        from13A: string;
+        from22A: string;
+        from30A: string;
         timeRatioA: number;
 
         skipPartB: boolean;     // a double FlexFX has a silent gap in the middle
         playPartB: boolean;
         partB: soundExpression.Sound;
+        waveB: string;
+        from13B: string;
+        from22B: string;
+        from30B: string;
         timeRatioB: number;
 
         playPartC: boolean;
         partC: soundExpression.Sound;
+        waveC: string;
+        from13C: string;
+        from22C: string;
+        from30C: string;
         timeRatioC: number;  // (always set to 1.0 - timeRatioA - timeRatioB)
 
         // Point 0
@@ -169,12 +179,10 @@ namespace flexFX {
         }
 
 
-        protected assemble(old: string, startFreq: string, startVol: string, endFreq: string, endVol: string, ms: string):string {
-            let from13 = old.substr(13, 5);
-            let from22 = old.substr(22, 4);
-            let from30 = old.substr(30, 42);
-            let result = old[0] + startVol + startFreq + ms + from13 + endFreq + from22 + endVol + from30;
-            return result;
+
+        protected assemble(startFreq: string, startVol: string, endFreq: string, endVol: string, ms: string,
+        wave: string, from13: string, from22: string, from30: string): string {
+            return wave + startVol + startFreq + ms + from13 + endFreq + from22 + endVol + from30;
         }
 
 
@@ -189,6 +197,11 @@ namespace flexFX {
             this.timeRatioA = ms1;
             this.partA = new soundExpression.Sound;
             this.partA.src = music.createSoundEffect(wave, 100, 101, 102, 103, 104, fx, shape);
+            // dismantle reusable parts...
+            this.waveA = this.partA.src[0];
+            this.from13A = this.partA.src.substr(13, 5);
+            this.from22A = this.partA.src.substr(22, 4);
+            this.from30A = this.partA.src.substr(30, 42);
             this.playPartA = true;
         }
         // Adds a  Part B:  (Point0)--(PartA)--(Point1)--(PartB)--(Point2)...
@@ -199,6 +212,11 @@ namespace flexFX {
             this.timeRatioB = ms2;
             this.partB = new soundExpression.Sound;
             this.partB.src = music.createSoundEffect(wave, 200, 201, 202, 203, 204, fx, shape);
+            // dismantle reusable parts...
+            this.waveB = this.partA.src[0];
+            this.from13B = this.partB.src.substr(13, 5);
+            this.from22B = this.partB.src.substr(22, 4);
+            this.from30B = this.partB.src.substr(30, 42);
             this.playPartB = true;
             this.usesPoint2 = true;
         }
@@ -218,6 +236,11 @@ namespace flexFX {
             this.timeRatioC = ms3;
             this.partC = new soundExpression.Sound;
             this.partC.src = music.createSoundEffect(wave, 300, 301, 302, 303, 304, fx, shape);
+            // dismantle reusable parts...
+            this.waveC = this.partA.src[0];
+            this.from13C = this.partC.src.substr(13, 5);
+            this.from22C = this.partC.src.substr(22, 4);
+            this.from30C = this.partC.src.substr(30, 42);
             this.playPartC = true;
             this.usesPoint2 = true;
             this.usesPoint3 = true;
@@ -253,12 +276,15 @@ namespace flexFX {
             }
 
             // adjust PartA frequencies, volumes and duration 
-            this.partA.src = this.assemble(this.partA.src, f0, v0, f1, v1, ms1);
+            this.partA.src = this.assemble(f0, v0, f1, v1, ms1,
+                            this.waveA, this.from13A, this.from22A, this.from30A);
             if (this.playPartB) {   // adjust PartB frequencies, volumes and duration 
-                this.partB.src = this.assemble(this.partB.src, f1, v1, f2, v2, ms2);
+                this.partB.src = this.assemble(f1, v1, f2, v2, ms2,
+                            this.waveB, this.from13B, this.from22B, this.from30B);
             }
             if (this.playPartC) {   // adjust PartC frequencies, volumes and duration
-                this.partC.src = this.assemble(this.partC.src, f2, v2, f3, v3, ms3);
+                this.partC.src = this.assemble(f2, v2, f3, v3, ms3,
+                            this.waveC, this.from13C, this.from22C, this.from30C);
             }
 
             // now for the actual performance...

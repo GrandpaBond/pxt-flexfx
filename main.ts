@@ -464,12 +464,12 @@ namespace flexFX {
 
     /*
     DOO          300% 80% 
-    SAW LOG NONE 100% 90%   | 15%
-    SQU LIN NONE 105% 70%   | 85%
+    SAW LOG NONE 100% 90%   |  5%
+    SQU LIN NONE 100% 70%   | 95%
     */
-    create2PartFlexFX(MoodSound.DOO.toString(), 3.00, 0.7,
+    create2PartFlexFX(MoodSound.DOO.toString(), 3.00, 0.8,
         Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.00, 0.9,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.05, 0.6, 0.15);
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.00, 0.7, 0.05);
 
     /*
     QUERY        110%  20% 
@@ -507,23 +507,23 @@ namespace flexFX {
     /*
     DUH          100%  60%
     SQU LIN NONE  95% 100%   | 10%
-    SQU LIN NONE 110%  80%   | 30%
-    SQU LIN NONE  66%  40%   | 60%
+    SQU LIN NONE 110%  80%   | 25%
+    SQU LIN NONE  66%  40%   | 65%
     */
     create3PartFlexFX(MoodSound.DUH.toString(), 1.00, 0.6,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.95, 1.0,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.10, 0.8,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.66, 0.4, 0.1, 0.3);
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.66, 0.4, 0.1, 0.25);
 
     /*
     WAAH         100%  10%
     SAW CUR NONE 140% 100%   | 70%
-    SAW LIN NONE 110%  20%   | 20%
+    SAW LIN NONE 110%  60%   | 20%
     SAW LIN NONE  30%   5%   | 10%
     */
     create3PartFlexFX(MoodSound.WAAH.toString(), 1.00, 0.1,
         Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 1.40, 1.0,
-        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 1.10, 0.2,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 1.10, 0.6,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.3, 0.05, 0.70, 0.20);
 
     /*
@@ -547,9 +547,9 @@ namespace flexFX {
     //% inlineInputMode=inline
     //% pitch.min=100 pitch.max=800 pitch.defl=300
     //% strength.min=0 strength.max=255 strength.defl=180
-    //% duration.min=50 duration.max=9999 duration.defl=1000
+    //% duration.min=50 duration.max=9999 duration.defl=800
     //% weight=300
-    export function emit(builtIn: MoodSound, pitch: number, strength: number, duration: number) {
+    export function emit(builtIn: MoodSound, pitch = 300, strength = 180, duration = 800) {
         // select builtin target... 
         let target: FlexFX = flexFXList.find(i => i.id === builtIn.toString());
         if (target != null) {
@@ -566,23 +566,23 @@ namespace flexFX {
     //% strength.min=0 strength.max=255 strength.defl=180
     //% duration.min=1 duration.max=9999 duration.defl=2000
     //% weight=250
-    export function hum(repeat: number = 10, strength: number = 180, duration: number = 2000) {
+    export function hum(repeat = 12, strength = 180, duration = 4000) {
         quiet = false;
         ave = duration / repeat;
         gap = 0.2 * ave;
-        pitch = randint(200, 350);
         let skip = true;
         for (let index = 0; index < repeat; index++) {
-            span = randint(0.2 * ave, 1.8 * ave);
-            if ((span > 0.6 * ave) || (skip)) {
+            span = randint(0.7 * ave, 1.4 * ave);
+            pitch = randint(200, 400);
+            if ((span > ave) || (skip)) {
                 // mostly "Dum"...
-                performFlexFX(MoodSound.DOO.toString(), randint(150, 300), strength, span);
+                performFlexFX(MoodSound.DOO.toString(), pitch, strength, span);
                 basic.pause(gap);
                 skip = false;
             } else {
-                // .. with occasional short, higher-pitched "Di"
-                performFlexFX(MoodSound.DOO.toString(), randint(350, 500), strength, 0.25 * ave);
-                basic.pause(gap / 2);
+                // .. with occasional short, higher-pitched "Di" (unrepeated)
+                performFlexFX(MoodSound.DOO.toString(), 1.33*pitch, strength, 0.3 * ave);
+                basic.pause(gap/2);
                 skip = true;
             }
         }
@@ -598,16 +598,16 @@ namespace flexFX {
     //% strength.min=0 strength.max=255 strength.defl=250
     //% duration.min=1 duration.max=9999 duration.defl=3000
     //% weight=245
-    export function grumble(repeat: number = 5, strength: number = 250, duration: number = 3000) {
+    export function grumble(repeat = 5, strength = 180, duration = 4000) {
         quiet = false;
         ave = duration / repeat;
         gap = 0.2 * ave;
         for (let index = 0; index < repeat; index++) {
             span = randint(0.4 * ave, 1.8 * ave);
-            if (span > 1.0 * ave) {
+            if (span > 0.8*ave) {
                 performFlexFX(MoodSound.DUH.toString(), randint(150, 300), strength, 0.5 * span);
             } else {
-                performFlexFX(MoodSound.UHOH.toString(), randint(100, 200), strength, 2 * span);
+                performFlexFX(MoodSound.UHOH.toString(), randint(100, 200), 1.2*strength, 2 * span);
             }
             pause(gap);
         }
@@ -623,15 +623,15 @@ namespace flexFX {
     //% strength.min=0 strength.max=255 strength.defl=200
     //% duration.min=1 duration.max=9999 duration.defl=4000
     //% weight=240
-    export function giggle(repeat: number = 12, strength: number = 200, duration: number = 2000) {
+    export function giggle(repeat = 10, strength = 200, duration = 2000) {
         quiet = false;
         ave = duration / repeat;
         gap = 0.2 * ave;
-        pitch = randint(500, 800);
+        pitch = randint(350, 700);
         for (let index = 0; index < repeat; index++) {
             span = randint(0.4 * ave, 1.8 * ave);
             performFlexFX(MoodSound.LAUGH.toString(), pitch, strength, span);
-            pitch = 0.9 * pitch;
+            pitch = 0.95 * pitch;
             basic.pause(gap);
         }
         quiet = true;
@@ -647,13 +647,13 @@ namespace flexFX {
     //% strength.min=0 strength.max=255 strength.defl=180
     //% duration.min=1 duration.max=9999 duration.defl=2500
     //% weight=235
-    export function whistle(repeat: number = 8, strength: number = 180, duration: number = 2500) {
+    export function whistle(repeat = 12, strength = 180, duration = 2500) {
         quiet = false;
         ave = duration / repeat;
         gap = 0.2 * ave;
         for (let index = 0; index < repeat; index++) {
             span = randint(0.4 * ave, 1.8 * ave);
-            performFlexFX(MoodSound.TWEET.toString(), randint(800, 1600), strength, span);
+            performFlexFX(MoodSound.TWEET.toString(), randint(800, 2000), strength, span);
             basic.pause(gap);
         }
         quiet = true;
@@ -669,12 +669,12 @@ namespace flexFX {
     //% strength.min=0 strength.max=255 strength.defl=150
     //% duration.min=1 duration.max=9999 duration.defl=5000
     //% weight=230
-    export function snore(repeat: number = 8, strength: number = 150, duration: number = 5000) {
+    export function snore(repeat = 6, strength = 150, duration = 10000) {
         quiet = false;
         ave = duration / repeat;
         for (let index = 0; index < repeat; index++) {
             span = randint(0.9 * ave, 1.1 * ave);
-            performFlexFX(MoodSound.SNORE.toString(), 1, 80, 0.2 * span);
+            performFlexFX(MoodSound.SNORE.toString(), 1, 80, 0.3 * span);
             pause(0.1 * ave);
             performFlexFX(MoodSound.SNORE.toString(), 1, 150, 0.4 * span);
             pause(0.3 * ave);
@@ -692,13 +692,13 @@ namespace flexFX {
     //% strength.min=0 strength.max=255 strength.defl=100
     //% duration.min=1 duration.max=9999 duration.defl=4000
     //% weight=225
-    export function whimper(repeat: number = 10, strength: number = 100, duration: number = 4000) {
+    export function whimper(repeat = 8, strength = 150, duration = 5000) {
         if (quiet) {
             quiet = false;
             ave = duration / repeat;
-            gap = 0.7 * ave;
+            gap = 0.5 * ave;
             for (let index = 0; index < repeat; index++) {
-                performFlexFX(MoodSound.MOAN.toString(), randint(250, 400), strength, randint(0.2 * ave, 0.4 * ave));
+                performFlexFX(MoodSound.MOAN.toString(), randint(350, 550), strength, randint(0.4 * ave, 1.4 * ave));
                 basic.pause(gap);
             }
             quiet = true;
@@ -714,17 +714,17 @@ namespace flexFX {
     //% strength.min=0 strength.max=255 strength.defl=200
     //% duration.min=1 duration.max=9999 duration.defl=3000
     //% weight=220
-    export function cry(repeat: number = 8, strength: number = 200, duration: number = 3500) {
+    export function cry(repeat = 8, strength = 200, duration = 3500) {
         if (quiet) {
             quiet = false;
             ave = duration / repeat;
             gap = 0.3 * ave;
             for (let index = 0; index < repeat; index++) {
-                span = randint(0.3 * ave, 1.1 * ave);
-                if (span > 0.7 * ave) {
-                    performFlexFX(MoodSound.MOAN.toString(), randint(200, 350), 1.5 * strength, 0.7 * span);
+                span = randint(0.5 * ave, 1.2 * ave);
+                if (span > ave) {
+                    performFlexFX(MoodSound.MOAN.toString(), randint(350, 550), 1.25 * strength, 0.7 * span);
                 } else {
-                    performFlexFX(MoodSound.WAAH.toString(), randint(250, 400), 0.05 * strength, 1.3 * span);
+                    performFlexFX(MoodSound.WAAH.toString(), randint(350, 450), 0.5 * strength, 1.3 * span);
                 }
                 basic.pause(gap);
             }
@@ -741,13 +741,13 @@ namespace flexFX {
     //% strength.min=0 strength.max=255 strength.defl=250
     //% duration.min=1 duration.max=9999 duration.defl=2500
     //% weight=215
-    export function shout(repeat: number = 5, strength: number = 250, duration: number = 2500) {
+    export function shout(repeat = 5, strength = 250, duration = 2500) {
         if (quiet) {
             quiet = false;
             ave = duration / repeat;
             gap = 0.3 * ave;
             for (let index = 0; index < repeat; index++) {
-                performFlexFX(MoodSound.GROWL.toString(), randint(320, 400), strength, randint(0.5 * ave, 0.9 * ave));
+                performFlexFX(MoodSound.GROWL.toString(), randint(320, 450), strength, randint(0.5 * ave, 1.3 * ave));
                 basic.pause(gap);
             }
             quiet = true;
@@ -760,21 +760,22 @@ namespace flexFX {
 
 function doMood(choice: number) {
     switch (choice) {
-        case 1: flexFX.shout();
+        case 1: flexFX.hum();
             break;
-        case 2: flexFX.cry();
+        case 2: flexFX.grumble();
             break;
-        case 3: flexFX.whimper();
+        case 3: flexFX.giggle();
             break;
-        case 4: flexFX.snore();
+        case 4: flexFX.whistle();
             break;
-        case 5: flexFX.whistle();
+        case 5: flexFX.snore();
             break;
-        case 6: flexFX.giggle();
+        case 6: flexFX.whimper();
             break;
-        case 7: flexFX.grumble();
+        case 7: flexFX.cry();
             break;
-        case 8: flexFX.hum();
+        case 8: flexFX.shout();
+            break;
     }
     basic.pause(1000);
 }
@@ -807,7 +808,7 @@ let span = 0;
 let pitch = 0;
 let ave = 0;
 let gap = 0;
-let choice = 8;
+let choice = 6;
 basic.showNumber(choice + 1);
 music.setBuiltInSpeakerEnabled(false);
 
@@ -817,11 +818,11 @@ flexFX.create3PartFlexFX("TEST", 0.5, 0.5,
     Wave.SINE, Attack.SLOW, Effect.NONE, 2, 0.5, 0.33, 0.33);
 pause(500);
 flexFX.performFlexFX("TEST", 800, 250, 1000)
-let all = 10;
+let all = 8;
 input.onButtonPressed(Button.A, function () {
     choice = (++choice) % all;
     basic.showNumber(choice + 1);
 })
 input.onButtonPressed(Button.B, function () {
-    doSound(choice + 1);
+    doMood(choice + 1);
 })

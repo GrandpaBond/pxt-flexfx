@@ -101,7 +101,7 @@ enum MoodSound {
  * Tools for creating composite sound-effects (of class FlexFX) that can be performed with
  * dynamically-specified pitch, volume and duration. Provides a built-in set of samples.
  */
-//% color=#7eff33 weight=100 icon="\uf0a1 block="FlexFX"
+//% color=#70e030 weight=100 icon="\uf0a1 block="FlexFX"
 namespace flexFX {
 
     // provide activity events (for other components to synchronise with)
@@ -183,7 +183,7 @@ namespace flexFX {
 
 
         protected assemble(startFreq: string, startVol: string, endFreq: string, endVol: string, ms: string,
-        wave: string, from13: string, from22: string, from30: string): string {
+            wave: string, from13: string, from22: string, from30: string): string {
             return wave + startVol + startFreq + ms + from13 + endFreq + from22 + endVol + from30;
         }
 
@@ -279,14 +279,14 @@ namespace flexFX {
 
             // adjust PartA frequencies, volumes and duration 
             this.partA.src = this.assemble(f0, v0, f1, v1, ms1,
-                            this.waveA, this.from13A, this.from22A, this.from30A);
+                this.waveA, this.from13A, this.from22A, this.from30A);
             if (this.playPartB) {   // adjust PartB frequencies, volumes and duration 
                 this.partB.src = this.assemble(f1, v1, f2, v2, ms2,
-                            this.waveB, this.from13B, this.from22B, this.from30B);
+                    this.waveB, this.from13B, this.from22B, this.from30B);
             }
             if (this.playPartC) {   // adjust PartC frequencies, volumes and duration
                 this.partC.src = this.assemble(f2, v2, f3, v3, ms3,
-                            this.waveC, this.from13C, this.from22C, this.from30C);
+                    this.waveC, this.from13C, this.from22C, this.from30C);
             }
 
             // now for the actual performance...
@@ -329,7 +329,9 @@ namespace flexFX {
     /**
     Create a simple custom FlexFX 
      */
-    //% block="create simple FlexFX called $id using wave-shape $wave            with attack $attack             and effect $effect|pitch profile goes from $startPitchRatio                     to $endPitchRatio|volume profile goes from $startVolRatio                     to $endVolRatio"//% inlineInputMode=external
+    //% block="create simple FlexFX: $id using wave-shape $wave      with attack $attack       and effect $effect|  pitch profile goes from $startPitchRatio                       to $endPitchRatio|volume profile goes from $startVolRatio                       to $endVolRatio"
+    //% inlineInputMode=external
+    //% id.defl="simple"
     //% advanced=true
     //% weight=140
     export function createFlexFX(
@@ -348,7 +350,9 @@ namespace flexFX {
     /**
     Create a more complex two-part custom FlexFX 
      */
-    //% block="create 2-part FlexFX called $id first using wave-shape $waveA            with attack $attackA             and effect $effectA|  then using wave-shape $waveB            with attack $attackB             and effect $effectB|pitch profile goes from $startPitchRatio                     to $midPitchRatio                     to $endPitchRatio|volume profile goes from $startVolRatio                     to $midVolRatio                     to $endVolRatio|duration fraction for first part: $timeRatioA"    //% inlineInputMode=external
+    //% block="create 2-part FlexFX: $id| first using wave-shape $waveA            with attack $attackA             and effect $effectA|  then using wave-shape $waveB            with attack $attackB             and effect $effectB|  pitch profile goes from $startPitchRatio                       to $midPitchRatio                       to $endPitchRatio|volume profile goes from $startVolRatio                       to $midVolRatio                       to $endVolRatio|duration used for 1st part: $timeRatioA"
+    //% inlineInputMode=external
+    //% id.defl="2-part"
     //% advanced=true
     //% weight=130
     export function create2PartFlexFX(
@@ -369,8 +373,9 @@ namespace flexFX {
     /**
     Create a really complex three-part custom FlexFX 
      */
-    //% block="create 3-part FlexFX called $id first using wave-shape $waveA     with attack $attackA     and effect $effectA|then using wave-shape $waveB     with attack $attackB     and effect $effectB|lastly using wave-shape $waveC     with attack $attackC     and effect $effectC|pitch profile goes from $startPitchRatio     to $pitchABRatio     to $pitchBCRatio     to $endPitchRatio|volume profile goes from $startVolRatio     to $volABRatio     to $volBCRatio     to $endVolRatio|duration is split as follows:|      first part:$timeRatioA     second part: $timeRatioB"
+    //% block="create 3-part FlexFX: $id|  first using wave-shape $waveA             with attack $attackA              and effect $effectA|   then using wave-shape $waveB             with attack $attackB              and effect $effectB|lastly using wave-shape $waveC             with attack $attackC              and effect $effectC|  pitch profile goes from $startPitchRatio                       to $pitchABRatio                       to $pitchBCRatio                       to $endPitchRatio|volume profile goes from $startVolRatio                       to $volABRatio                       to $volBCRatio                       to $endVolRatio|duration used for 1st part:$timeRatioA|                   2nd part: $timeRatioB"
     //% inlineInputMode=external
+    //% id.defl="3-part"
     //% advanced=true
     //% weight=120
     export function create3PartFlexFX(
@@ -395,8 +400,9 @@ namespace flexFX {
     /**
     Create a FlexFx with two parts separated by a silence.
     */
-    //% block="create double FlexFX called $id using wave-shape $waveA            with attack $attackA             and effect $effectA|pitch profile goes from $startPitchARatio                     to $endPitchARatio|volume profile goes from $startVolARatio                     to $endVolARatio|fraction of duration: $timeRatioA|Silent for duration fraction:$timeGapRatio|second part using wave-shape $waveB            with attack $attackB             and effect $effectB|pitch profile goes from $startPitchBRatio                     to $endPitchBRatio|volume profile goes from $startVolBRatio                     to $endVolBRatio"
+    //% block="create double FlexFX: $id|1st part using wave-shape $waveA               with attack $attackA                and effect $effectA|  pitch profile goes from $startPitchARatio                       to $endPitchARatio|volume profile goes from $startVolARatio                       to $endVolARatio|duration used for 1st part:$timeRatioA|duration used for silence:  $timeGapRatio|2nd part using wave-shape $waveB               with attack $attackB                and effect $effectB|  pitch profile goes from $startPitchBRatio                       to $endPitchBRatio|volume profile goes from $startVolBRatio                       to $endVolBRatio"
     //% inlineInputMode=external
+    //% id.defl="double"
     //% advanced=true
     //% weight=110
     export function createDoubleFlexFX(
@@ -433,7 +439,7 @@ namespace flexFX {
     TWEET         80%  45% 
     SIN LOG NONE 100% 100%   | 100%
     */
-    createFlexFX(MoodSound.TWEET.toString(), 0.8, 0.45, 
+    createFlexFX(MoodSound.TWEET.toString(), 0.8, 0.45,
         Wave.SINE, Attack.FAST, Effect.NONE, 1.00, 1.0);
 
     /*
@@ -576,7 +582,7 @@ namespace flexFX {
             } else {
                 // .. with occasional short, higher-pitched "Di"
                 performFlexFX(MoodSound.DOO.toString(), randint(350, 500), strength, 0.25 * ave);
-                basic.pause(gap/2);
+                basic.pause(gap / 2);
                 skip = true;
             }
         }
@@ -774,7 +780,7 @@ function doMood(choice: number) {
 }
 function doSound(choice: number) {
     switch (choice) {
-        case 1: flexFX.performFlexFX(MoodSound.TWEET.toString(),800,200,400);
+        case 1: flexFX.performFlexFX(MoodSound.TWEET.toString(), 800, 200, 400);
             break;
         case 2: flexFX.performFlexFX(MoodSound.LAUGH.toString(), 400, 200, 400);
             break;
@@ -810,7 +816,7 @@ flexFX.create3PartFlexFX("TEST", 0.5, 0.5,
     Wave.SINE, Attack.SLOW, Effect.NONE, 1.00, 1.0,
     Wave.SINE, Attack.SLOW, Effect.NONE, 2, 0.5, 0.33, 0.33);
 pause(500);
-flexFX.performFlexFX("TEST",800,250,1000)
+flexFX.performFlexFX("TEST", 800, 250, 1000)
 let all = 10;
 input.onButtonPressed(Button.A, function () {
     choice = (++choice) % all;

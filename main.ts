@@ -332,6 +332,10 @@ namespace flexFX {
     //% block="create simple FlexFX: $id using wave-shape $wave      with attack $attack       and effect $effect|  pitch profile goes from $startPitchRatio                       to $endPitchRatio|volume profile goes from $startVolRatio                       to $endVolRatio"
     //% inlineInputMode=external
     //% id.defl="simple"
+    //% startPitchRatio.min=0.001 startPitchRatio.max=100.0 startPitchRatio.defl=1.0
+    //% startVolRatio.min=0.001 startVolRatio.max=1.0 startVolRatio.defl=1.0
+    //% endPitchRatio.min=0.001 endPitchRatio.max=100.0 endPitchRatio.defl=1.0
+    //% endVolRatio.min=0.001 endVolRatio.max=1.0 endVolRatio.defl=1.0
     //% advanced=true
     //% weight=140
     export function createFlexFX(
@@ -353,6 +357,13 @@ namespace flexFX {
     //% block="create 2-part FlexFX: $id| first using wave-shape $waveA            with attack $attackA             and effect $effectA|  then using wave-shape $waveB            with attack $attackB             and effect $effectB|  pitch profile goes from $startPitchRatio                       to $midPitchRatio                       to $endPitchRatio|volume profile goes from $startVolRatio                       to $midVolRatio                       to $endVolRatio|duration used for 1st part: $timeRatioA"
     //% inlineInputMode=external
     //% id.defl="2-part"
+    //% startPitchRatio.min=0.001 startPitchRatio.max=100.0 startPitchRatio.defl=1.0
+    //% startVolRatio.min=0.001 startVolRatio.max=1.0 startVolRatio.defl=1.0
+    //% midPitchRatio.min=0.001 midPitchRatio.max=100.0 midPitchRatio.defl=1.0
+    //% midVolRatio.min=0.001 midVolRatio.max=0 midVolRatio.defl=1.0
+    //% endPitchRatio.min=0.001 endPitchRatio.max=100.0 endPitchRatio.defl=1.0
+    //% endVolRatio.min=0.001 endVolRatio.max=1.0 endVolRatio.defl=1.0
+    //% timeRatioA.min=0.001 timeRatioA.max=0.999 timeRatioA.defl=0.50
     //% advanced=true
     //% weight=130
     export function create2PartFlexFX(
@@ -376,6 +387,16 @@ namespace flexFX {
     //% block="create 3-part FlexFX: $id|  first using wave-shape $waveA             with attack $attackA              and effect $effectA|   then using wave-shape $waveB             with attack $attackB              and effect $effectB|lastly using wave-shape $waveC             with attack $attackC              and effect $effectC|  pitch profile goes from $startPitchRatio                       to $pitchABRatio                       to $pitchBCRatio                       to $endPitchRatio|volume profile goes from $startVolRatio                       to $volABRatio                       to $volBCRatio                       to $endVolRatio|duration used for 1st part:$timeRatioA|                   2nd part: $timeRatioB"
     //% inlineInputMode=external
     //% id.defl="3-part"
+    //% startPitchRatio.min=0.001 startPitchRatio.max=100.0 startPitchRatio.defl=1.0
+    //% startVolRatio.min=0.001 startVolRatio.max=1.0 startVolRatio.defl=1.0
+    //% PitchABRatio.min=0.001 PitchABRatio.max=100.0 PitchABRatio.defl=1.0
+    //% VolABRatio.min=0.001 VolABRatio.max=0 VolABRatio.defl=1.0
+    //% PitchBCRatio.min=0.001 PitchBCRatio.max=100.0 PitchBCRatio.defl=1.0
+    //% VolBCRatio.min=0.001 VolBCRatio.max=0 VolBCRatio.defl=1.0
+    //% endPitchRatio.min=0.001 endPitchRatio.max=100.0 endPitchRatio.defl=1.0
+    //% endVolRatio.min=0.001 endVolRatio.max=1.0 endVolRatio.defl=1.0
+    //% timeRatioA.min=0.001 timeRatioA.max=0.999 timeRatioA.defl=0.333
+    //% timeRatioB.min=0.001 timeRatioB.max=0.999 timeRatioB.defl=0.333
     //% advanced=true
     //% weight=120
     export function create3PartFlexFX(
@@ -403,6 +424,14 @@ namespace flexFX {
     //% block="create double FlexFX: $id|1st part using wave-shape $waveA               with attack $attackA                and effect $effectA|  pitch profile goes from $startPitchARatio                       to $endPitchARatio|volume profile goes from $startVolARatio                       to $endVolARatio|duration used for 1st part:$timeRatioA|duration used for silence:  $timeGapRatio|2nd part using wave-shape $waveB               with attack $attackB                and effect $effectB|  pitch profile goes from $startPitchBRatio                       to $endPitchBRatio|volume profile goes from $startVolBRatio                       to $endVolBRatio"
     //% inlineInputMode=external
     //% id.defl="double"
+    //% startPitchARatio.min=0.001 startPitchARatio.max=100.0 startPitchARatio.defl=1.0
+    //% startVolARatio.min=0.001 startVolARatio.max=1.0 startVolARatio.defl=1.0
+    //% endPitchARatio.min=0.001 endPitchARatio.max=100.0 endPitchARatio.defl=1.0
+    //% endVolARatio.min=0.001 endVolARatio.max=1.0 endVolARatio.defl=1.0
+    //% startPitchBRatio.min=0.001 startPitchBRatio.max=100.0 startPitchBRatio.defl=1.0
+    //% startVolBRatio.min=0.001 startVolBRatio.max=1.0 startVolBRatio.defl=1.0
+    //% endPitchBRatio.min=0.001 endPitchBRatio.max=100.0 endPitchBRatio.defl=1.0
+    //% endVolBRatio.min=0.001 endVolBRatio.max=1.0 endVolBRatio.defl=1.0
     //% advanced=true
     //% weight=110
     export function createDoubleFlexFX(
@@ -581,8 +610,8 @@ namespace flexFX {
                 skip = false;
             } else {
                 // .. with occasional short, higher-pitched "Di" (unrepeated)
-                performFlexFX(MoodSound.DOO.toString(), 1.33*pitch, strength, 0.3 * ave);
-                basic.pause(gap/2);
+                performFlexFX(MoodSound.DOO.toString(), 1.33 * pitch, strength, 0.3 * ave);
+                basic.pause(gap / 2);
                 skip = true;
             }
         }
@@ -604,10 +633,10 @@ namespace flexFX {
         gap = 0.2 * ave;
         for (let index = 0; index < repeat; index++) {
             span = randint(0.4 * ave, 1.8 * ave);
-            if (span > 0.8*ave) {
+            if (span > 0.8 * ave) {
                 performFlexFX(MoodSound.DUH.toString(), randint(150, 300), strength, 0.5 * span);
             } else {
-                performFlexFX(MoodSound.UHOH.toString(), randint(100, 200), 1.2*strength, 2 * span);
+                performFlexFX(MoodSound.UHOH.toString(), randint(100, 200), 1.2 * strength, 2 * span);
             }
             pause(gap);
         }

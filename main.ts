@@ -319,7 +319,7 @@ namespace flexFX {
     //% id.defl="DOO"
     //% pitch.min=50 pitch.max=2000 pitch.defl=250
     //% vol.min=0 vol.max=255 vol.defl=180
-    //% ms.min=0 ms.max=60000 ms.defl=750
+    //% ms.min=0 ms.max=10000 ms.defl=750
     //% inlineInputMode=inline
     //% advanced=true
     //% weight=150
@@ -333,91 +333,93 @@ namespace flexFX {
     /**
     Create a simple custom FlexFX 
      */
-    //% block="create simple FlexFX: $id using wave-shape $wave      with attack $attack       and effect $effect|  pitch profile goes from $startPitchRatio                       to $endPitchRatio|volume profile goes from $startVolRatio                       to $endVolRatio"
+    //% block="create simple FlexFX: $id using wave-shape $wave      with attack $attack       and effect $effect|  pitch profile goes from $startPitchRatio                       to $endPitchPercent|volume profile goes from $startVolRatio                       to $endVolPercent"
     //% inlineInputMode=external
     //% id.defl="simple"
-    //% startPitchRatio.min=0.001 startPitchRatio.max=100.0 startPitchRatio.defl=1.0
-    //% startVolRatio.min=0.001 startVolRatio.max=1.0 startVolRatio.defl=1.0
-    //% endPitchRatio.min=0.001 endPitchRatio.max=100.0 endPitchRatio.defl=1.0
-    //% endVolRatio.min=0.001 endVolRatio.max=1.0 endVolRatio.defl=1.0
+    //% startPitchPercent.min=25 startPitchPercent.max=400 startPitchPercent.defl=100
+    //% startVolPercent.min=1 startVolPercent.max=100 startVolPercent.defl=100
+    //% endPitchPercent.min=10 endPitchPercent.max=400 endPitchPercent.defl=100
+    //% endVolPercent.min=1 endVolPercent.max=100 endVolPercent.defl=100
     //% advanced=true
     //% weight=140
     export function createFlexFX(
-        id: string, startPitchRatio: number, startVolRatio: number,
-        wave: Wave, attack: Attack, effect: Effect, endPitchRatio: number, endVolRatio: number) {
+        id: string, startPitchPercent: number, startVolPercent: number,
+        wave: Wave, attack: Attack, effect: Effect, endPitchPercent: number, endVolPercent: number) {
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target == null) {
             target = new FlexFX(id);
             flexFXList.push(target);
         }
-        target.setPartA(startPitchRatio, startVolRatio, wave, attack, effect, endPitchRatio, endVolRatio, 1.0);
+        target.setPartA(startPitchPercent / 100, startVolPercent / 100, wave, attack, effect, endPitchPercent / 100, endVolPercent / 100, 1.0);
     }
 
 
     /**
     Create a more complex two-part custom FlexFX 
      */
-    //% block="create 2-part FlexFX: $id| first using wave-shape $waveA            with attack $attackA             and effect $effectA|  then using wave-shape $waveB            with attack $attackB             and effect $effectB|  pitch profile goes from $startPitchRatio                       to $midPitchRatio                       to $endPitchRatio|volume profile goes from $startVolRatio                       to $midVolRatio                       to $endVolRatio|duration used for 1st part: $timeRatioA"
+    //% block="create 2-part FlexFX: $id| first using wave-shape $waveA            with attack $attackA             and effect $effectA|  then using wave-shape $waveB            with attack $attackB             and effect $effectB|  pitch profile goes from $startPitchPercent                       to $midPitchPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $midVolPercent                       to $endVolPercent|duration used for 1st part: $timePercentA"
     //% inlineInputMode=external
     //% id.defl="2-part"
-    //% startPitchRatio.min=0.001 startPitchRatio.max=100.0 startPitchRatio.defl=1.0
-    //% startVolRatio.min=0.001 startVolRatio.max=1.0 startVolRatio.defl=1.0
-    //% midPitchRatio.min=0.001 midPitchRatio.max=100.0 midPitchRatio.defl=1.0
-    //% midVolRatio.min=0.001 midVolRatio.max=0 midVolRatio.defl=1.0
-    //% endPitchRatio.min=0.001 endPitchRatio.max=100.0 endPitchRatio.defl=1.0
-    //% endVolRatio.min=0.001 endVolRatio.max=1.0 endVolRatio.defl=1.0
-    //% timeRatioA.min=0.001 timeRatioA.max=0.999 timeRatioA.defl=0.50
+    //% startPitchPercent.min=10 startPitchPercent.max=400 startPitchPercent.defl=100
+    //% startVolPercent.min=1 startVolPercent.max=100 startVolPercent.defl=100
+    //% midPitchPercent.min=10 midPitchPercent.max=400 midPitchPercent.defl=100
+    //% midVolPercent.min=1 midVolPercent.max=0 midVolPercent.defl=100
+    //% endPitchPercent.min=10 endPitchPercent.max=400 endPitchPercent.defl=100
+    //% endVolPercent.min=1 endVolPercent.max=100 endVolPercent.defl=100
+    //% timePercentA.min=1 timePercentA.max=99 timePercentA.defl=500
     //% advanced=true
     //% weight=130
     export function create2PartFlexFX(
-        id: string, startPitchRatio: number, startVolRatio: number,
-        waveA: Wave, attackA: Attack, effectA: Effect, midPitchRatio: number, midVolRatio: number,
-        waveB: Wave, attackB: Attack, effectB: Effect, endPitchRatio: number, endVolRatio: number, timeRatioA: number) {
+        id: string, startPitchPercent: number, startVolPercent: number,
+        waveA: Wave, attackA: Attack, effectA: Effect, midPitchPercent: number, midVolPercent: number,
+        waveB: Wave, attackB: Attack, effectB: Effect, endPitchPercent: number, endVolPercent: number, timePercentA: number) {
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target == null) {
             target = new FlexFX(id);
             flexFXList.push(target);
         }
-        target.setPartA(startPitchRatio, startVolRatio, waveA, attackA, effectA, midPitchRatio, midVolRatio, timeRatioA);
-        target.setPartB(waveB, attackB, effectB, endPitchRatio, endVolRatio, 1.0 - timeRatioA);
+        target.setPartA(startPitchPercent / 100, startVolPercent / 100, waveA, attackA, effectA, midPitchPercent / 100, midVolPercent / 100, timePercentA / 100);
+        target.setPartB(waveB, attackB, effectB, endPitchPercent / 100, endVolPercent / 100,
+            1.0 - (timePercentA / 100));
 
     }
 
     /**
     Create a really complex three-part custom FlexFX 
      */
-    //% block="create 3-part FlexFX: $id|  first using wave-shape $waveA             with attack $attackA              and effect $effectA|   then using wave-shape $waveB             with attack $attackB              and effect $effectB|lastly using wave-shape $waveC             with attack $attackC              and effect $effectC|  pitch profile goes from $startPitchRatio                       to $pitchABRatio                       to $pitchBCRatio                       to $endPitchRatio|volume profile goes from $startVolRatio                       to $volABRatio                       to $volBCRatio                       to $endVolRatio|duration used for 1st part:$timeRatioA|                   2nd part: $timeRatioB"
+    //% block="create 3-part FlexFX: $id|  first using wave-shape $waveA             with attack $attackA              and effect $effectA|   then using wave-shape $waveB             with attack $attackB              and effect $effectB|lastly using wave-shape $waveC             with attack $attackC              and effect $effectC|  pitch profile goes from $startPitchPercent                       to $pitchABPercent                       to $pitchBCPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $volABPercent                       to $volBCPercent                       to $endVolPercent|duration used for 1st part:$timePercentA|                   2nd part: $timePercentB"
     //% inlineInputMode=external
     //% id.defl="3-part"
-    //% startPitchRatio.min=0.001 startPitchRatio.max=100.0 startPitchRatio.defl=1.0
-    //% startVolRatio.min=0.001 startVolRatio.max=1.0 startVolRatio.defl=1.0
-    //% PitchABRatio.min=0.001 PitchABRatio.max=100.0 PitchABRatio.defl=1.0
-    //% VolABRatio.min=0.001 VolABRatio.max=0 VolABRatio.defl=1.0
-    //% PitchBCRatio.min=0.001 PitchBCRatio.max=100.0 PitchBCRatio.defl=1.0
-    //% VolBCRatio.min=0.001 VolBCRatio.max=0 VolBCRatio.defl=1.0
-    //% endPitchRatio.min=0.001 endPitchRatio.max=100.0 endPitchRatio.defl=1.0
-    //% endVolRatio.min=0.001 endVolRatio.max=1.0 endVolRatio.defl=1.0
-    //% timeRatioA.min=0.001 timeRatioA.max=0.999 timeRatioA.defl=0.333
-    //% timeRatioB.min=0.001 timeRatioB.max=0.999 timeRatioB.defl=0.333
+    //% startPitchPercent.min=10 startPitchPercent.max=400 startPitchPercent.defl=100
+    //% startVolPercent.min=1 startVolPercent.max=100 startVolPercent.defl=100
+    //% PitchABPercent.min=10 PitchABPercent.max=400 PitchABPercent.defl=100
+    //% VolABPercent.min=1 VolABPercent.max=0 VolABPercent.defl=100
+    //% PitchBCPercent.min=10 PitchBCPercent.max=400 PitchBCPercent.defl=100
+    //% VolBCPercent.min=1 VolBCPercent.max=0 VolBCPercent.defl=100
+    //% endPitchPercent.min=10 endPitchPercent.max=400 endPitchPercent.defl=100
+    //% endVolPercent.min=1 endVolPercent.max=100 endVolPercent.defl=100
+    //% timePercentA.min=1 timePercentA.max=99 timePercentA.defl=33
+    //% timePercentB.min=1 timePercentB.max=99 timePercentB.defl=33
     //% advanced=true
     //% weight=120
     export function create3PartFlexFX(
-        id: string, startPitchRatio: number, startVolRatio: number,
-        waveA: Wave, attackA: Attack, effectA: Effect, pitchABRatio: number, volABRatio: number,
-        waveB: Wave, attackB: Attack, effectB: Effect, pitchBCRatio: number, volBCRatio: number,
-        waveC: Wave, attackC: Attack, effectC: Effect, endPitchRatio: number, endVolRatio: number,
-        timeRatioA: number, timeRatioB: number) {
+        id: string, startPitchPercent: number, startVolPercent: number,
+        waveA: Wave, attackA: Attack, effectA: Effect, pitchABPercent: number, volABPercent: number,
+        waveB: Wave, attackB: Attack, effectB: Effect, pitchBCPercent: number, volBCPercent: number,
+        waveC: Wave, attackC: Attack, effectC: Effect, endPitchPercent: number, endVolPercent: number,
+        timePercentA: number, timePercentB: number) {
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target == null) {
             target = new FlexFX(id);
             flexFXList.push(target);
         }
-        target.setPartA(startPitchRatio, startVolRatio, waveA, attackA, effectA, pitchABRatio, volABRatio, timeRatioA);
-        target.setPartB(waveB, attackB, effectB, pitchBCRatio, volBCRatio, timeRatioB);
-        target.setPartC(waveC, attackC, effectC, endPitchRatio, endVolRatio, 1.0 - timeRatioA - timeRatioB);
+        target.setPartA(startPitchPercent / 100, startVolPercent / 100, waveA, attackA, effectA, pitchABPercent / 100, volABPercent / 100, timePercentA / 100);
+        target.setPartB(waveB, attackB, effectB, pitchBCPercent / 100, volBCPercent / 100, timePercentB / 100);
+        target.setPartC(waveC, attackC, effectC, endPitchPercent / 100, endVolPercent / 100,
+            1.0 - (timePercentA - timePercentB) / 100);
 
     }
 
@@ -425,25 +427,27 @@ namespace flexFX {
     /**
     Create a FlexFx with two parts separated by a silence.
     */
-    //% block="create double FlexFX: $id|1st part using wave-shape $waveA               with attack $attackA                and effect $effectA|  pitch profile goes from $startPitchARatio                       to $endPitchARatio|volume profile goes from $startVolARatio                       to $endVolARatio|duration used for 1st part:$timeRatioA|duration used for silence:  $timeGapRatio|2nd part using wave-shape $waveB               with attack $attackB                and effect $effectB|  pitch profile goes from $startPitchBRatio                       to $endPitchBRatio|volume profile goes from $startVolBRatio                       to $endVolBRatio"
+    //% block="create double FlexFX: $id|1st part using wave-shape $waveA               with attack $attackA                and effect $effectA|  pitch profile goes from $startPitchAPercent                       to $endPitchAPercent|volume profile goes from $startVolAPercent                       to $endVolAPercent|duration used for 1st part:$timePercentA|duration used for silence:  $timeGapPercent|2nd part using wave-shape $waveB               with attack $attackB                and effect $effectB|  pitch profile goes from $startPitchBPercent                       to $endPitchBPercent|volume profile goes from $startVolBPercent                       to $endVolBPercent"
     //% inlineInputMode=external
     //% id.defl="double"
-    //% startPitchARatio.min=0.001 startPitchARatio.max=100.0 startPitchARatio.defl=1.0
-    //% startVolARatio.min=0.001 startVolARatio.max=1.0 startVolARatio.defl=1.0
-    //% endPitchARatio.min=0.001 endPitchARatio.max=100.0 endPitchARatio.defl=1.0
-    //% endVolARatio.min=0.001 endVolARatio.max=1.0 endVolARatio.defl=1.0
-    //% startPitchBRatio.min=0.001 startPitchBRatio.max=100.0 startPitchBRatio.defl=1.0
-    //% startVolBRatio.min=0.001 startVolBRatio.max=1.0 startVolBRatio.defl=1.0
-    //% endPitchBRatio.min=0.001 endPitchBRatio.max=100.0 endPitchBRatio.defl=1.0
-    //% endVolBRatio.min=0.001 endVolBRatio.max=1.0 endVolBRatio.defl=1.0
+    //% startPitchAPercent.min=10 startPitchAPercent.max=400 startPitchAPercent.defl=100
+    //% startVolAPercent.min=1 startVolAPercent.max=100 startVolAPercent.defl=100
+    //% endPitchAPercent.min=10 endPitchAPercent.max=400 endPitchAPercent.defl=100
+    //% endVolAPercent.min=1 endVolAPercent.max=100 endVolAPercent.defl=100
+    //% startPitchBPercent.min=10 startPitchBPercent.max=400 startPitchBPercent.defl=0.75
+    //% startVolBPercent.min=1 startVolBPercent.max=100 startVolBPercent.defl=100
+    //% endPitchBPercent.min=10 endPitchBPercent.max=400 endPitchBPercent.defl=0.75
+    //% endVolBPercent.min=1 endVolBPercent.max=100 endVolBPercent.defl=100
+    //% timePercentA.min=1 timePercentA.max=99 timePercentA.defl=40
+    //% timeGapPercent.min=1 timeGapPercent.max=99 timeGapPercent.defl=20
     //% advanced=true
     //% weight=110
     export function createDoubleFlexFX(
-        id: string, startPitchARatio: number, startVolARatio: number,
-        waveA: Wave, attackA: Attack, effectA: Effect, endPitchARatio: number, endVolARatio: number,
-        startPitchBRatio: number, startVolBRatio: number,
-        waveB: Wave, attackB: Attack, effectB: Effect, endPitchBRatio: number, endVolBRatio: number,
-        timeRatioA: number, timeGapRatio: number) {
+        id: string, startPitchAPercent: number, startVolAPercent: number,
+        waveA: Wave, attackA: Attack, effectA: Effect, endPitchAPercent: number, endVolAPercent: number,
+        startPitchBPercent: number, startVolBPercent: number,
+        waveB: Wave, attackB: Attack, effectB: Effect, endPitchBPercent: number, endVolBPercent: number,
+        timePercentA: number, timeGapPercent: number) {
 
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id);
@@ -451,9 +455,10 @@ namespace flexFX {
             target = new FlexFX(id);
             flexFXList.push(target);
         }
-        target.setPartA(startPitchARatio, startVolARatio, waveA, attackA, effectA, endPitchARatio, endVolARatio, timeRatioA);
-        target.silentPartB(startPitchBRatio, startVolBRatio, timeGapRatio);
-        target.setPartC(waveB, attackB, effectB, endPitchBRatio, endVolBRatio, 1.0 - timeRatioA - timeGapRatio);
+        target.setPartA(startPitchAPercent / 100, startVolAPercent / 100, waveA, attackA, effectA, endPitchAPercent / 100, endVolAPercent / 100, timePercentA / 100);
+        target.silentPartB(startPitchBPercent / 100, startVolBPercent / 100, timeGapPercent / 100);
+        target.setPartC(waveB, attackB, effectB, endPitchBPercent / 100, endVolBPercent / 100,
+            1.0 - (timePercentA - timeGapPercent) / 100);
 
     }
     // ---Create Built-in FlexFXs----

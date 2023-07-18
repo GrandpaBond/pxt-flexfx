@@ -333,7 +333,7 @@ namespace flexFX {
     /**
     Create a simple custom FlexFX 
      */
-    //% block="create simple FlexFX: $id using wave-shape $wave      with attack $attack       and effect $effect|  pitch profile goes from $startPitchRatio                       to $endPitchPercent|volume profile goes from $startVolRatio                       to $endVolPercent"
+    //% block="create simple FlexFX: $id using wave-shape $wave      with attack $attack       and effect $effect|  pitch profile goes from $startPitchPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $endVolPercent"
     //% inlineInputMode=external
     //% id.defl="simple"
     //% startPitchPercent.min=25 startPitchPercent.max=400 startPitchPercent.defl=100
@@ -367,7 +367,7 @@ namespace flexFX {
     //% midVolPercent.min=1 midVolPercent.max=0 midVolPercent.defl=100
     //% endPitchPercent.min=10 endPitchPercent.max=400 endPitchPercent.defl=100
     //% endVolPercent.min=1 endVolPercent.max=100 endVolPercent.defl=100
-    //% timePercentA.min=1 timePercentA.max=99 timePercentA.defl=500
+    //% timePercentA.min=1 timePercentA.max=99 timePercentA.defl=50
     //% advanced=true
     //% weight=130
     export function create2PartFlexFX(
@@ -477,46 +477,46 @@ namespace flexFX {
     TWEET         80%  45% 
     SIN LOG NONE 100% 100%   | 100%
     */
-    createFlexFX(MoodSound.TWEET.toString(), 0.8, 0.45,
-        Wave.SINE, Attack.FAST, Effect.NONE, 1.00, 1.0);
+    createFlexFX(MoodSound.TWEET.toString(), 80, 45,
+        Wave.SINE, Attack.FAST, Effect.NONE, 100, 100);
 
     /*
     LAUGH         70%  40%  
     SAW LOG NONE 100% 100%   | 10%
     SQU LIN NONE  70%  75%   | 90%
     */
-    create2PartFlexFX(MoodSound.LAUGH.toString(), 0.70, 0.4,
-        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.0, 1.0,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.7, 0.75, 0.9);
+    create2PartFlexFX(MoodSound.LAUGH.toString(), 70, 40,
+        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 100,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 70, 75, 90);
 
     /*
     SNORE       3508  10% 
     NOI VIB LIN  715 100%   | 50%
     NOI VIB LIN 5008   0%   | 50%
     NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, and these strange values have been experimentally derived.
-    By always invoking Snore.performUsing() with the scaling-factor (freq=1), these literal frequencies will get used as specified here!
+    By always invoking Snore.performUsing() with (freq=1), these literal frequencies will get used as specified here!
     */
-    create2PartFlexFX(MoodSound.SNORE.toString(), 3508, 0.1,
-        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 715, 1.0,
-        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 5008, 0, 0.5);
+    create2PartFlexFX(MoodSound.SNORE.toString(), 3508, 10,
+        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 715, 100,
+        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 5008, 0, 50);
 
     /*
     DOO          300% 80% 
     SAW LOG NONE 100% 90%   |  5%
     SQU LIN NONE 100% 70%   | 95%
     */
-    create2PartFlexFX(MoodSound.DOO.toString(), 3.00, 0.8,
-        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.00, 0.9,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.00, 0.7, 0.05);
+    create2PartFlexFX(MoodSound.DOO.toString(), 300, 80,
+        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 90,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 70, 5);
 
     /*
     QUERY        110%  20% 
     SQU LIN NONE 100% 100%   | 20%
     SQU CUR NONE 150%  30%   | 80%
     */
-    create2PartFlexFX(MoodSound.QUERY.toString(), 1.10, 0.2,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.00, 1.0,
-        Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 1.50, 0.3, 0.2);
+    create2PartFlexFX(MoodSound.QUERY.toString(), 110, 20,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 100,
+        Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 150, 30, 20);
 
     /*
     
@@ -527,9 +527,9 @@ namespace flexFX {
     SQU LIN NONE  85%  75%   | 60%
     */
     createDoubleFlexFX(MoodSound.UHOH.toString(),
-        1.10, 0.4, Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.20, 1.0,
-        0.95, 1.0, Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.85, 0.75,
-        0.2, 0.2);
+        110, 40, Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 120, 100,
+        95, 100, Wave.SQUARE, Attack.SLOW, Effect.NONE, 85, 75,
+        20, 20);
 
     /*
     MOAN         120%  60%
@@ -537,10 +537,10 @@ namespace flexFX {
     TRI CUR NONE  95%  80%   | 30%
     TRI LIN NONE 115%  55%   | 10%
     */
-    create3PartFlexFX(MoodSound.MOAN.toString(), 1.20, 0.6,
-        Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 1.00, 1.0,
-        Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 0.95, 0.8,
-        Wave.TRIANGLE, Attack.SLOW, Effect.NONE, 1.15, 0.55, 0.6, 0.3);
+    create3PartFlexFX(MoodSound.MOAN.toString(), 120, 60,
+        Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 100, 100,
+        Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 95, 80,
+        Wave.TRIANGLE, Attack.SLOW, Effect.NONE, 115, 55, 60, 30);
 
     /*
     DUH          100%  60%
@@ -548,10 +548,10 @@ namespace flexFX {
     SQU LIN NONE 110%  80%   | 25%
     SQU LIN NONE  66%  40%   | 65%
     */
-    create3PartFlexFX(MoodSound.DUH.toString(), 1.00, 0.6,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.95, 1.0,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 1.10, 0.8,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 0.66, 0.4, 0.1, 0.25);
+    create3PartFlexFX(MoodSound.DUH.toString(), 100, 60,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 95, 100,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 110, 80,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 66, 40, 10, 25);
 
     /*
     WAAH         100%  10%
@@ -559,10 +559,10 @@ namespace flexFX {
     SAW LIN NONE 110%  60%   | 20%
     SAW LIN NONE  30%   5%   | 10%
     */
-    create3PartFlexFX(MoodSound.WAAH.toString(), 1.00, 0.1,
-        Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 1.40, 1.0,
-        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 1.10, 0.6,
-        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.3, 0.05, 0.70, 0.20);
+    create3PartFlexFX(MoodSound.WAAH.toString(), 100, 10,
+        Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 140, 100,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 110, 60,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 30, 5, 70, 20);
 
     /*
     GROWL         30%  50%
@@ -570,10 +570,10 @@ namespace flexFX {
     SAW LIN NONE  90% 100%   | 15%
     SAW LIN NONE  30%  75%   | 15%
     */
-    create3PartFlexFX(MoodSound.GROWL.toString(), 0.30, 0.5,
-        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 1.00, 0.8,
-        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.90, 1.0,
-        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 0.30, 0.75, 0.60, 0.15);
+    create3PartFlexFX(MoodSound.GROWL.toString(), 30, 50,
+        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 80,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 100,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 30, 75, 60, 15);
 
     // *** SIMPLE UI BLOCKS ***
 
@@ -850,10 +850,10 @@ let choice = 6;
 basic.showNumber(choice + 1);
 music.setBuiltInSpeakerEnabled(false);
 
-flexFX.create3PartFlexFX("TEST", 0.5, 0.5,
-    Wave.SINE, Attack.SLOW, Effect.NONE, 2, 1.0,
-    Wave.SINE, Attack.SLOW, Effect.NONE, 1.00, 1.0,
-    Wave.SINE, Attack.SLOW, Effect.NONE, 2, 0.5, 0.33, 0.33);
+flexFX.create3PartFlexFX("TEST", 50, 50,
+    Wave.SINE, Attack.SLOW, Effect.NONE, 200, 100,
+    Wave.SINE, Attack.SLOW, Effect.NONE, 100, 100,
+    Wave.SINE, Attack.SLOW, Effect.NONE, 150, 50, 33, 33);
 pause(500);
 flexFX.performFlexFX("TEST", 800, 250, 1000)
 let all = 8;

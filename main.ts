@@ -316,6 +316,10 @@ namespace flexFX {
     Perform a custom FlexFX 
      */
     //% block="perform FlexFX $id at pitch $pitch with strength $vol for $ms ms"
+    //% id.defl="DOO"
+    //% pitch.min=50 pitch.max=2000 pitch.defl=250
+    //% vol.min=0 vol.max=255 vol.defl=180
+    //% ms.min=0 ms.max=60000 ms.defl=750
     //% inlineInputMode=inline
     //% advanced=true
     //% weight=150

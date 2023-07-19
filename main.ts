@@ -333,7 +333,7 @@ namespace flexFX {
     /**
     Create a simple custom FlexFX 
      */
-    //% block="create simple FlexFX: $id using wave-shape $wave      with attack $attack       and effect $effect|  pitch% profile goes from $startPitchPercent                        to $endPitchPercent|volume% profile goes from $startVolPercent                        to $endVolPercent"
+    //% block="create simple FlexFX: $id using wave-shape $wave      with attack $attack       and effect $effect|  pitch profile goes from $startPitchPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $endVolPercent"
     //% inlineInputMode=external
     //% id.defl="simple"
     //% startPitchPercent.min=25 startPitchPercent.max=400 startPitchPercent.defl=100
@@ -358,7 +358,7 @@ namespace flexFX {
     /**
     Create a more complex two-part custom FlexFX 
      */
-    //% block="create 2-part FlexFX: $id| first using wave-shape $waveA            with attack $attackA             and effect $effectA|  then using wave-shape $waveB            with attack $attackB             and effect $effectB|  pitch% profile goes from $startPitchPercent                        to $midPitchPercent                        to $endPitchPercent|volume% profile goes from $startVolPercent                        to $midVolPercent                        to $endVolPercent|duration% used for 1st part: $timePercentA"
+    //% block="create 2-part FlexFX: $id| first using wave-shape $waveA            with attack $attackA             and effect $effectA|  then using wave-shape $waveB            with attack $attackB             and effect $effectB|  pitch profile goes from $startPitchPercent                       to $midPitchPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $midVolPercent                       to $endVolPercent|duration used for 1st part: $timePercentA"
     //% inlineInputMode=external
     //% id.defl="2-part"
     //% startPitchPercent.min=10 startPitchPercent.max=400 startPitchPercent.defl=100
@@ -389,7 +389,7 @@ namespace flexFX {
     /**
     Create a really complex three-part custom FlexFX 
      */
-    //% block="create 3-part FlexFX: $id|  first using wave-shape $waveA             with attack $attackA              and effect $effectA|   then using wave-shape $waveB             with attack $attackB              and effect $effectB|lastly using wave-shape $waveC             with attack $attackC              and effect $effectC|  pitch% profile goes from $startPitchPercent                        to $pitchABPercent                        to $pitchBCPercent                        to $endPitchPercent|volume% profile goes from $startVolPercent                        to $volABPercent                        to $volBCPercent                        to $endVolPercent|duration% used for 1st part:$timePercentA|                    2nd part: $timePercentB"
+    //% block="create 3-part FlexFX: $id|  first using wave-shape $waveA             with attack $attackA              and effect $effectA|   then using wave-shape $waveB             with attack $attackB              and effect $effectB|lastly using wave-shape $waveC             with attack $attackC              and effect $effectC|  pitch profile goes from $startPitchPercent                       to $pitchABPercent                       to $pitchBCPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $volABPercent                       to $volBCPercent                       to $endVolPercent|duration used for 1st part:$timePercentA|                   2nd part: $timePercentB"
     //% inlineInputMode=external
     //% id.defl="3-part"
     //% startPitchPercent.min=10 startPitchPercent.max=400 startPitchPercent.defl=100
@@ -427,7 +427,7 @@ namespace flexFX {
     /**
     Create a FlexFx with two parts separated by a silence.
     */
-    //% block="create double FlexFX: $id|1st part using wave-shape $waveA               with attack $attackA                and effect $effectA|  pitch% profile goes from $startPitchAPercent                        to $endPitchAPercent|volume% profile goes from $startVolAPercent                        to $endVolAPercent|duration% used for 1st part:$timePercentA|duration% used for silence:  $timeGapPercent|2nd part using wave-shape $waveB               with attack $attackB                and effect $effectB|  pitch% profile goes from $startPitchBPercent                        to $endPitchBPercent|volume% profile goes from $startVolBPercent                        to $endVolBPercent"
+    //% block="create double FlexFX: $id|1st part using wave-shape $waveA               with attack $attackA                and effect $effectA|  pitch profile goes from $startPitchAPercent                       to $endPitchAPercent|volume profile goes from $startVolAPercent                       to $endVolAPercent|duration used for 1st part:$timePercentA|duration used for silence:  $timeGapPercent|2nd part using wave-shape $waveB               with attack $attackB                and effect $effectB|  pitch profile goes from $startPitchBPercent                       to $endPitchBPercent|volume profile goes from $startVolBPercent                       to $endVolBPercent"
     //% inlineInputMode=external
     //% id.defl="double"
     //% startPitchAPercent.min=10 startPitchAPercent.max=400 startPitchAPercent.defl=100

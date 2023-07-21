@@ -5,9 +5,9 @@
         "core": "*"
     },
     "files": [
-        "main.blocks",
-        "main.ts",
-        "README.md"
+        "flexFX.ts",
+        "README.md",
+        "_locales/en-GB/README.md"
     ],
     "testFiles": [
         "test.ts"

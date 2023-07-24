@@ -29,8 +29,43 @@ flexFX.whistle(30,200,12000);
 The basic idea is that a FlexFX is built from one, two or three **parts**.
 Each part is a sound-expression that takes a particular **style** of sound and varies its **[pitch,volume]** 
 parameters from a start-point to an end-point, over some period of time. Note that each part can use a different 
-style of sound, specified by three parameters: its **wave**, **attack** and a possible **effect**.
+style of sound, specified by three parameters: its **wave-shape**, **attack** and a possible **effect**.
 
+### Style: Wave-shape
+The wave-shape sets the basic quality: the spikier the wave, the harsher the sound. There are five shapes available:
+
+**Pure** selects a Sine-wave -a smooth, clean shape giving a smooth, clean tone.
+
+**Buzzy** selects a Square-wave containing harmonics, partial tones that are multiples (in this case 3,5,7...) of the main frequency). This gives a square wave a richer and buzzier sound.
+
+**Bright** select a Triangular-wave containing the same odd harmonics as a square wave, but with the higher ones tapering off. It sounds clear and bright.
+
+**Harsh** selects a Sawtooth-wave which is the richest in terms of harmonics, making it sound even harsher than a square wave,
+
+**Noisy** selects a randomised wave-shape that takes harshness to the extreme: it does't really have much of a pitch left at all!
+
+### Style: Attack
+The attack chooses how the pitch and volume move from the start-point to the end-point of the FlexFX part.
+
+**Slow** selects a simple straight-line path, changing evenly over time.
+
+**Medium** follows a curved path, changing more quickly to start with, then gradually slowing down.
+
+**Fast** gives the most extreme attack, moving very rapidly away from the start-point towards the end-point. 
+
+### Style: Effect
+There are three special-effects that can optionally be added to the sound.
+**Vibrato** wobbles the pitch up and down as it progresses.
+
+**Tremolo** flutters the volume throughout.
+
+**Warble** is a rather more extreme version of Vibrato.
+
+**None** avoids these effects,
+
+There is currently no control of how rapidly or deeply these effects are applied.
+
+### Profiles
 A FlexFX stitches-together its parts, so the end-point of one part forms the start-point of the next part.
 This means that its pitch will vary smoothly through the parts, as will the volume. 
 We call these sets of fixed points the **pitch-profile** and the **volume-profile**.
@@ -39,14 +74,6 @@ As a FlexFX is a *tuneable* object, all of its parameters are given as **percent
 So it might start at 75% of the specified pitch (a fifth below), rise to 125% (a third above) before settling on 100%.
 Similarly, it may start quietly (at 50% volume), then grow to a maximum (100%) before fading away to silence (0%).
 Percentages also say how the total duration should be split between the different parts. 
-
-### parts
-
-### Wave
-
-### Attack
-
-### Effect
 
 ## Creating Custom Sounds
 Under the three-dot **... more** category are some tools for creating and performing your own FlexFX sounds.

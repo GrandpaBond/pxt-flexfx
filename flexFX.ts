@@ -45,12 +45,12 @@ in our three-part FlexFX, to "tune" its pitch and volume as we require.
 enum Wave {
     //%block="Pure"
     SINE = WaveShape.Sine,
-    //%block="Harsh"
-    SAWTOOTH = WaveShape.Sawtooth,
-    //%block="Mellow"
-    TRIANGLE = WaveShape.Triangle,
     //%block="Buzzy"
     SQUARE = WaveShape.Square,
+    //%block="Bright"
+    TRIANGLE = WaveShape.Triangle,
+    //%block="Harsh"
+    SAWTOOTH = WaveShape.Sawtooth,
     //%block="Noisy"
     NOISE = WaveShape.Noise,
 }

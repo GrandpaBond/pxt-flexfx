@@ -3,27 +3,6 @@ The ``|music:Music|`` category has a ``||music:micro:bit(V2)||`` section with bl
 These let you build some amazing sounds, but sometimes you need something more complex.
 ``|flexFX:FlexFX|`` sounds are *re-usable* objects that can stitch together up to three sound-expressions.
 They use **play-settings**, which means you can play them at different pitch, volume, or duration.
-## Built-in Sounds
-### Simple Sounds
-These are FlexFX sounds that can be played very simply using the **emit** block:
-```block
-flexFX.emit(2)
-```
-Expanding this block, you can specify the play-settings to be used (with duration in ms):
-```block
-flexFX.emit(5,400,100,5000);
-```
-### Behaviours
-Currently the built-in sounds are mostly expressive humanoid sounds, so there is a set of **behaviour** blocks
- that perform several repetitions of a FlexFX sound, with their play-settings slightly randomised to give 
- a more natural effect. The results will change with every performance.
-```block
-flexFX.giggle();
-```
-These blocks can also be expanded to control the number of repeats, the volume, and the overall duration (in ms). 
-```block
-flexFX.whistle(30,200,12000);
-```
 
 ## Anatomy of a FlexFX
 The basic idea is that a FlexFX is built from one, two or three **parts**.

@@ -161,14 +161,20 @@ namespace flexFX {
             return expression.substr(0, offset) + digits + expression.substr(offset + digits.length);
         }
 
-
-
         protected assemble(startFreq: string, startVol: string, endFreq: string, endVol: string, ms: string,
             wave: string, from13: string, from22: string, from30: string): string {
             return wave + startVol + startFreq + ms + from13 + endFreq + from22 + endVol + from30;
         }
 
-
+        protected goodFreqRatio(freq: number): number{
+            return Math.min(Math.max(freq,0),2000);
+        }
+        protected goodVolRatio(vol: number): number {
+            return Math.min(Math.max(vol,0),100);
+        }
+        protected goodTimeRatio(time: number, timeLeft: number): number {
+            return Math.min(Math.max(time, 0), timeLeft);
+        }
         // methods...  
         // Sets up Part A:  (Point0)--(PartA)--(Point1)...
         // This implicitly sets the start values for any Part B that follows
@@ -263,11 +269,11 @@ namespace flexFX {
                 this.waveA, this.from13A, this.from22A, this.from30A);
             if (this.playPartB) {   // adjust PartB frequencies, volumes and duration 
                 this.partB.src = this.assemble(f1, v1, f2, v2, ms2,
-                    this.waveB, this.from13B, this.from22B, this.from30B);
+                this.waveB, this.from13B, this.from22B, this.from30B);
             }
             if (this.playPartC) {   // adjust PartC frequencies, volumes and duration
                 this.partC.src = this.assemble(f2, v2, f3, v3, ms3,
-                    this.waveC, this.from13C, this.from22C, this.from30C);
+                this.waveC, this.from13C, this.from22C, this.from30C);
             }
 
             // now for the actual performance...

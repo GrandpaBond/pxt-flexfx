@@ -1,7 +1,7 @@
 // *********** test codes **********
 
 music.setBuiltInSpeakerEnabled(false);
-// create and perform a simple flexFX
+/*// create and perform a simple flexFX
 flexFX.createFlexFX("TEST-SIMPLE", 50, 50,
     Wave.SINE, Attack.SLOW, Effect.NONE, 100, 100);
 flexFX.performFlexFX("TEST-SIMPLE", 800, 250, 1000)
@@ -28,4 +28,27 @@ flexFX.createDoubleFlexFX("TEST-DOUBLE", 95, 50,
     70, 100,
     Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 50, 45, 10);
 flexFX.performFlexFX("TEST-DOUBLE", 800, 250, 1000)
+pause(500);
+*/
+// create and perform a Violin 3-part flexFX
+//flexFX.create3PartFlexFX("TEST-MUSIC", 10, 100,
+//    Wave.NOISE, Attack.SLOW, Effect.NONE, 10, 100,
+//    Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 100,
+//    Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 50, 5, 5);
+// create and perform a simple flexFX
+
+flexFX.create3PartFlexFX("TEST-MUSIC", 1, 100,
+    Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 75,
+    Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 75,
+    Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 10, 100, 0, 0);
+
+flexFX.performFlexFX("TEST-MUSIC", Note.C5, 250, 500)
+flexFX.performFlexFX("TEST-MUSIC", Note.B4, 250, 500)
+flexFX.performFlexFX("TEST-MUSIC", Note.A4, 250, 500)
+flexFX.performFlexFX("TEST-MUSIC", Note.G4, 250, 500)
+flexFX.performFlexFX("TEST-MUSIC", Note.F4, 250, 500)
+flexFX.performFlexFX("TEST-MUSIC", Note.E4, 250, 500)
+flexFX.performFlexFX("TEST-MUSIC", Note.D4, 250, 500)
+flexFX.performFlexFX("TEST-MUSIC", Note.C4, 250, 1000)
+
 pause(500);

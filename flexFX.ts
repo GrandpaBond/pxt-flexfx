@@ -185,7 +185,7 @@ namespace flexFX {
             this.volRatio1 = this.goodVolRatio(vol1);
             this.timeRatioA = this.goodTimeRatio(ms1,1.0);
             this.partA = new soundExpression.Sound;
-            this.partA.src = music.createSoundEffect(wave, 100, 101, 102, 103, 104, fx, shape);
+            this.partA.src = music.createSoundEffect(wave, 100, 101, 102, 103, 104, SoundExpressionEffect.None, InterpolationCurve.Linear);
             // dismantle reusable parts...
             this.waveA = this.partA.src[0];
             this.from13A = this.partA.src.substr(13, 5);
@@ -207,7 +207,7 @@ namespace flexFX {
             this.partB = new soundExpression.Sound;
             this.partB.src = music.createSoundEffect(wave, 200, 201, 202, 203, 204, fx, shape);
             // dismantle reusable parts...
-            this.waveB = this.partA.src[0];
+            this.waveB = this.partB.src[0];
             this.from13B = this.partB.src.substr(13, 5);
             this.from22B = this.partB.src.substr(22, 4);
             this.from30B = this.partB.src.substr(30, 42);
@@ -231,7 +231,7 @@ namespace flexFX {
             this.partC = new soundExpression.Sound;
             this.partC.src = music.createSoundEffect(wave, 300, 301, 302, 303, 304, fx, shape);
             // dismantle reusable parts...
-            this.waveC = this.partA.src[0];
+            this.waveC = this.partC.src[0];
             this.from13C = this.partC.src.substr(13, 5);
             this.from22C = this.partC.src.substr(22, 4);
             this.from30C = this.partC.src.substr(30, 42);
@@ -300,7 +300,7 @@ namespace flexFX {
         }
     }
 
-    // ---- ADVANCED UI BLOCKS ----
+    // ---- UI BLOCKS ----
     /**
     Perform a custom FlexFX 
      */
@@ -417,6 +417,7 @@ namespace flexFX {
     /**
     Create a FlexFx with two parts separated by a silence.
     */
+    // NOTE: Since it's the second actual sound, PartC is called PartB in the UI
     //% block="create double FlexFX: $id|1st part using wave-shape $waveA               with attack $attackA                and effect $effectA|  pitch profile goes from $startPitchAPercent                       to $endPitchAPercent|volume profile goes from $startVolAPercent                       to $endVolAPercent|duration used for 1st part:$timePercentA|duration used for silence:  $timeGapPercent|2nd part using wave-shape $waveB               with attack $attackB                and effect $effectB|  pitch profile goes from $startPitchBPercent                       to $endPitchBPercent|volume profile goes from $startVolBPercent                       to $endVolBPercent"
     //% inlineInputMode=external
     //% id.defl="double"
@@ -447,8 +448,7 @@ namespace flexFX {
         }
         target.setPartA(startPitchAPercent / 100, startVolAPercent / 100, waveA, attackA, effectA, endPitchAPercent / 100, endVolAPercent / 100, timePercentA / 100);
         target.silentPartB(startPitchBPercent / 100, startVolBPercent / 100, timeGapPercent / 100);
-        target.setPartC(waveB, attackB, effectB, endPitchBPercent / 100, endVolBPercent / 100,
-            1.0 - (timePercentA - timeGapPercent) / 100);
+        target.setPartC(waveB, attackB, effectB, endPitchBPercent / 100, endVolBPercent / 100, (100 - timePercentA - timeGapPercent) / 100);
 
     }
 }

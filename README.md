@@ -107,7 +107,7 @@ flexFX.createDoubleFlexFX("TEST-DOUBLE", 95, 50,
 ```
 ## Changing a FlexFX
 Any FlexFX (including the built-in ones) can be freely modified using any of the ``|flexFX:create...|`` blocks, by specifying its **id**. 
-The basic rule is that if it exists, it gets changed; otherwwise it is created from scratch.
+The basic rule is that if it exists, it gets changed; otherwise it is created from scratch.
 (Note that the built-in FlexFX sounds have the ids "1", "2", "3", etc.)
 
 

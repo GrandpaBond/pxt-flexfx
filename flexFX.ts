@@ -167,23 +167,23 @@ namespace flexFX {
         }
 
         protected goodFreqRatio(freq: number): number{
-            return Math.min(Math.max(freq,0),2000);
+            return Math.min(Math.max(freq, 0), 2000);
         }
         protected goodVolRatio(vol: number): number {
-            return Math.min(Math.max(vol,0),100);
+            return Math.min(Math.max(vol, 0), 100);
         }
         protected goodTimeRatio(time: number, timeLeft: number): number {
             return Math.min(Math.max(time, 0), timeLeft);
         }
         // methods...  
         // Sets up Part A:  (Point0)--(PartA)--(Point1)...
-        // This implicitly sets the start values for any Part B that follows
+        // This implicitly sets the start values for any Part B that might follow
         setPartA(freq0: number, vol0: number, wave: number, shape: number, fx: number, freq1: number, vol1: number, ms1: number) {
-            this.freqRatio0 = freq0;
-            this.volRatio0 = vol0;
-            this.freqRatio1 = freq1;
-            this.volRatio1 = vol1;
-            this.timeRatioA = ms1;
+            this.freqRatio0 = this.goodFreqRatio(freq0);
+            this.volRatio0 = this.goodVolRatio(vol0);
+            this.freqRatio1 = this.goodFreqRatio(freq1);
+            this.volRatio1 = this.goodVolRatio(vol1);
+            this.timeRatioA = this.goodTimeRatio(ms1,1.0);
             this.partA = new soundExpression.Sound;
             this.partA.src = music.createSoundEffect(wave, 100, 101, 102, 103, 104, fx, shape);
             // dismantle reusable parts...
@@ -192,13 +192,18 @@ namespace flexFX {
             this.from22A = this.partA.src.substr(22, 4);
             this.from30A = this.partA.src.substr(30, 42);
             this.playPartA = true;
+        // clear other flags for parts B & C that might have been set...
+            this.playPartB = false;
+            this.playPartC = false;
+            this.usesPoint2 = false;
+            this.usesPoint3 = false;
         }
         // Adds a  Part B:  (Point0)--(PartA)--(Point1)--(PartB)--(Point2)...
-        // This also implicitly sets the start values for any Part C that follows
+        // This also implicitly sets the start values for any Part C that might follow
         setPartB(wave: number, shape: number, fx: number, freq2: number, vol2: number, ms2: number) {
-            this.freqRatio2 = freq2;
-            this.volRatio2 = vol2;
-            this.timeRatioB = ms2;
+            this.freqRatio2 = this.goodFreqRatio(freq2);
+            this.volRatio2 = this.goodVolRatio(vol2);
+            this.timeRatioB = this.goodTimeRatio(ms2, 1.0 - this.timeRatioA);
             this.partB = new soundExpression.Sound;
             this.partB.src = music.createSoundEffect(wave, 200, 201, 202, 203, 204, fx, shape);
             // dismantle reusable parts...
@@ -212,17 +217,17 @@ namespace flexFX {
         // Adds a silent Part B:  (Point0)--(PartA)--(Point1)--(silence)--(Point2)...
         // This implicitly sets start values for the Part C that follows
         silentPartB(freq2: number, vol2: number, ms2: number) {
-            this.freqRatio2 = freq2;
-            this.volRatio2 = vol2;
-            this.timeRatioB = ms2;
+            this.freqRatio2 = this.goodFreqRatio(freq2);
+            this.volRatio2 = this.goodVolRatio(vol2);
+            this.timeRatioB = this.goodTimeRatio(ms2, 1.0 - this.timeRatioA);
             this.skipPartB = true;
         }
 
         // Adds an optional part C: (Point0)--(PartA)--(Point1)--(PartB)--(Point2)--(PartC)--(Point3)
         setPartC(wave: number, shape: number, fx: number, freq3: number, vol3: number, ms3: number) {
-            this.freqRatio3 = freq3;
-            this.volRatio3 = vol3;
-            this.timeRatioC = ms3;
+            this.freqRatio3 = this.goodFreqRatio(freq3);
+            this.volRatio3 = this.goodVolRatio(vol3);
+            this.timeRatioC = this.goodTimeRatio(ms3, 1.0 - this.timeRatioA - this.timeRatioB);
             this.partC = new soundExpression.Sound;
             this.partC.src = music.createSoundEffect(wave, 300, 301, 302, 303, 304, fx, shape);
             // dismantle reusable parts...
@@ -367,7 +372,7 @@ namespace flexFX {
         }
         target.setPartA(startPitchPercent / 100, startVolPercent / 100, waveA, attackA, effectA, midPitchPercent / 100, midVolPercent / 100, timePercentA / 100);
         target.setPartB(waveB, attackB, effectB, endPitchPercent / 100, endVolPercent / 100,
-            1.0 - (timePercentA / 100));
+            (100 - timePercentA / 100));
 
     }
 
@@ -404,7 +409,7 @@ namespace flexFX {
         target.setPartA(startPitchPercent / 100, startVolPercent / 100, waveA, attackA, effectA, pitchABPercent / 100, volABPercent / 100, timePercentA / 100);
         target.setPartB(waveB, attackB, effectB, pitchBCPercent / 100, volBCPercent / 100, timePercentB / 100);
         target.setPartC(waveC, attackC, effectC, endPitchPercent / 100, endVolPercent / 100,
-            1.0 - (timePercentA - timePercentB) / 100);
+            (100 - timePercentA - timePercentB) / 100);
 
     }
 

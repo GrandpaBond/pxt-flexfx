@@ -21,7 +21,7 @@ The wave-shape sets the basic tonal quality: the spikier the wave, the harsher t
 
 ``||Harsh||`` selects a Sawtooth-wave which is the richest in terms of harmonics, making it sound even harsher than a square wave,
 
-``||Noisy||`` selects a randomised wave-shape that takes harshness to the extreme: it doesn't really have much of a pitch left at all!
+``||Noisy||`` selects a randomised wave-shape that takes harshness to the extreme: it doesn't have any real pitch left at all!
 
 ### Style: Attack
 The attack chooses how fast the pitch and volume move from the start-point to the end-point of the FlexFX part.
@@ -57,63 +57,64 @@ Percentages also say how the total duration should be split between the differen
 
 ### Performing a FlexFX 
 Each FlexFX has a unique name (its **id**), assigned when it is first created. 
-This is supplied to the block ``|flexFX:performFlexFX|``, together with your chosen play-settings.
+This is supplied to the block ``|flexFX:performFlexFX|``, together with your chosen **play-settings**.
 
-This example would play a FlexFX called **MYSOUND** quietly, based on the pitch middle-C, with the whole performance lasting 2 seconds:
+``||Pitch||`` sets the basic pitch as a numeric frequency.
+
+``||Volume||`` sets the basic volume as a number in the range 0-255.
+
+``||Duration||`` sets how long the overall performance will last in milliseconds.
+
+This example would play a FlexFX called **MYSOUND** quietly, based on a pitch around middle-C, with the whole performance lasting 2 seconds:
 ```block
 flexFX.performFlexFX("MYSOUND", 250, 50, 2000);
 ```
-## Creating Custom Sounds
-Under the three-dot ``|flexFX:... more|`` category are some tools for creating and performing your own FlexFX sounds.
 
-### Simple FlexFX
+### Creating a Simple FlexFX
 The simplest FlexFX has just one part (so is really just a tuneable version of a standard sound-expression)
 Here is an example:
 ```block
-flexFX.createFlexFX("TEST-SIMPLE", 50, 50,
-    Wave.SINE, Attack.SLOW, Effect.NONE, 100, 100);
+flexFX.createFlexFX("Ting", 100, 100,
+    Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10);
 ```
 
-### 2-Part FlexFX
+### Creating a 2-Part FlexFX
 A two-part FlexFX requires three sets of play-settings (start, middle and end).
 For example:
 ```block
-flexFX.create2PartFlexFX("TEST-2PART", 50, 50,
-    Wave.TRIANGLE, Attack.SLOW, Effect.NONE, 100, 100,
-    Wave.TRIANGLE, Attack.SLOW, Effect.NONE, 30, 50, 33);
+flexFX.create2PartFlexFX("Miaow", 70, 50,
+    Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 100, 100,
+    Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 80, 30);
 ```
 
-### 3-Part FlexFX
+### Creating a 3-Part FlexFX
 The most complex 3-part FlexFX moves between four sets of play-settings.
 For example:
 ```block
-flexFX.create3PartFlexFX("TEST-3PART", 50, 50,
+flexFX.create3PartFlexFX("SIREN", 50, 50,
     Wave.SQUARE, Attack.SLOW, Effect.NONE, 200, 100,
     Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 100,
     Wave.SQUARE, Attack.SLOW, Effect.NONE, 150, 50, 33, 33);
 ```
 
-
-### Double FlexFX
+### Creating a Double FlexFX
 For some special sounds (e.g a two-tone police siren) we need a silent gap separating two simple sound-expressions.
 This is called a **double FlexFX**. Each part has play-settings for its start-point and end-point, 
-and the second duration percentage controls the length of the silence inbetween.
+and the duration percentages controls the lengths of the first sound, and of the silence in-between.
 
 ```block
-flexFX.createDoubleFlexFX("TEST-DOUBLE", 95, 50,
+flexFX.createDoubleFlexFX("NeeNaw", 95, 80,
     Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 100,
     70, 100,
-    Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 50, 45, 10);
+    Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 80, 45, 10);
 ```
+
 ## Changing a FlexFX
-Any FlexFX (including the built-in ones) can be freely modified using any of the ``|flexFX:create...|`` blocks, by specifying its **id**. 
+Any FlexFX can be freely modified using any of the ``|flexFX:create...|`` blocks, by specifying its **id**. 
 The basic rule is that if it exists, it gets changed; otherwise it is created from scratch.
-(Note that the built-in FlexFX sounds have the ids "1", "2", "3", etc.)
-
 
 -----------------------------------------------------------------------
 -----------------------------------------------------------------------
-
 
 
 

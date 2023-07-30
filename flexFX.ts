@@ -121,7 +121,7 @@ namespace flexFX {
         // and endB===startC, so a three-part FlexFX moves through four [frequency,volume,time] points
         // Points are defined to be fixed ratios of the "performance" [frequency,volume,duration] arguments
         playPartA: boolean;
-        partA: soundExpression.Sound;
+        partA: string;
         waveA: string;
         from13A: string;
         from22A: string;
@@ -130,7 +130,7 @@ namespace flexFX {
 
         skipPartB: boolean;     // a double FlexFX has a silent gap in the middle
         playPartB: boolean;
-        partB: soundExpression.Sound;
+        partB: string;
         waveB: string;
         from13B: string;
         from22B: string;
@@ -138,7 +138,7 @@ namespace flexFX {
         timeRatioB: number;
 
         playPartC: boolean;
-        partC: soundExpression.Sound;
+        partC: string;
         waveC: string;
         from13C: string;
         from22C: string;
@@ -203,14 +203,16 @@ namespace flexFX {
             this.volRatio0 = this.goodVolRatio(vol0);
             this.freqRatio1 = this.goodFreqRatio(freq1);
             this.volRatio1 = this.goodVolRatio(vol1);
-            this.timeRatioA = this.goodTimeRatio(ms1,1.0);
-            this.partA = new soundExpression.Sound;
-            this.partA.src = music.createSoundEffect(wave, 100, 101, 102, 103, 104, SoundExpressionEffect.None, InterpolationCurve.Linear);
-            // dismantle reusable parts...
-            this.waveA = this.partA.src[0];
-            this.from13A = this.partA.src.substr(13, 5);
-            this.from22A = this.partA.src.substr(22, 4);
-            this.from30A = this.partA.src.substr(30, 42);
+            this.timeRatioA = this.goodTimeRatio(ms1,1.0); 
+            // To allow a soundExpression string to be read as a normal string
+            // we need it to form part of a temporary (throw-away) Sound object
+            let sex = new soundExpression.Sound;
+            sex.src = music.createSoundEffect(wave, 100, 101, 102, 103, 104, SoundExpressionEffect.None, InterpolationCurve.Linear);
+            // dismantle into reusable parts...
+            this.waveA = sex.src[0];
+            this.from13A = sex.src.substr(13, 5);
+            this.from22A = sex.src.substr(22, 4);
+            this.from30A = sex.src.substr(30, 42);
             this.playPartA = true;
         // clear other flags for parts B & C that might have been set...
             this.playPartB = false;
@@ -224,13 +226,13 @@ namespace flexFX {
             this.freqRatio2 = this.goodFreqRatio(freq2);
             this.volRatio2 = this.goodVolRatio(vol2);
             this.timeRatioB = this.goodTimeRatio(ms2, 1.0 - this.timeRatioA);
-            this.partB = new soundExpression.Sound;
-            this.partB.src = music.createSoundEffect(wave, 200, 201, 202, 203, 204, fx, shape);
+            let sex = new soundExpression.Sound;
+            sex.src = music.createSoundEffect(wave, 200, 201, 202, 203, 204, fx, shape);
             // dismantle reusable parts...
-            this.waveB = this.partB.src[0];
-            this.from13B = this.partB.src.substr(13, 5);
-            this.from22B = this.partB.src.substr(22, 4);
-            this.from30B = this.partB.src.substr(30, 42);
+            this.waveB = sex.src[0];
+            this.from13B = sex.src.substr(13, 5);
+            this.from22B = sex.src.substr(22, 4);
+            this.from30B = sex.src.substr(30, 42);
             this.playPartB = true;
             this.usesPoint2 = true;
         }
@@ -248,13 +250,13 @@ namespace flexFX {
             this.freqRatio3 = this.goodFreqRatio(freq3);
             this.volRatio3 = this.goodVolRatio(vol3);
             this.timeRatioC = this.goodTimeRatio(ms3, 1.0 - this.timeRatioA - this.timeRatioB);
-            this.partC = new soundExpression.Sound;
-            this.partC.src = music.createSoundEffect(wave, 300, 301, 302, 303, 304, fx, shape);
+            let sex = new soundExpression.Sound;
+            sex.src = music.createSoundEffect(wave, 300, 301, 302, 303, 304, fx, shape);
             // dismantle reusable parts...
-            this.waveC = this.partC.src[0];
-            this.from13C = this.partC.src.substr(13, 5);
-            this.from22C = this.partC.src.substr(22, 4);
-            this.from30C = this.partC.src.substr(30, 42);
+            this.waveC = sex.src[0];
+            this.from13C = sex.src.substr(13, 5);
+            this.from22C = sex.src.substr(22, 4);
+            this.from30C = sex.src.substr(30, 42);
             this.playPartC = true;
             this.usesPoint2 = true;
             this.usesPoint3 = true;
@@ -290,14 +292,14 @@ namespace flexFX {
             }
 
             // adjust PartA frequencies, volumes and duration 
-            this.partA.src = this.assemble(f0, v0, f1, v1, ms1,
+            this.partA = this.assemble(f0, v0, f1, v1, ms1,
                 this.waveA, this.from13A, this.from22A, this.from30A);
             if (this.playPartB) {   // adjust PartB frequencies, volumes and duration 
-                this.partB.src = this.assemble(f1, v1, f2, v2, ms2,
+                this.partB = this.assemble(f1, v1, f2, v2, ms2,
                 this.waveB, this.from13B, this.from22B, this.from30B);
             }
             if (this.playPartC) {   // adjust PartC frequencies, volumes and duration
-                this.partC.src = this.assemble(f2, v2, f3, v3, ms3,
+                this.partC = this.assemble(f2, v2, f3, v3, ms3,
                 this.waveC, this.from13C, this.from22C, this.from30C);
             }
 
@@ -305,17 +307,17 @@ namespace flexFX {
             playing = true;
             control.raiseEvent(FLEXFX_ACTIVITY_ID, Status.STARTING); // e.g. to synchronise opening displayed mouth
             if (this.playPartA) {
-                music.playSoundEffect(this.partA.src, SoundExpressionPlayMode.UntilDone);
+                music.playSoundEffect(this.partA, SoundExpressionPlayMode.UntilDone);
             }
             if (this.playPartB) {
-                music.playSoundEffect(this.partB.src, SoundExpressionPlayMode.UntilDone);
+                music.playSoundEffect(this.partB, SoundExpressionPlayMode.UntilDone);
             } else {
                 if (this.skipPartB) {   //   ...a silent gap in the middle...
                     basic.pause(ms * this.timeRatioB);
                 }
             }
             if (this.playPartC) {
-                music.playSoundEffect(this.partC.src, SoundExpressionPlayMode.UntilDone);
+                music.playSoundEffect(this.partC, SoundExpressionPlayMode.UntilDone);
             }
             control.raiseEvent(FLEXFX_ACTIVITY_ID, Status.FINISHED); // e.g. to synchronise closing displayed mouth
             playing = false;

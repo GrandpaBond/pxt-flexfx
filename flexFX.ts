@@ -76,7 +76,7 @@ enum Effect {
 }
 /**
  * Tools for creating composite sound-effects (of class FlexFX) that can be performed with
- * dynamically-specified pitch, volume and duration. Provides a built-in set of samples.
+ * dynamically-specified pitch, volume and duration.
  */
 //% color=#70e030 weight=100 icon="\uf0a1 block="FlexFX"
 namespace flexFX {
@@ -105,6 +105,7 @@ namespace flexFX {
     // play-list ensures proper asynch sequencing
     let playList: Play[] = [];
     let playing = false;
+    export function isPlaying(): boolean { return playing; } // accessor
     let active = false;
     export function isActive(): boolean { return active; } // accessor
 
@@ -301,6 +302,7 @@ namespace flexFX {
             }
 
             // now for the actual performance...
+            playing = true;
             control.raiseEvent(FLEXFX_ACTIVITY_ID, Status.STARTING); // e.g. to synchronise opening displayed mouth
             if (this.playPartA) {
                 music.playSoundEffect(this.partA.src, SoundExpressionPlayMode.UntilDone);
@@ -316,6 +318,7 @@ namespace flexFX {
                 music.playSoundEffect(this.partC.src, SoundExpressionPlayMode.UntilDone);
             }
             control.raiseEvent(FLEXFX_ACTIVITY_ID, Status.FINISHED); // e.g. to synchronise closing displayed mouth
+            playing = false;
         }
     }
 
@@ -342,16 +345,23 @@ namespace flexFX {
                     while (playList.length > 0){ // play everything on the playList
                         let play = playList.shift();
                         let theFlexFX: FlexFX = flexFXList.find(i => i.id === play.flexFXid);
-                        theFlexFX.performUsing(play.pitch, play.vol,play. ms);
+                        theFlexFX.performUsing(play.pitch, play.vol, play.ms);
                     }
                     active = false;
                     control.raiseEvent(FLEXFX_ACTIVITY_ID, Status.ALLPLAYED);
                 });
             }
-            if (waiting) { // ours was the lastest Play, so just await completion of player.
+            if (waiting) { // ours was the lastest Play, so simply await completion of player.
                 control.waitForEvent(FLEXFX_ACTIVITY_ID, Status.ALLPLAYED);
             }
         }
+    }
+    /**
+     * await completion of everything on the Play-list
+     */
+    //% block
+    export function finish(){
+        control.waitForEvent(FLEXFX_ACTIVITY_ID, Status.ALLPLAYED);
     }
 
     /**

@@ -55,13 +55,15 @@ flexFX.performFlexFX("NeeNaw", 780, 128, 1000, false);
 flexFX.performFlexFX("NeeNaw", 780, 64, 1000, false);
 flexFX.performFlexFX("NeeNaw", 780, 32, 1000, false);
 flexFX.performFlexFX("NeeNaw", 780, 16, 1000, false);
-while(flexFX.isActive) {
+/*
+while(flexFX.isActive) {  // flash the blue light (sort of)
     basic.showIcon(IconNames.SmallDiamond);
     basic.pause(400);
     basic.showIcon(IconNames.Diamond);
     basic.pause(400);
 }
-
+*/
+flexFX.finish(); // make sure everything has finished playing
 pause(1000);
 
 // create and perform a Violin 3-part flexFX
@@ -86,6 +88,14 @@ flexFX.performFlexFX("Violin", Note.D5, 250, 150, false);
 flexFX.performFlexFX("Violin", Note.C5, 250, 300, false);
 flexFX.performFlexFX("Violin", Note.A4, 250, 900, false);
 
+while (flexFX.isActive) {  // jiggle a note around
+    images.iconImage(IconNames.QuarterNote).showImage(-1, 150);
+    images.iconImage(IconNames.QuarterNote).showImage(0, 150);
+    images.iconImage(IconNames.QuarterNote).showImage(1, 150);
+    images.iconImage(IconNames.QuarterNote).showImage(0, 150);
+}
+
+flexFX.finish(); // make sure everything has finished playing
 pause(1000);
 
 // create and perform a flowing 3-part flexFX

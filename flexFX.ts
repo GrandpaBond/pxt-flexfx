@@ -84,10 +84,29 @@ namespace flexFX {
     const FLEXFX_ACTIVITY_ID = 1234 // TODO: Check this is a permissable value!
     enum Status {
         STARTING = 1,
-        FINISHED = 2
+        FINISHED = 2,
+        ALLPLAYED = 3,
     }
-    // performance counter to ensure proper sequencing
-    let turn = 0;
+    class Play {
+        // properties
+        flexFXid: string
+        pitch: number;
+        vol: number;
+        ms: number;
+
+        constructor(id: string, pitch: number, vol: number, ms: number){
+            this.flexFXid = id;
+            this.pitch = pitch;
+            this.vol = vol;
+            this.ms = ms;
+        }
+    }
+
+    // play-list ensures proper asynch sequencing
+    let playList: Play[] = [];
+    let playing = false;
+    let active = false;
+    export function isActive(): boolean { return active; } // accessor
 
     // ---- Central array of currently defined FlexFX objects ----
     let flexFXList: FlexFX[] = [];
@@ -303,20 +322,35 @@ namespace flexFX {
     // ---- UI BLOCKS ----
     /**
     Perform a custom FlexFX 
-     */
-    //% block="perform FlexFX $id at pitch $pitch with strength $vol for $ms ms"
+    */
+    //% block="perform FlexFX $id at pitch $pitch with strength $vol for $ms m, wait=%waiting"
     //% help=pxt-flexfx/performflexfx
     //% id.defl="DOO"
     //% pitch.min=50 pitch.max=2000 pitch.defl=250
     //% vol.min=0 vol.max=255 vol.defl=180
     //% ms.min=0 ms.max=10000 ms.defl=750
+    //% waiting.defl=true
     //% inlineInputMode=inline
-    //% advanced=true
     //% weight=150
-    export function performFlexFX(id: string, pitch: number, vol: number, ms: number) {
+    export function performFlexFX(id: string, pitch: number, vol: number, ms: number, waiting: boolean) {
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
-            target.performUsing(pitch, vol, ms);
+            playList.push(new Play(id, pitch, vol, ms));  // add our Play to playList
+            if (!active){ // need to kick off player if not already running
+                control.inBackground(() => {
+                    active = true;
+                    while (playList.length > 0){ // play everything on the playList
+                        let play = playList.shift();
+                        let theFlexFX: FlexFX = flexFXList.find(i => i.id === play.flexFXid);
+                        theFlexFX.performUsing(play.pitch, play.vol,play. ms);
+                    }
+                    active = false;
+                    control.raiseEvent(FLEXFX_ACTIVITY_ID, Status.ALLPLAYED);
+                });
+            }
+            if (waiting) { // ours was the lastest Play, so just await completion of player.
+                control.waitForEvent(FLEXFX_ACTIVITY_ID, Status.ALLPLAYED);
+            }
         }
     }
 

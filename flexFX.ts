@@ -86,8 +86,8 @@ namespace flexFX {
         STARTING = 1,
         FINISHED = 2
     }
-    // semaphore to prevent possible interference between concurrent performances
-    let quiet = true;
+    // performance counter to ensure proper sequencing
+    let turn = 0;
 
     // ---- Central array of currently defined FlexFX objects ----
     let flexFXList: FlexFX[] = [];

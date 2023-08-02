@@ -9,31 +9,9 @@ To achieve this we have defined a flexible sound-effect class called a "FlexFX".
 It can involve up to three separate sound parts that will then be played consecutively
 to give a smoothly varying result when spliced together.
 
-Internally, sound effects are specified by a string of 72 decimal digits, broken into several 
-fields (many of which appear to be either obsolete or redundant). 
-
-Notable SoundExpression string fields are laid out as follows:
-        [0]:        Wave            (1 digit)
-        [1-3]:      Start Volume    (4 digits)
-        [5-8]:      Start Frequency (4 digits)
-        [9-12]:     Duration        (4 digits)
-        [13-17]:    Interpolation   (5 digits)
-        [18-21]:    End Frequency   (4 digits)
-        [22-25]:    --other stuff-- (4 digits)
-        [26-29]:    End Volume      (4 digits)
-        [30-71]:    --other stuff-- (42 digits)
-        
-On each invocation the core function createSoundEffect() takes eight arguments and works quite hard 
-to encode them into their respective fields. 
-
-We would like to be able to repeatedly vary the overall pitch or volume of any given FlexFX.
-Conventionally, that would require reconstructing all three sound effects from scratch for each 
-performance (or saving a wide range of 3*72-character strings we had prepared earlier).
-Instead we choose to selectively overwrite certain 4-digit fields within the three soundExpressions 
-in our three-part FlexFX, to "tune" its pitch and volume as we require.
-
-*** It is acknowledged that this is a DANGEROUS PRACTICE that relies on the internal
-*** representation not changing, but it is believed that the performance gains justify it!
+The core function to playSoundEffect() offers a playInBackground option. Unfortunately, this 
+does not allow subsequent playSoundEffect() to queue sounds up. The FlexFX class therefore
+implements its own play-list to achieve this.
 
 */
 /* NOTE:    The built-in enums for sound effect parameters are hardly beginner-friendly!
@@ -47,7 +25,7 @@ enum Wave {
     SINE = WaveShape.Sine,
     //%block="Buzzy"
     SQUARE = WaveShape.Square,
-    //%block="Bright"
+    //%block="Bright"music.builtinPlayableSoundEffect(soundExpression.giggle)
     TRIANGLE = WaveShape.Triangle,
     //%block="Harsh"
     SAWTOOTH = WaveShape.Sawtooth,
@@ -75,8 +53,8 @@ enum Effect {
     WARBLE = SoundExpressionEffect.Warble
 }
 /**
- * Tools for creating composite sound-effects (of class FlexFX) that can be performed with
- * dynamically-specified pitch, volume and duration.
+ * Tools for creating composite sound-effects of class FlexFX that can be performed 
+ * (either directly or queued-up) with dynamically-specified pitch, volume and duration.
  */
 //% color=#70e030 weight=100 icon="\uf0a1 block="FlexFX"
 namespace flexFX {
@@ -88,22 +66,14 @@ namespace flexFX {
         ALLPLAYED = 3,
     }
     class Play {
-        // properties
-        flexFXid: string
-        pitch: number;
-        vol: number;
-        ms: number;
-
-        constructor(id: string, pitch: number, vol: number, ms: number){
-            this.flexFXid = id;
-            this.pitch = pitch;
-            this.vol = vol;
-            this.ms = ms;
+        parts: String[];
+        constructor() {
+            this.parts = [];
         }
     }
 
-    // play-list ensures proper asynch sequencing
-    let playList: Play[] = [];
+    // Use a play-list to ensure proper asynch sequencing
+    let playList: Play[] = []; // an array of arrays of 1,2 or three strings
     let playing = false;
     export function isPlaying(): boolean { return playing; } // accessor
     let active = false;
@@ -121,28 +91,25 @@ namespace flexFX {
         // and endB===startC, so a three-part FlexFX moves through four [frequency,volume,time] points
         // Points are defined to be fixed ratios of the "performance" [frequency,volume,duration] arguments
         playPartA: boolean;
-        partA: string;
-        waveA: string;
-        from13A: string;
-        from22A: string;
-        from30A: string;
+        //partA: string;
+        waveA: number;
+        attackA: number;
+        effectA: number;
         timeRatioA: number;
 
         skipPartB: boolean;     // a double FlexFX has a silent gap in the middle
         playPartB: boolean;
-        partB: string;
-        waveB: string;
-        from13B: string;
-        from22B: string;
-        from30B: string;
+        //partB: string;
+        waveB: number;
+        attackB: number;
+        effectB: number;
         timeRatioB: number;
 
         playPartC: boolean;
-        partC: string;
-        waveC: string;
-        from13C: string;
-        from22C: string;
-        from30C: string;
+        //partC: string;
+        waveC: number;
+        attackC: number;
+        effectC: number;
         timeRatioC: number;  // (always set to 1.0 - timeRatioA - timeRatioB)
 
         // Point 0
@@ -171,21 +138,6 @@ namespace flexFX {
         }
 
         // internal tools...
-        protected formatNumber(num: number, length: number) {
-            let result = Math.constrain(num | 0, 0, Math.pow(10, length) - 1) + "";
-            while (result.length < length) result = "0" + result;
-            return result;
-        }
-
-        protected insert(expression: string, offset: number, digits: string): string {
-            return expression.substr(0, offset) + digits + expression.substr(offset + digits.length);
-        }
-
-        protected assemble(startFreq: string, startVol: string, endFreq: string, endVol: string, ms: string,
-            wave: string, from13: string, from22: string, from30: string): string {
-            return wave + startVol + startFreq + ms + from13 + endFreq + from22 + endVol + from30;
-        }
-
         protected goodFreqRatio(freq: number): number{
             return Math.min(Math.max(freq, 0), 2000);
         }
@@ -198,21 +150,21 @@ namespace flexFX {
         // methods...  
         // Sets up Part A:  (Point0)--(PartA)--(Point1)...
         // This implicitly sets the start values for any Part B that might follow
-        setPartA(freq0: number, vol0: number, wave: number, shape: number, fx: number, freq1: number, vol1: number, ms1: number) {
+        setPartA(freq0: number, vol0: number, wave: Wave, attack: number, effect: number, freq1: number, vol1: number, ms1: number) {
             this.freqRatio0 = this.goodFreqRatio(freq0);
             this.volRatio0 = this.goodVolRatio(vol0);
             this.freqRatio1 = this.goodFreqRatio(freq1);
             this.volRatio1 = this.goodVolRatio(vol1);
-            this.timeRatioA = this.goodTimeRatio(ms1,1.0); 
+            this.timeRatioA = this.goodTimeRatio(ms1,1.0);
+            this.waveA = wave;
+            this.attackA = attack;
+            this.effectA = effect;
+
             // To allow a soundExpression string to be read as a normal string
             // we need it to form part of a temporary (throw-away) Sound object
-            let sex = new soundExpression.Sound;
-            sex.src = music.createSoundEffect(wave, 100, 101, 102, 103, 104, SoundExpressionEffect.None, InterpolationCurve.Linear);
-            // dismantle into reusable parts...
-            this.waveA = sex.src[0];
-            this.from13A = sex.src.substr(13, 5);
-            this.from22A = sex.src.substr(22, 4);
-            this.from30A = sex.src.substr(30, 42);
+            // let sex = new soundExpression.Sound;
+
+            
             this.playPartA = true;
         // clear other flags for parts B & C that might have been set...
             this.playPartB = false;
@@ -222,17 +174,13 @@ namespace flexFX {
         }
         // Adds a  Part B:  (Point0)--(PartA)--(Point1)--(PartB)--(Point2)...
         // This also implicitly sets the start values for any Part C that might follow
-        setPartB(wave: number, shape: number, fx: number, freq2: number, vol2: number, ms2: number) {
+        setPartB(wave: number, attack: number, effect: number, freq2: number, vol2: number, ms2: number) {
             this.freqRatio2 = this.goodFreqRatio(freq2);
             this.volRatio2 = this.goodVolRatio(vol2);
             this.timeRatioB = this.goodTimeRatio(ms2, 1.0 - this.timeRatioA);
-            let sex = new soundExpression.Sound;
-            sex.src = music.createSoundEffect(wave, 200, 201, 202, 203, 204, fx, shape);
-            // dismantle reusable parts...
-            this.waveB = sex.src[0];
-            this.from13B = sex.src.substr(13, 5);
-            this.from22B = sex.src.substr(22, 4);
-            this.from30B = sex.src.substr(30, 42);
+            this.waveB = wave;
+            this.attackB = attack;
+            this.effectB = effect;
             this.playPartB = true;
             this.usesPoint2 = true;
         }
@@ -246,17 +194,13 @@ namespace flexFX {
         }
 
         // Adds an optional part C: (Point0)--(PartA)--(Point1)--(PartB)--(Point2)--(PartC)--(Point3)
-        setPartC(wave: number, shape: number, fx: number, freq3: number, vol3: number, ms3: number) {
+        setPartC(wave: number, attack: number, effect: number, freq3: number, vol3: number, ms3: number) {
             this.freqRatio3 = this.goodFreqRatio(freq3);
             this.volRatio3 = this.goodVolRatio(vol3);
             this.timeRatioC = this.goodTimeRatio(ms3, 1.0 - this.timeRatioA - this.timeRatioB);
-            let sex = new soundExpression.Sound;
-            sex.src = music.createSoundEffect(wave, 300, 301, 302, 303, 304, fx, shape);
-            // dismantle reusable parts...
-            this.waveC = sex.src[0];
-            this.from13C = sex.src.substr(13, 5);
-            this.from22C = sex.src.substr(22, 4);
-            this.from30C = sex.src.substr(30, 42);
+            this.waveC = wave;
+            this.attackC = attack;
+            this.effectC = effect;
             this.playPartC = true;
             this.usesPoint2 = true;
             this.usesPoint3 = true;
@@ -265,33 +209,33 @@ namespace flexFX {
         performUsing(freq: number, vol: number, ms: number) {
             let loud = vol * 4 // map from [0...255] into range [0...1023]
             // Point 0
-            let f0 = this.formatNumber(freq * this.freqRatio0, 4);
-            let v0 = this.formatNumber(loud * this.volRatio0, 4);
+            let f0 = freq * this.freqRatio0;
+            let v0 = loud * this.volRatio0;
             // Point 1
-            let f1 = this.formatNumber(freq * this.freqRatio1, 4);
-            let v1 = this.formatNumber(loud * this.volRatio1, 4);
-            let ms1 = this.formatNumber(ms * this.timeRatioA, 4);
+            let f1 = freq * this.freqRatio1;
+            let v1 = loud * this.volRatio1;
+            let ms1 = ms * this.timeRatioA;
             // declarations required, even if unused...
-            let f2 = "";
-            let v2 = "";
-            let ms2 = "";
-            let f3 = "";
-            let v3 = "";
-            let ms3 = "";
+            let f2 = 0;
+            let v2 = 0;
+            let ms2 = 0;
+            let f3 = 0;
+            let v3 = 0;
+            let ms3 = 0;
             // Point 2
             if (this.usesPoint2) {
-                f2 = this.formatNumber(freq * this.freqRatio2, 4);
-                v2 = this.formatNumber(loud * this.volRatio2, 4);
-                ms2 = this.formatNumber(ms * this.timeRatioB, 4);
+                f2 = freq * this.freqRatio2;
+                v2 = loud * this.volRatio2;
+                ms2 = ms * this.timeRatioB;
             }
             // Point 3
             if (this.usesPoint3) {
-                f3 = this.formatNumber(freq * this.freqRatio3, 4);
-                v3 = this.formatNumber(loud * this.volRatio3, 4);
-                ms3 = this.formatNumber(ms * this.timeRatioC, 4);
+                f3 = freq * this.freqRatio3;
+                v3 = loud * this.volRatio3;
+                ms3 = ms * this.timeRatioC;
             }
 
-            // adjust PartA frequencies, volumes and duration 
+            /* adjust PartA frequencies, volumes and duration 
             this.partA = this.assemble(f0, v0, f1, v1, ms1,
                 this.waveA, this.from13A, this.from22A, this.from30A);
             if (this.playPartB) {   // adjust PartB frequencies, volumes and duration 
@@ -302,25 +246,24 @@ namespace flexFX {
                 this.partC = this.assemble(f2, v2, f3, v3, ms3,
                 this.waveC, this.from13C, this.from22C, this.from30C);
             }
-
-            // now for the actual performance...
-            playing = true;
-            control.raiseEvent(FLEXFX_ACTIVITY_ID, Status.STARTING); // e.g. to synchronise opening displayed mouth
+            */
+            // now create the actual performance...
+            let play = new Play;
             if (this.playPartA) {
-                music.playSoundEffect(this.partA, SoundExpressionPlayMode.UntilDone);
+                play.parts.push(music.createSoundEffect(this.waveA,f0,f1,v0,v1,ms1,this.effectA, this.attackA));
             }
             if (this.playPartB) {
-                music.playSoundEffect(this.partB, SoundExpressionPlayMode.UntilDone);
+                play.parts.push(music.createSoundEffect(this.waveB,f1,f2,v1,v2,ms2,this.effectB, this.attackB));
             } else {
-                if (this.skipPartB) {   //   ...a silent gap in the middle...
-                    basic.pause(ms * this.timeRatioB);
+                if (this.skipPartB) {   //   ...instruct a silent gap in the middle...
+                play.parts.push("pause:"+ convertToText(Math.floor(ms * this.timeRatioB)));
                 }
             }
             if (this.playPartC) {
-                music.playSoundEffect(this.partC, SoundExpressionPlayMode.UntilDone);
+                play.parts.push(music.createSoundEffect(this.waveC,f2,f3,v2,v3,ms3,this.effectC, this.attackC));
             }
-            control.raiseEvent(FLEXFX_ACTIVITY_ID, Status.FINISHED); // e.g. to synchronise closing displayed mouth
-            playing = false;
+            playList.push(play);
+            
         }
     }
 
@@ -340,24 +283,36 @@ namespace flexFX {
     export function performFlexFX(id: string, pitch: number, vol: number, ms: number, waiting: boolean) {
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
-            playList.push(new Play(id, pitch, vol, ms));  // add our Play to playList
+            target.performUsing(pitch, vol, ms); // add our Play to the playList
             if (!active){ // need to kick off player if not already running
                 control.inBackground(() => {
                     active = true;
+                    let play: Play[] = [];
                     while (playList.length > 0){ // play everything on the playList
-                        let play = playList.shift();
-                        let theFlexFX: FlexFX = flexFXList.find(i => i.id === play.flexFXid);
-                        theFlexFX.performUsing(play.pitch, play.vol, play.ms);
+                        play = playList.shift();
+                        let sound: string = "";
+                        while (play.parts.length > 0){
+                                sound = play.parts.shift();
+                                if (sound.substring(0,5)=="pause:") {
+                                    pause(sound.substring(6,sound.length));
+                                } else {
+                                    music.playSoundEffect(sound, SoundExpressionPlayMode.UntilDone)
+                                }
+                        }
                     }
                     active = false;
                     control.raiseEvent(FLEXFX_ACTIVITY_ID, Status.ALLPLAYED);
                 });
             }
+
+
             if (waiting) { // ours was the lastest Play, so simply await completion of player.
                 control.waitForEvent(FLEXFX_ACTIVITY_ID, Status.ALLPLAYED);
             }
         }
     }
+
+
     /**
      * await completion of everything on the Play-list
      */

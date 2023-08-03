@@ -41,10 +41,9 @@ flexFX.performFlexFX("Horn", Note.D3, 255, 2400, true);
 pause(1000);
 
 // create and perform a double flexFX
-flexFX.createDoubleFlexFX("NeeNaw", 95, 80,
-    Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 100,
-    70, 100,
-    Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 80, 45, 10);
+flexFX.createDoubleFlexFX("NeeNaw", 
+        95, 80, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 100,
+        70, 100, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 80, 45, 10);
 flexFX.performFlexFX("NeeNaw", 800, 16, 1000, false);
 flexFX.performFlexFX("NeeNaw", 800, 32, 1000, false);
 flexFX.performFlexFX("NeeNaw", 800, 64, 1000, false);
@@ -55,14 +54,14 @@ flexFX.performFlexFX("NeeNaw", 780, 128, 1000, false);
 flexFX.performFlexFX("NeeNaw", 780, 64, 1000, false);
 flexFX.performFlexFX("NeeNaw", 780, 32, 1000, false);
 flexFX.performFlexFX("NeeNaw", 780, 16, 1000, false);
-/*
+
 while(flexFX.isActive) {  // flash the blue light (sort of)
     basic.showIcon(IconNames.SmallDiamond);
     basic.pause(400);
     basic.showIcon(IconNames.Diamond);
     basic.pause(400);
 }
-*/
+
 flexFX.finish(); // make sure everything has finished playing
 pause(1000);
 

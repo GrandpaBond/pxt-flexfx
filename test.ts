@@ -4,9 +4,9 @@ music.setBuiltInSpeakerEnabled(false);
 // create and perform a simple chime flexFX
 flexFX.createFlexFX("Ting", 100, 100,
     Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10);
-flexFX.performFlexFX("Ting", Note.G5, 250, 400, true);
-flexFX.performFlexFX("Ting", Note.E5, 250, 400, true);
-flexFX.performFlexFX("Ting", Note.C5, 250, 1600, true);
+flexFX.performFlexFX("Ting", Note.G5, 250, 400, false);
+flexFX.performFlexFX("Ting", Note.E5, 250, 400, false);
+flexFX.performFlexFX("Ting", Note.C5, 250, 1600, false);
 
 pause(1000);
 
@@ -39,6 +39,7 @@ flexFX.performFlexFX("Horn", Note.E3, 255, 600, true);
 flexFX.performFlexFX("Horn", Note.D3, 255, 2400, true);
 
 pause(1000);
+//flexFX.suspendPlaying();
 
 // create and perform a double flexFX
 flexFX.createDoubleFlexFX("NeeNaw", 
@@ -54,15 +55,12 @@ flexFX.performFlexFX("NeeNaw", 780, 128, 1000, false);
 flexFX.performFlexFX("NeeNaw", 780, 64, 1000, false);
 flexFX.performFlexFX("NeeNaw", 780, 32, 1000, false);
 flexFX.performFlexFX("NeeNaw", 780, 16, 1000, false);
-
-while(flexFX.isActive) {  // flash the blue light (sort of)
+while(flexFX.isActive()) {  // flash the blue light (sort of)
     basic.showIcon(IconNames.SmallDiamond);
-    basic.pause(400);
     basic.showIcon(IconNames.Diamond);
-    basic.pause(400);
 }
 
-flexFX.finish(); // make sure everything has finished playing
+//flexFX.finish(); // make sure everything has finished playing
 pause(1000);
 
 // create and perform a Violin 3-part flexFX
@@ -87,14 +85,15 @@ flexFX.performFlexFX("Violin", Note.D5, 250, 150, false);
 flexFX.performFlexFX("Violin", Note.C5, 250, 300, false);
 flexFX.performFlexFX("Violin", Note.A4, 250, 900, false);
 
-while (flexFX.isActive) {  // jiggle a note around
+//flexFX.startPlaying();
+while (flexFX.isActive()) {  // jiggle a note around
     images.iconImage(IconNames.QuarterNote).showImage(-1, 150);
     images.iconImage(IconNames.QuarterNote).showImage(0, 150);
     images.iconImage(IconNames.QuarterNote).showImage(1, 150);
     images.iconImage(IconNames.QuarterNote).showImage(0, 150);
 }
 
-flexFX.finish(); // make sure everything has finished playing
+//flexFX.finish(); // make sure everything has finished playing
 pause(1000);
 
 // create and perform a flowing 3-part flexFX
@@ -102,13 +101,22 @@ flexFX.create3PartFlexFX("SIREN", 50, 50,
     Wave.SQUARE, Attack.SLOW, Effect.NONE, 200, 100,
     Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 100,
     Wave.SQUARE, Attack.SLOW, Effect.NONE, 150, 50, 33, 33);
-flexFX.performFlexFX("SIREN", 200, 250, 1000, true);
-pause(400);
-flexFX.performFlexFX("SIREN", 300, 250, 1000, true);
-pause(400);
-flexFX.performFlexFX("SIREN", 400, 250, 1000, true);
-pause(400);
-flexFX.performFlexFX("SIREN", 600, 250, 1000, true);
-pause(400);
-flexFX.performFlexFX("SIREN", 800, 250, 1000, true);
-pause(1000);
+flexFX.performFlexFX("SIREN", 200, 250, 1000, false);
+flexFX.performSilence(400,false);
+flexFX.performFlexFX("SIREN", 300, 250, 1000, false);
+flexFX.performSilence(400, false);
+flexFX.performFlexFX("SIREN", 400, 250, 1000, false);
+flexFX.performSilence(400, false);
+flexFX.performFlexFX("SIREN", 600, 250, 1000, false);
+flexFX.performSilence(400, false);
+flexFX.performFlexFX("SIREN", 800, 250, 1000, false);
+// choreograph faces to sounds: 600ms for icon display + 800ms = 1000ms + 400ms
+basic.showIcon(IconNames.Happy);
+pause(800);
+basic.showIcon(IconNames.Sad);
+pause(800);
+basic.showIcon(IconNames.Confused);
+pause(800);
+basic.showIcon(IconNames.Angry);
+pause(800);
+basic.showIcon(IconNames.Surprised);

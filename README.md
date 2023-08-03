@@ -2,7 +2,7 @@
 The ``|music:Music|`` category has a ``||music:micro:bit(V2)||`` section with blocks for **sound-expressions**. 
 These let you build some amazing sounds, but sometimes you need something more complex.
 ``|flexFX:FlexFX|`` sounds are *re-usable* objects that can stitch together up to three sound-expressions.
-They use **play-settings**, which means you can play them at different pitch, volume, or duration.
+They can be **performed** using different play-settings to control the pitch, volume, or duration.
 
 ## Anatomy of a FlexFX
 The basic idea is that a FlexFX is built from one, two or three **parts**.
@@ -55,21 +55,6 @@ So it might start at 75% of the specified pitch (a musical fifth below), rise to
 Similarly, it might start quietly (at 50% volume), then grow to a maximum (100%) before fading away to silence (0%).
 Percentages also say how the total duration should be split between the different parts. 
 
-### Performing a FlexFX 
-Each FlexFX has a unique name (its **id**), assigned when it is first created. 
-This is supplied to the block ``|flexFX:performFlexFX|``, together with your chosen **play-settings**.
-
-``||Pitch||`` sets the basic pitch as a numeric frequency.
-
-``||Volume||`` sets the basic volume as a number in the range 0-255.
-
-``||Duration||`` sets how long the overall performance will last in milliseconds.
-
-This example would play a FlexFX called **MYSOUND** quietly, based on a pitch around middle-C, with the whole performance lasting 2 seconds:
-```block
-flexFX.performFlexFX("MYSOUND", 250, 50, 2000);
-```
-
 ### Creating a Simple FlexFX
 The simplest FlexFX has just one part (so is really just a tuneable version of a standard sound-expression)
 Here is an example:
@@ -79,7 +64,7 @@ flexFX.createFlexFX("Ting", 100, 100,
 ```
 
 ### Creating a 2-Part FlexFX
-A two-part FlexFX requires three sets of play-settings (start, middle and end).
+A **2-part FlexFX** allows profiles passing through three [pitch,volume] settings: start, middle and end.
 For example:
 ```block
 flexFX.create2PartFlexFX("Miaow", 70, 50,
@@ -88,7 +73,7 @@ flexFX.create2PartFlexFX("Miaow", 70, 50,
 ```
 
 ### Creating a 3-Part FlexFX
-The most complex 3-part FlexFX moves between four sets of play-settings.
+The most complex **3-part FlexFX** has profiles that move smoothly between four points.
 For example:
 ```block
 flexFX.create3PartFlexFX("SIREN", 50, 50,
@@ -107,6 +92,24 @@ flexFX.createDoubleFlexFX("NeeNaw", 95, 80,
     Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 100,
     70, 100,
     Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 80, 45, 10);
+```
+
+## Using your FlexFX 
+
+## Performing a FlexFX 
+Each FlexFX has a unique name (its **id**), assigned when it is first created. 
+This is supplied to the block ``|flexFX:performFlexFX|``, together with your chosen play-settings:
+
+``||Pitch||`` sets the basic pitch as a numeric frequency.
+
+``||Volume||`` sets the basic volume as a number in the range 0-255.
+
+``||Duration||`` sets how long the overall performance will last in milliseconds.
+
+The following example would play a FlexFX called **MYSOUND** quietly, based on a pitch around middle-C, 
+with the whole performance lasting 2 seconds:
+```block
+flexFX.performFlexFX("MYSOUND", 250, 50, 2000);
 ```
 
 ## Changing a FlexFX

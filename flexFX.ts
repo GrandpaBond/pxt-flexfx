@@ -58,14 +58,14 @@ enum Effect {
  */
 //% color=#70e030 weight=100 icon="\uf0a1 block="FlexFX"
 namespace flexFX {
-    // Each performance comprises an array of the "compiled" sound-strings for its several parts.
+    // Each performance will comprise an array of the "compiled" sound-strings for its several parts.
     class Play {
         parts: string[];
         constructor() {
             this.parts = [];
         }
     }
-    // Performances are queued on the play-list to ensure proper asynch sequencing
+    // Performances get queued on the play-list to ensure proper asynch sequencing
     let playList: Play[] = []; 
     
     // control flags:
@@ -73,10 +73,13 @@ namespace flexFX {
     export function isPlaying(): boolean { return playerPlaying; } // accessor
     let playerActive = false;
     export function isActive(): boolean { return playerActive; } // accessor
+    let playerLocked = false; // activation of player inhibited for now
+    export function isLocked(): boolean { return playerLocked; } // accessor
+
 
     // activity events (for other components to synchronise with)
     const FLEXFX_ACTIVITY_ID = 1234 // TODO: Check this is a permissable value!
-    enum Status {
+    enum PLAYER {
         STARTING = 1,
         FINISHED = 2,
         ALLPLAYED = 3,
@@ -100,7 +103,7 @@ namespace flexFX {
         effectA: number;
         timeRatioA: number;
 
-        skipPartB: boolean;     // a double FlexFX has a silent gap in the middle
+        skipPartB: boolean;     // marks a double FlexFX, which has a silent gap in the middle
         playPartB: boolean;
         //partB: string;
         waveB: number;
@@ -151,7 +154,7 @@ namespace flexFX {
             return Math.min(Math.max(time, 0), timeLeft);
         }
         // methods...  
-        // Sets up Part A:  (Point0)--(PartA)--(Point1)...
+        // Sets up Part A:  (Point0)--PartA--(Point1)...
         // This implicitly sets the start values for any Part B that might follow
         setPartA(freq0: number, vol0: number, wave: Wave, attack: number, effect: number, freq1: number, vol1: number, ms1: number) {
             this.freqRatio0 = this.goodFreqRatio(freq0);
@@ -175,7 +178,7 @@ namespace flexFX {
             this.usesPoint2 = false;
             this.usesPoint3 = false;
         }
-        // Adds a  Part B:  (Point0)--(PartA)--(Point1)--(PartB)--(Point2)...
+        // Adds a  Part B:  (Point0)--PartA--(Point1)--PartB--(Point2)...
         // This also implicitly sets the start values for any Part C that might follow
         setPartB(wave: number, attack: number, effect: number, freq2: number, vol2: number, ms2: number) {
             this.freqRatio2 = this.goodFreqRatio(freq2);
@@ -187,7 +190,7 @@ namespace flexFX {
             this.playPartB = true;
             this.usesPoint2 = true;
         }
-        // Adds a silent Part B:  (Point0)--(PartA)--(Point1)--(silence)--(Point2)...
+        // Adds a silent Part B:  (Point0)--PartA--(Point1)--silence--(Point2)...
         // This implicitly sets start values for the Part C that follows
         silentPartB(freq2: number, vol2: number, ms2: number) {
             this.freqRatio2 = this.goodFreqRatio(freq2);
@@ -196,7 +199,7 @@ namespace flexFX {
             this.skipPartB = true;
         }
 
-        // Adds an optional part C: (Point0)--(PartA)--(Point1)--(PartB)--(Point2)--(PartC)--(Point3)
+        // Adds an optional part C: (Point0)--PartA--(Point1)--PartB--(Point2)--PartC--(Point3)
         setPartC(wave: number, attack: number, effect: number, freq3: number, vol3: number, ms3: number) {
             this.freqRatio3 = this.goodFreqRatio(freq3);
             this.volRatio3 = this.goodVolRatio(vol3);
@@ -210,7 +213,7 @@ namespace flexFX {
         }
 
         // Compiles a performance (called a Play) for this FlexFX and adds it to the Play-list
-        performUsing(freq: number, vol: number, ms: number) {
+        compilePlay(freq: number, vol: number, ms: number) {
             let loud = vol * 4 // map from [0...255] into range [0...1023]
             // Point 0
             let f0 = freq * this.freqRatio0;
@@ -239,7 +242,7 @@ namespace flexFX {
                 ms3 = ms * this.timeRatioC;
             }
 
-            // now create the actual performance...
+            // now create the actual performance Play...
             let play = new Play;
             if (this.playPartA) {
                 play.parts.push(music.createSoundEffect(this.waveA,f0,f1,v0,v1,ms1,this.effectA, this.attackA));
@@ -253,53 +256,77 @@ namespace flexFX {
             }
             if (this.playPartC) {
                 play.parts.push(music.createSoundEffect(this.waveC,f2,f3,v2,v3,ms3,this.effectC, this.attackC));
-            }
+            }     
+            //append new Play onto the end of the playList
             playList.push(play);
         }
     }
 
-    // kick off the background player if not already running
+    // kick off the background player (if not already running)
     function activatePlayer() {
-        if (!playerActive){ 
-            control.inBackground(() => {
-                playerActive = true;
-                let play = new Play;
-                while (playList.length > 0){ // play everything on the playList then exit
-                    play = playList.shift();
-                    let sound = "";
-                    control.raiseEvent(FLEXFX_ACTIVITY_ID, Status.STARTING);
-                    playerPlaying = true;
-                    while (play.parts.length > 0){
-                            sound = play.parts.shift();
-                            if (sound.charAt(0)==' ') {
-                                pause(parseInt(sound.slice(1,sound.length)));
-                            } else {
-                                music.playSoundEffect(sound, SoundExpressionPlayMode.UntilDone)
-                            }
-                    }
-                    control.raiseEvent(FLEXFX_ACTIVITY_ID, Status.STARTING);
-                    playerPlaying = false;
-                }
-                playerActive = false;
-                control.raiseEvent(FLEXFX_ACTIVITY_ID, Status.ALLPLAYED);
-            });
+        if (!(playerActive || playerLocked)){ 
+            playerActive = true;
+            control.inBackground(() => player());
         }
     }
 
+    function player() {
+        let play = new Play;
+        while (playList.length > 0) { // play everything on the playList in turn
+            play = playList.shift();
+            let sound = "";
+            control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
+            playerPlaying = true;
+            while (play.parts.length > 0) {  // play its sounds in turn
+                sound = play.parts.shift();
+                if (sound.charAt(0) == ' ') {
+                    pause(parseInt(sound.slice(1, sound.length)));
+                } else {
+                    music.playSoundEffect(sound, SoundExpressionPlayMode.UntilDone)
+                }
+            }
+            control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
+            playerPlaying = false;
+        }
+        control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+        playerActive = false;
+    }
+
+    // ---- UI BLOCKS ----
     /**
      * Add a silent pause to the play-list
      */
     export function performSilence(ms: number, waiting: boolean) {
             let play = new Play;
-            play.parts.push("_"+ convertToText(Math.floor(ms)));
+            play.parts.push(" "+ convertToText(Math.floor(ms)));
             playList.push(play);
             activatePlayer();  // make sure it gets played
             if (waiting) { // ours was the lastest Play, so simply await completion of player.
-                control.waitForEvent(FLEXFX_ACTIVITY_ID, Status.ALLPLAYED);
+                control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
             }
     }
 
-    // ---- UI BLOCKS ----
+    /**
+     * await completion of everything on the Play-list
+     */
+    //% block
+    export function finish(){
+        control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+    }
+    /**
+     * suspend playing from the Play-list
+     */
+    export function suspendPlaying(){
+        playerLocked = true;
+    }
+    /**
+     * resume playing from the Play-List
+     */
+    export function startPlaying() {
+        playerLocked = false;
+        activatePlayer();
+    }
+
     /**
      * Perform a custom FlexFX 
     */
@@ -316,22 +343,15 @@ namespace flexFX {
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
             // first compile and add our Play onto the playList
-            target.performUsing(pitch, vol, ms); 
+            target.compilePlay(pitch, vol, ms); 
             activatePlayer();  // make sure it now gets played
             if (waiting) { // ours was the lastest Play, so simply await completion of player.
-                control.waitForEvent(FLEXFX_ACTIVITY_ID, Status.ALLPLAYED);
+                control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
             }
         }
     }
 
 
-    /**
-     * await completion of everything on the Play-list
-     */
-    //% block
-    export function finish(){
-        control.waitForEvent(FLEXFX_ACTIVITY_ID, Status.ALLPLAYED);
-    }
 
     /**
     Create a simple custom FlexFX 

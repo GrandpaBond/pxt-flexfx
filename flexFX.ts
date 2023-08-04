@@ -304,30 +304,42 @@ namespace flexFX {
     /**
      * Perform a custom FlexFX 
      */
-    //% block="perform FlexFX $id at pitch $pitch with strength $vol for $ms m||, wait till played=%waiting"
+    //% block="perform FlexFX $id at pitch $pitch with strength $vol for $ms m||; add to background Play-list=%background"
     //% group="Playing..."
     //% help=pxt-flexfx/performflexfx
     //% id.defl="Ting"
     //% pitch.min=50 pitch.max=2000 pitch.defl=800
     //% vol.min=0 vol.max=255 vol.defl=200
     //% ms.min=0 ms.max=10000 ms.defl=800
-    //% waiting.defl=true
+    //% background.defl=false
     //% inlineInputMode=inline
     //% weight=150
-    export function performFlexFX(id: string, pitch: number, vol: number, ms: number, waiting: boolean) {
+    export function performFlexFX(id: string, pitch: number, vol: number, ms: number, background: boolean) {
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
             // first compile and add our Play onto the playList
             target.compilePlay(pitch, vol, ms); 
-            activatePlayer();  // make sure it now gets played
-            if (waiting) { // ours was the lastest Play, so simply await completion of player.
+            activatePlayer();  // make sure it will get played
+            if (!background) { // ours was the lastest Play, so simply await completion of player.
                 control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
             }
         }
     }
 
     /**
-     * Await start of next performance on the Play-list
+     * Add a silent pause to the play-list
+     */
+    //% block="add a pause of $ms ms to the background Play-list"
+    //% group="Playing..."
+    export function performSilence(ms: number) {
+        let play = new Play;
+        play.parts.push("s" + convertToText(Math.floor(ms)));
+        playList.push(play);
+        activatePlayer();  // make sure it gets played
+    }
+
+    /**
+     * Await start of next FLexFX performance on the Play-list
      */
     //% block="wait until next FLexFX starts"
     //% group="Playing..."
@@ -336,7 +348,7 @@ namespace flexFX {
     }
 
     /**
-     * Await completion of current performance
+     * Await completion of current FLexFX performance
      */
     //% block="wait until current FlexFX finished"
     //% group="Playing..."
@@ -503,21 +515,6 @@ namespace flexFX {
         target.setPartA(startPitchAPercent / 100, startVolAPercent / 100, waveA, attackA, effectA, endPitchAPercent / 100, endVolAPercent / 100, timePercentA / 100);
         target.silentPartB(startPitchBPercent / 100, startVolBPercent / 100, timeGapPercent / 100);
         target.setPartC(waveB, attackB, effectB, endPitchBPercent / 100, endVolBPercent / 100, (100 - timePercentA - timeGapPercent) / 100);
-    }
-    
-    /**
-     8 Add a silent pause to the play-list
-     */
-    //% block="pause playing for $ms m||; wait till done=%waiting"
-    //% group="Creating"
-    export function performSilence(ms: number, waiting: boolean) {
-        let play = new Play;
-        play.parts.push("s" + convertToText(Math.floor(ms)));
-        playList.push(play);
-        activatePlayer();  // make sure it gets played
-        if (waiting) { // ours was the lastest Play, so simply await completion of player.
-            control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
-        }
     }
 
     // create a simple default "chime" flexFX

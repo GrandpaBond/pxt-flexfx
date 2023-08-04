@@ -108,13 +108,11 @@ flexFX.performSilence(400, false);
 flexFX.performFlexFX("SIREN", 600, 250, 1000, false);
 flexFX.performSilence(400, false);
 flexFX.performFlexFX("SIREN", 800, 250, 1000, false);
-// choreograph faces to sounds: 600ms for icon display + 800ms = 1000ms + 400ms
-basic.showIcon(IconNames.Happy);
-pause(800);
-basic.showIcon(IconNames.Sad);
-pause(800);
-basic.showIcon(IconNames.Confused);
-pause(800);
-basic.showIcon(IconNames.Angry);
-pause(800);
-basic.showIcon(IconNames.Surprised);
+// choreograph faces to sounds
+while(flexFX.isActive){
+    basic.showIcon(IconNames.Happy);
+    flexFX.awaitPlayStart();
+    basic.showIcon(IconNames.Surprised);
+    flexFX.awaitPlayFinish();
+}
+

@@ -327,13 +327,32 @@ namespace flexFX {
     }
 
     /**
+     * Await start of next performance on the Play-list
+     */
+    //% block="wait until next FLexFX starts"
+    //% group="Playing..."
+    export function awaitPlayStart() {
+        control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
+    }
+
+    /**
+     * Await completion of current performance
+     */
+    //% block="wait until current FlexFX finished"
+    //% group="Playing..."
+    export function awaitPlayFinish() {
+        control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
+    }
+
+    /**
      * Await completion of everything on the Play-list
      */
     //% block="wait until everything played"
     //% group="Playing..."
-    export function finishPlaying() {
+    export function awaitAllFinished() {
         control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
     }
+
     /**
      * Suspend background playing from the Play-list
      */

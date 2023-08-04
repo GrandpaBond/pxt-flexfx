@@ -57,6 +57,7 @@ enum Effect {
  * (either directly or queued-up) with dynamically-specified pitch, volume and duration.
  */
 //% color=#70e030 weight=100 icon="\uf0a1 block="FlexFX"
+//% groups=['Creating...', 'Playing...']
 namespace flexFX {
     // Each performance will comprise an array of the "compiled" sound-strings for its several parts.
     class Play {
@@ -273,20 +274,27 @@ namespace flexFX {
     function player() {
         let play = new Play;
         while (playList.length > 0) { // play everything on the playList in turn
-            play = playList.shift();
             let sound = "";
-            control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
-            playerPlaying = true;
-            while (play.parts.length > 0) {  // play its sounds in turn
+            play = playList.shift();
+            if (play.parts[0].charAt(0) == 's') {
+                // this is just a pause, so doesn't count as "PLAYING"
                 sound = play.parts.shift();
-                if (sound.charAt(0) == ' ') {
-                    pause(parseInt(sound.slice(1, sound.length)));
-                } else {
-                    music.playSoundEffect(sound, SoundExpressionPlayMode.UntilDone)
+                pause(parseInt(sound.slice(1, sound.length)));
+            } else {
+                control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
+                playerPlaying = true;
+                while (play.parts.length > 0) {  // play its sounds in turn
+                    sound = play.parts.shift();
+                    if (sound.charAt(0) == ' ') {
+                    // this is a gap within a sound, so DOES still count as "PLAYING"
+                        pause(parseInt(sound.slice(1, sound.length)));
+                    } else {
+                        music.playSoundEffect(sound, SoundExpressionPlayMode.UntilDone)
+                    }
                 }
+                control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
+                playerPlaying = false;
             }
-            control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
-            playerPlaying = false;
         }
         control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
         playerActive = false;
@@ -294,48 +302,15 @@ namespace flexFX {
 
     // ---- UI BLOCKS ----
     /**
-     * Add a silent pause to the play-list
-     */
-    export function performSilence(ms: number, waiting: boolean) {
-            let play = new Play;
-            play.parts.push(" "+ convertToText(Math.floor(ms)));
-            playList.push(play);
-            activatePlayer();  // make sure it gets played
-            if (waiting) { // ours was the lastest Play, so simply await completion of player.
-                control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
-            }
-    }
-
-    /**
-     * await completion of everything on the Play-list
-     */
-    //% block
-    export function finish(){
-        control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
-    }
-    /**
-     * suspend playing from the Play-list
-     */
-    export function suspendPlaying(){
-        playerLocked = true;
-    }
-    /**
-     * resume playing from the Play-List
-     */
-    export function startPlaying() {
-        playerLocked = false;
-        activatePlayer();
-    }
-
-    /**
      * Perform a custom FlexFX 
-    */
-    //% block="perform FlexFX $id at pitch $pitch with strength $vol for $ms m, wait=%waiting"
+     */
+    //% block="perform FlexFX $id at pitch $pitch with strength $vol for $ms m||, wait till played=%waiting"
+    //% group="Playing..."
     //% help=pxt-flexfx/performflexfx
-    //% id.defl="DOO"
-    //% pitch.min=50 pitch.max=2000 pitch.defl=250
-    //% vol.min=0 vol.max=255 vol.defl=180
-    //% ms.min=0 ms.max=10000 ms.defl=750
+    //% id.defl="Ting"
+    //% pitch.min=50 pitch.max=2000 pitch.defl=800
+    //% vol.min=0 vol.max=255 vol.defl=200
+    //% ms.min=0 ms.max=10000 ms.defl=800
     //% waiting.defl=true
     //% inlineInputMode=inline
     //% weight=150
@@ -351,20 +326,44 @@ namespace flexFX {
         }
     }
 
-
+    /**
+     * Await completion of everything on the Play-list
+     */
+    //% block="wait until everything played"
+    //% group="Playing..."
+    export function finishPlaying() {
+        control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+    }
+    /**
+     * Suspend background playing from the Play-list
+     */
+    //% block="pause play-List"
+    //% group="Playing..."
+    export function stopPlaying() {
+        playerLocked = true;
+    }
+    /**
+     * Resume background playing from the Play-List
+     */
+    //% block="play play-List"
+    //% group="Playing..."
+    export function startPlaying() {
+        playerLocked = false;
+        activatePlayer();
+    }
 
     /**
-    Create a simple custom FlexFX 
+     * Create a simple custom FlexFX 
      */
     //% block="create simple FlexFX: $id using wave-shape $wave      with attack $attack       and effect $effect|  pitch profile goes from $startPitchPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $endVolPercent"
+    //% group="Creating..."
+    //% help=pxt-flexfx/createFlexFX
     //% inlineInputMode=external
     //% id.defl="simple"
     //% startPitchPercent.min=25 startPitchPercent.max=400 startPitchPercent.defl=100
     //% startVolPercent.min=1 startVolPercent.max=100 startVolPercent.defl=100
     //% endPitchPercent.min=10 endPitchPercent.max=400 endPitchPercent.defl=100
     //% endVolPercent.min=1 endVolPercent.max=100 endVolPercent.defl=100
-    //% advanced=true
-    //% weight=140
     export function createFlexFX(
         id: string, startPitchPercent: number, startVolPercent: number,
         wave: Wave, attack: Attack, effect: Effect, endPitchPercent: number, endVolPercent: number) {
@@ -382,6 +381,8 @@ namespace flexFX {
     Create a more complex two-part custom FlexFX 
      */
     //% block="create 2-part FlexFX: $id| first using wave-shape $waveA            with attack $attackA             and effect $effectA|  then using wave-shape $waveB            with attack $attackB             and effect $effectB|  pitch profile goes from $startPitchPercent                       to $midPitchPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $midVolPercent                       to $endVolPercent|duration used for 1st part: $timePercentA"
+    //% group="Creating..."
+    //% help=pxt-flexfx/create2PartFlexFX
     //% inlineInputMode=external
     //% id.defl="2-part"
     //% startPitchPercent.min=10 startPitchPercent.max=400 startPitchPercent.defl=100
@@ -391,7 +392,6 @@ namespace flexFX {
     //% endPitchPercent.min=10 endPitchPercent.max=400 endPitchPercent.defl=100
     //% endVolPercent.min=1 endVolPercent.max=100 endVolPercent.defl=100
     //% timePercentA.min=1 timePercentA.max=99 timePercentA.defl=50
-    //% advanced=true
     //% weight=130
     export function create2PartFlexFX(
         id: string, startPitchPercent: number, startVolPercent: number,
@@ -413,6 +413,8 @@ namespace flexFX {
     Create a really complex three-part custom FlexFX 
      */
     //% block="create 3-part FlexFX: $id|  first using wave-shape $waveA             with attack $attackA              and effect $effectA|   then using wave-shape $waveB             with attack $attackB              and effect $effectB|lastly using wave-shape $waveC             with attack $attackC              and effect $effectC|  pitch profile goes from $startPitchPercent                       to $pitchABPercent                       to $pitchBCPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $volABPercent                       to $volBCPercent                       to $endVolPercent|duration used for 1st part:$timePercentA|                   2nd part: $timePercentB"
+    //% group="Creating..."
+    //% help=pxt-flexfx/create3PartFlexFX
     //% inlineInputMode=external
     //% id.defl="3-part"
     //% startPitchPercent.min=10 startPitchPercent.max=400 startPitchPercent.defl=100
@@ -425,7 +427,6 @@ namespace flexFX {
     //% endVolPercent.min=1 endVolPercent.max=100 endVolPercent.defl=100
     //% timePercentA.min=1 timePercentA.max=99 timePercentA.defl=33
     //% timePercentB.min=1 timePercentB.max=99 timePercentB.defl=33
-    //% advanced=true
     //% weight=120
     export function create3PartFlexFX(
         id: string, startPitchPercent: number, startVolPercent: number,
@@ -452,6 +453,8 @@ namespace flexFX {
     */
     // NOTE: Since it's the second actual sound, PartC is called PartB in the UI
     //% block="create double FlexFX: $id|1st part using wave-shape $waveA               with attack $attackA                and effect $effectA|  pitch profile goes from $startPitchAPercent                       to $endPitchAPercent|volume profile goes from $startVolAPercent                       to $endVolAPercent|duration used for 1st part:$timePercentA|duration used for silence:  $timeGapPercent|2nd part using wave-shape $waveB               with attack $attackB                and effect $effectB|  pitch profile goes from $startPitchBPercent                       to $endPitchBPercent|volume profile goes from $startVolBPercent                       to $endVolBPercent"
+    //% group="Creating..."
+    //% help=pxt-flexfx/createDoubleFlexFX
     //% inlineInputMode=external
     //% id.defl="double"
     //% startPitchAPercent.min=10 startPitchAPercent.max=400 startPitchAPercent.defl=100
@@ -464,7 +467,6 @@ namespace flexFX {
     //% endVolBPercent.min=1 endVolBPercent.max=100 endVolBPercent.defl=100
     //% timePercentA.min=1 timePercentA.max=99 timePercentA.defl=40
     //% timeGapPercent.min=1 timeGapPercent.max=99 timeGapPercent.defl=20
-    //% advanced=true
     //% weight=110
     export function createDoubleFlexFX(
         id: string, startPitchAPercent: number, startVolAPercent: number,
@@ -483,4 +485,22 @@ namespace flexFX {
         target.silentPartB(startPitchBPercent / 100, startVolBPercent / 100, timeGapPercent / 100);
         target.setPartC(waveB, attackB, effectB, endPitchBPercent / 100, endVolBPercent / 100, (100 - timePercentA - timeGapPercent) / 100);
     }
+    
+    /**
+     8 Add a silent pause to the play-list
+     */
+    //% block="pause playing for $ms m||; wait till done=%waiting"
+    //% group="Creating"
+    export function performSilence(ms: number, waiting: boolean) {
+        let play = new Play;
+        play.parts.push("s" + convertToText(Math.floor(ms)));
+        playList.push(play);
+        activatePlayer();  // make sure it gets played
+        if (waiting) { // ours was the lastest Play, so simply await completion of player.
+            control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+        }
+    }
+
+    // create a simple default "chime" flexFX
+    flexFX.createFlexFX("Ting", 100, 100, Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10);
 }

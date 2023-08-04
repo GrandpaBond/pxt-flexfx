@@ -1,9 +1,7 @@
 // *********** test codes **********
 
 music.setBuiltInSpeakerEnabled(false);
-// create and perform a simple chime flexFX
-flexFX.createFlexFX("Ting", 100, 100,
-    Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10);
+// perform the simple built-in chime flexFX
 flexFX.performFlexFX("Ting", Note.G5, 250, 400, false);
 flexFX.performFlexFX("Ting", Note.E5, 250, 400, false);
 flexFX.performFlexFX("Ting", Note.C5, 250, 1600, false);

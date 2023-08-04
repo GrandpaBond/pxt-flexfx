@@ -87,10 +87,10 @@ flexFX.performFlexFX("Violin", Note.A4, 250, 900, false);
 
 //flexFX.startPlaying();
 while (flexFX.isActive()) {  // jiggle a note around
-    images.iconImage(IconNames.QuarterNote).showImage(-2, 150);
     images.iconImage(IconNames.QuarterNote).showImage(-1, 150);
     images.iconImage(IconNames.QuarterNote).showImage(0, 150);
-    images.iconImage(IconNames.QuarterNote).showImage(-1, 150);
+    images.iconImage(IconNames.QuarterNote).showImage(1, 150);
+    images.iconImage(IconNames.QuarterNote).showImage(0, 150);
 }
 
 //flexFX.finish(); // make sure everything has finished playing
@@ -110,12 +110,13 @@ flexFX.performSilence(400, false);
 flexFX.performFlexFX("SIREN", 600, 250, 1000, false);
 flexFX.performSilence(400, false);
 flexFX.performFlexFX("SIREN", 800, 250, 1000, false);
-
-// choreograph faces to sounds:
-while (flexFX.isActive) {
-    basic.showIcon(IconNames.Happy);
-    control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
-    basic.showIcon(IconNames.Surprised);
-    control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
-}
+// choreograph faces to sounds: 600ms for icon display + 800ms = 1000ms + 400ms
 basic.showIcon(IconNames.Happy);
+pause(800);
+basic.showIcon(IconNames.Sad);
+pause(800);
+basic.showIcon(IconNames.Confused);
+pause(800);
+basic.showIcon(IconNames.Angry);
+pause(800);
+basic.showIcon(IconNames.Surprised);

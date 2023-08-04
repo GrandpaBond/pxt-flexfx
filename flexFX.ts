@@ -273,19 +273,13 @@ namespace flexFX {
     function player() {
         let play = new Play;
         while (playList.length > 0) { // play everything on the playList in turn
-            let sound = "";
             play = playList.shift();
-            if (play.parts[0].charAt(0) == 'p'){
-                // this is just a pause, so doesn't count as "PLAYING"
-                sound = play.parts.shift();
-                pause(parseInt(sound.slice(1, sound.length)));
-            } else {
+            let sound = "";
             control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
             playerPlaying = true;
             while (play.parts.length > 0) {  // play its sounds in turn
                 sound = play.parts.shift();
                 if (sound.charAt(0) == ' ') {
-                    // this is a gap within a sound, so DOES count as still "PLAYING"
                     pause(parseInt(sound.slice(1, sound.length)));
                 } else {
                     music.playSoundEffect(sound, SoundExpressionPlayMode.UntilDone)
@@ -297,19 +291,19 @@ namespace flexFX {
         control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
         playerActive = false;
     }
-    }
+
     // ---- UI BLOCKS ----
     /**
      * Add a silent pause to the play-list
      */
     export function performSilence(ms: number, waiting: boolean) {
-        let play = new Play;
-        play.parts.push("p"+ convertToText(Math.floor(ms)));
-        playList.push(play);
-        activatePlayer();  // make sure it gets played
-        if (waiting) { // ours was the lastest Play, so simply await completion of player.
-            control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
-        }
+            let play = new Play;
+            play.parts.push(" "+ convertToText(Math.floor(ms)));
+            playList.push(play);
+            activatePlayer();  // make sure it gets played
+            if (waiting) { // ours was the lastest Play, so simply await completion of player.
+                control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+            }
     }
 
     /**

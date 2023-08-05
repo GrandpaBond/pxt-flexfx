@@ -74,8 +74,8 @@ namespace flexFX {
     export function isPlaying(): boolean { return playerPlaying; } // accessor
     let playerActive = false;
     export function isActive(): boolean { return playerActive; } // accessor
-    let playerLocked = false; // activation of player inhibited for now
-    export function isLocked(): boolean { return playerLocked; } // accessor
+    let playerStopped = false; // activation of player inhibited for now
+    export function isStopped(): boolean { return playerStopped; } // accessor
 
 
     // activity events (for other components to synchronise with)
@@ -265,7 +265,7 @@ namespace flexFX {
 
     // kick off the background player (if not already running)
     function activatePlayer() {
-        if (!(playerActive || playerLocked)){ 
+        if (!(playerActive || playerStopped)){ 
             playerActive = true;
             control.inBackground(() => player());
         }
@@ -277,7 +277,7 @@ namespace flexFX {
             let sound = "";
             play = playList.shift();
             if (play.parts[0].charAt(0) == 's') {
-                // this is just a pause, so doesn't count as "PLAYING"
+                // this is just a queued pause, so doesn't count as "PLAYING"
                 sound = play.parts.shift();
                 pause(parseInt(sound.slice(1, sound.length)));
             } else {
@@ -371,7 +371,7 @@ namespace flexFX {
     //% block="pause play-List"
     //% group="Playing..."
     export function stopPlaying() {
-        playerLocked = true;
+        playerStopped = true;
     }
     /**
      * Resume background playing from the Play-List
@@ -379,7 +379,7 @@ namespace flexFX {
     //% block="play play-List"
     //% group="Playing..."
     export function startPlaying() {
-        playerLocked = false;
+        playerStopped = false;
         activatePlayer();
     }
 

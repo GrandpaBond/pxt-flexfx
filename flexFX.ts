@@ -57,7 +57,7 @@ enum Effect {
  * (either directly or queued-up) with dynamically-specified pitch, volume and duration.
  */
 //% color=#70e030 weight=100 icon="\uf0a1 block="FlexFX"
-//% groups=['Creating...', 'Playing...']
+//% groups=['Creating...', 'Playing...', 'Play-list...']
 namespace flexFX {
     // Each performance will comprise an array of the "compiled" sound-strings for its several parts.
     class Play {
@@ -271,9 +271,10 @@ namespace flexFX {
         }
     }
 
+    // play everything on the playList in turn
     function player() {
         let play = new Play;
-        while (playList.length > 0) { // play everything on the playList in turn
+        while ((playList.length > 0) && !playerStopped) { 
             let sound = "";
             play = playList.shift();
             if (play.parts[0].charAt(0) == 's') {
@@ -296,92 +297,13 @@ namespace flexFX {
                 playerPlaying = false;
             }
         }
-        control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+        if (playList.length == 0) {
+             control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+        } // else we were prematurely stopped
         playerActive = false;
     }
 
     // ---- UI BLOCKS ----
-    /**
-     * Perform a custom FlexFX 
-     */
-    //% block="perform FlexFX $id at pitch $pitch with strength $vol for $ms m||; add to background Play-list=%background"
-    //% group="Playing..."
-    //% help=pxt-flexfx/performflexfx
-    //% id.defl="Ting"
-    //% pitch.min=50 pitch.max=2000 pitch.defl=800
-    //% vol.min=0 vol.max=255 vol.defl=200
-    //% ms.min=0 ms.max=10000 ms.defl=800
-    //% background.defl=false
-    //% inlineInputMode=inline
-    //% weight=150
-    export function performFlexFX(id: string, pitch: number, vol: number, ms: number, background: boolean) {
-        let target: FlexFX = flexFXList.find(i => i.id === id);
-        if (target != null) {
-            // first compile and add our Play onto the playList
-            target.compilePlay(pitch, vol, ms); 
-            activatePlayer();  // make sure it will get played
-            if (!background) { // ours was the lastest Play, so simply await completion of player.
-                control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
-            }
-        }
-    }
-
-    /**
-     * Add a silent pause to the play-list
-     */
-    //% block="add a pause of $ms ms to the background Play-list"
-    //% group="Playing..."
-    export function performSilence(ms: number) {
-        let play = new Play;
-        play.parts.push("s" + convertToText(Math.floor(ms)));
-        playList.push(play);
-        activatePlayer();  // make sure it gets played
-    }
-
-    /**
-     * Await start of next FLexFX performance on the Play-list
-     */
-    //% block="wait until next FLexFX starts"
-    //% group="Playing..."
-    export function awaitPlayStart() {
-        control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
-    }
-
-    /**
-     * Await completion of current FLexFX performance
-     */
-    //% block="wait until current FlexFX finished"
-    //% group="Playing..."
-    export function awaitPlayFinish() {
-        control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
-    }
-
-    /**
-     * Await completion of everything on the Play-list
-     */
-    //% block="wait until everything played"
-    //% group="Playing..."
-    export function awaitAllFinished() {
-        control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
-    }
-
-    /**
-     * Suspend background playing from the Play-list
-     */
-    //% block="pause play-List"
-    //% group="Playing..."
-    export function stopPlaying() {
-        playerStopped = true;
-    }
-    /**
-     * Resume background playing from the Play-List
-     */
-    //% block="play play-List"
-    //% group="Playing..."
-    export function startPlaying() {
-        playerStopped = false;
-        activatePlayer();
-    }
 
     /**
      * Create a simple custom FlexFX 
@@ -395,6 +317,7 @@ namespace flexFX {
     //% startVolPercent.min=1 startVolPercent.max=100 startVolPercent.defl=100
     //% endPitchPercent.min=10 endPitchPercent.max=400 endPitchPercent.defl=100
     //% endVolPercent.min=1 endVolPercent.max=100 endVolPercent.defl=100
+    //% weight=250
     export function createFlexFX(
         id: string, startPitchPercent: number, startVolPercent: number,
         wave: Wave, attack: Attack, effect: Effect, endPitchPercent: number, endVolPercent: number) {
@@ -423,7 +346,7 @@ namespace flexFX {
     //% endPitchPercent.min=10 endPitchPercent.max=400 endPitchPercent.defl=100
     //% endVolPercent.min=1 endVolPercent.max=100 endVolPercent.defl=100
     //% timePercentA.min=1 timePercentA.max=99 timePercentA.defl=50
-    //% weight=130
+    //% weight=240
     export function create2PartFlexFX(
         id: string, startPitchPercent: number, startVolPercent: number,
         waveA: Wave, attackA: Attack, effectA: Effect, midPitchPercent: number, midVolPercent: number,
@@ -458,7 +381,7 @@ namespace flexFX {
     //% endVolPercent.min=1 endVolPercent.max=100 endVolPercent.defl=100
     //% timePercentA.min=1 timePercentA.max=99 timePercentA.defl=33
     //% timePercentB.min=1 timePercentB.max=99 timePercentB.defl=33
-    //% weight=120
+    //% weight=2300
     export function create3PartFlexFX(
         id: string, startPitchPercent: number, startVolPercent: number,
         waveA: Wave, attackA: Attack, effectA: Effect, pitchABPercent: number, volABPercent: number,
@@ -475,9 +398,7 @@ namespace flexFX {
         target.setPartB(waveB, attackB, effectB, pitchBCPercent / 100, volBCPercent / 100, timePercentB / 100);
         target.setPartC(waveC, attackC, effectC, endPitchPercent / 100, endVolPercent / 100,
             (100 - timePercentA - timePercentB) / 100);
-
     }
-
 
     /**
     Create a FlexFx with two parts separated by a silence.
@@ -498,7 +419,7 @@ namespace flexFX {
     //% endVolBPercent.min=1 endVolBPercent.max=100 endVolBPercent.defl=100
     //% timePercentA.min=1 timePercentA.max=99 timePercentA.defl=40
     //% timeGapPercent.min=1 timeGapPercent.max=99 timeGapPercent.defl=20
-    //% weight=110
+    //% weight=220
     export function createDoubleFlexFX(
         id: string, startPitchAPercent: number, startVolAPercent: number,
         waveA: Wave, attackA: Attack, effectA: Effect, endPitchAPercent: number, endVolAPercent: number,
@@ -515,6 +436,106 @@ namespace flexFX {
         target.setPartA(startPitchAPercent / 100, startVolAPercent / 100, waveA, attackA, effectA, endPitchAPercent / 100, endVolAPercent / 100, timePercentA / 100);
         target.silentPartB(startPitchBPercent / 100, startVolBPercent / 100, timeGapPercent / 100);
         target.setPartC(waveB, attackB, effectB, endPitchBPercent / 100, endVolBPercent / 100, (100 - timePercentA - timeGapPercent) / 100);
+    }
+
+    /**
+     * Perform a custom FlexFX 
+     */
+    //% block="perform FlexFX $id at pitch $pitch with strength $vol for $ms || queued = $background"
+    //% group="Playing..."
+    //% help=pxt-flexfx/performflexfx
+    //% id.defl="Ting"
+    //% pitch.min=50 pitch.max=2000 pitch.defl=800
+    //% vol.min=0 vol.max=255 vol.defl=200
+    //% ms.min=0 ms.max=10000 ms.defl=800
+    //% background.defl=false
+    //% inlineInputMode=inline
+    //% expandableArgumentMode="enabled"
+    //% weight=150
+    export function performFlexFX(id: string, pitch: number, vol: number, ms: number, background: boolean) {
+        let target: FlexFX = flexFXList.find(i => i.id === id);
+        if (target != null) {
+            // first compile and add our Play onto the playList
+            target.compilePlay(pitch, vol, ms); 
+            activatePlayer();  // make sure it will get played
+            if (!background) { // ours was the lastest Play, so simply await completion of player.
+                control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+            }
+        }
+    }
+
+    /**
+     * Add a silent pause to the play-list
+     */
+    //% block="add a pause of $ms ms next in the play-list"
+    //% group="Play-list..."
+    //% weight=50
+    export function performSilence(ms: number) {
+        let play = new Play;
+        play.parts.push("s" + convertToText(Math.floor(ms)));
+        playList.push(play);
+        activatePlayer();  // make sure it gets played
+    }
+
+    /**
+     * Await start of next FLexFX on the play-list
+     */
+    //% block="wait until next FLexFX starts"
+    //% group="Play-list..."
+    //% weight=45
+    export function awaitPlayStart() {
+        control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
+    }
+
+    /**
+     * Await completion of FLexFX currently playing
+     */
+    //% block="wait until current FlexFX finished"
+    //% group="Play-list..."
+    //% weight=40
+    export function awaitPlayFinish() {
+        control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
+    }
+
+    /**
+     * Await completion of everything on the play-list
+     */
+    //% block="wait until everything played"
+    //% group="Play-list..."
+    //% weight=35
+    export function awaitAllFinished() {
+        control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+    }
+
+    /**
+     * Check the length of the play-list
+     */
+    //% block="length of play-list"
+    //% group="Play-list..."
+    //% weight=30
+    export function waitingToPlay(): number {
+        return playList.length;
+    }
+
+    /**
+     * Suspend background playing from the play-list
+     */
+    //% block="pause play-list"
+    //% group="Play-list..."
+    //% weight=25
+    export function stopPlaying() {
+        playerStopped = true;
+    }
+    
+    /**
+     * Resume background playing from the play-list
+     */
+    //% block="play play-list"
+    //% group="Play-list..."
+    //% weight=20
+    export function startPlaying() {
+        playerStopped = false;
+        activatePlayer();
     }
 
     // create a simple default "chime" flexFX

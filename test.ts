@@ -1,5 +1,5 @@
 // *********** test codes **********
-
+/*
 // perform the simple built-in chime flexFX
 flexFX.performFlexFX("Ting", Note.G5, 250, 400, true);
 flexFX.performFlexFX("Ting", Note.E5, 250, 400, true);
@@ -111,7 +111,7 @@ flexFX.performSilence(1500);
 flexFX.performFlexFX("Wail", 400, 250, 1000, true);
 flexFX.performSilence(1000);
 flexFX.performFlexFX("Wail", 600, 250, 1000, true);
-flexFX.performSilence(600);
+flexFX.performSilence(800);
 flexFX.performFlexFX("Wail", 800, 250, 1000, true);
 
 // use events to choreograph faces to sounds
@@ -127,7 +127,12 @@ while(flexFX.isActive()) {
 }
 basic.showIcon(IconNames.Happy);
 pause(2000)
-
+*/
+// create a wailing 3-part flexFX
+flexFX.create3PartFlexFX("Wail", 50, 50,
+    Wave.SQUARE, Attack.SLOW, Effect.NONE, 200, 100,
+    Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 100,
+    Wave.SQUARE, Attack.SLOW, Effect.NONE, 150, 50, 33, 33);
 // now re-build the Play-list and synchronise a different way, by playing
 // queued performances one-at-a-time, with explicit pauses...
 basic.showIcon(IconNames.Sad);
@@ -137,13 +142,11 @@ flexFX.performFlexFX("Wail", 300, 250, 1000, true);
 flexFX.performFlexFX("Wail", 400, 250, 1000, true);
 flexFX.performFlexFX("Wail", 600, 250, 1000, true);
 flexFX.performFlexFX("Wail", 800, 250, 1000, true);
+basic.showIcon(IconNames.Yes);
 pause(1000)
-basic.showIcon(IconNames.Surprised);
-// kick off the Player
-flexFX.startPlaying();
 let delay = 1600;
 while (flexFX.isActive()) {
-    flexFX.awaitPlayStart(); 
+    flexFX.startPlaying(); 
     // as soon as the first Play begins, prevent any more being started
     flexFX.stopPlaying();
     basic.showIcon(IconNames.Surprised);  // open the mouth...

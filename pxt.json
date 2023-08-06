@@ -8,7 +8,8 @@
     "files": [
         "flexFX.ts",
         "README.md",
-        "_locales/en-GB/README.md"
+        "_locales/en-GB/README.md",
+        "help/createflexfx.md"
     ],
     "testFiles": [
         "test.ts"

@@ -1,5 +1,4 @@
 // *********** test codes **********
-/*
 // perform the simple built-in chime flexFX
 flexFX.performFlexFX("Ting", Note.G5, 250, 400, true);
 flexFX.performFlexFX("Ting", Note.E5, 250, 400, true);
@@ -113,7 +112,8 @@ flexFX.performSilence(1000);
 flexFX.performFlexFX("Wail", 600, 250, 1000, true);
 flexFX.performSilence(800);
 flexFX.performFlexFX("Wail", 800, 250, 1000, true);
-
+basic.showNumber(flexFX.waitingToPlay());
+pause(500);
 // use events to choreograph faces to sounds
 basic.showIcon(IconNames.Sad);
 pause(1000)
@@ -125,16 +125,11 @@ while(flexFX.isActive()) {
     basic.showIcon(IconNames.Sad); // close the mouth again
     // (the active Player now "Plays" the queued silence)
 }
+pause(500);
 basic.showIcon(IconNames.Happy);
+
 pause(2000)
-*/
-// create a wailing 3-part flexFX
-flexFX.create3PartFlexFX("Wail", 50, 50,
-    Wave.SQUARE, Attack.SLOW, Effect.NONE, 200, 100,
-    Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 100,
-    Wave.SQUARE, Attack.SLOW, Effect.NONE, 150, 50, 33, 33);
-// now re-build the Play-list and synchronise a different way, by playing
-// queued performances one-at-a-time, with explicit pauses...
+// now re-build the Play-list 
 basic.showIcon(IconNames.Sad);
 flexFX.stopPlaying();  // inhibit Playing
 flexFX.performFlexFX("Wail", 200, 250, 1000, true);
@@ -142,11 +137,15 @@ flexFX.performFlexFX("Wail", 300, 250, 1000, true);
 flexFX.performFlexFX("Wail", 400, 250, 1000, true);
 flexFX.performFlexFX("Wail", 600, 250, 1000, true);
 flexFX.performFlexFX("Wail", 800, 250, 1000, true);
-basic.showIcon(IconNames.Yes);
+basic.showNumber(flexFX.waitingToPlay());
+
 pause(1000)
+// synchronise a different way, by playing queued Plays one-at-a-time, 
+// with explicit pauses...
 let delay = 1600;
-while (flexFX.isActive()) {
-    flexFX.startPlaying(); 
+while (flexFX.waitingToPlay() > 0) {
+    flexFX.startPlaying(); // allow the next Play to happen
+    pause(20);
     // as soon as the first Play begins, prevent any more being started
     flexFX.stopPlaying();
     basic.showIcon(IconNames.Surprised);  // open the mouth...
@@ -154,8 +153,7 @@ while (flexFX.isActive()) {
     basic.showIcon(IconNames.Sad); // close the mouth again
     pause(delay); 
     delay -= 200; // increase the silence in-between 
-    flexFX.startPlaying(); // allow the next Play to happen
 }
-basic.showIcon(IconNames.Happy);
 
-flexFX.awaitAllFinished();
+pause(500);
+basic.showIcon(IconNames.Happy);

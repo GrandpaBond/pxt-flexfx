@@ -484,7 +484,11 @@ namespace flexFX {
     //% group="Play-list..."
     //% weight=45
     export function awaitPlayStart() {
-        control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
+        if (playList.length >= 0) {
+            playerStopped = false; // in case it was
+            activatePlayer(); // it case it wasn't
+            control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
+        } // else nothing to wait for
     }
 
     /**
@@ -494,7 +498,9 @@ namespace flexFX {
     //% group="Play-list..."
     //% weight=40
     export function awaitPlayFinish() {
-        control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
+        if (playerPlaying) {
+            control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
+        } // else nothing to wait for
     }
 
     /**
@@ -504,7 +510,11 @@ namespace flexFX {
     //% group="Play-list..."
     //% weight=35
     export function awaitAllFinished() {
-        control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+        if (playList.length >= 0) {
+            playerStopped = false; // in case it was
+            activatePlayer(); // it case it wasn't
+            control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+        } // else nothing to wait for
     }
 
     /**

@@ -381,7 +381,7 @@ namespace flexFX {
     //% endVolPercent.min=1 endVolPercent.max=100 endVolPercent.defl=100
     //% timePercentA.min=1 timePercentA.max=99 timePercentA.defl=33
     //% timePercentB.min=1 timePercentB.max=99 timePercentB.defl=33
-    //% weight=2300
+    //% weight=230
     export function create3PartFlexFX(
         id: string, startPitchPercent: number, startVolPercent: number,
         waveA: Wave, attackA: Attack, effectA: Effect, pitchABPercent: number, volABPercent: number,

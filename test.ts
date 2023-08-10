@@ -1,8 +1,8 @@
 // *********** test codes **********
 // perform the simple built-in chime flexFX
-flexFX.performFlexFX("Ting", Note.G5, 250, 400, true);
-flexFX.performFlexFX("Ting", Note.E5, 250, 400, true);
-flexFX.performFlexFX("Ting", Note.C5, 250, 1600, true);
+flexFX.performFlexFX("Ting", Note.G5, 250, 400, false);
+flexFX.performFlexFX("Ting", Note.E5, 250, 400, false);
+flexFX.performFlexFX("Ting", Note.C5, 250, 1600, false);
 
 pause(1000);
 

@@ -7,10 +7,11 @@ morse=github:grandpabond/pxt-flexfx
 The ``|music:Music|`` category has a ``||music:micro:bit(V2)||`` section with blocks for **sound-expressions**. 
 These let you build some amazing sounds, but sometimes you need something more complex.
 ``|flexFX:flexFX|`` sounds are *re-usable recipes* for sound-effects that can stitch together up to three sound-expressions, to be played one after the other.
-As its name suggests, a``|flexFX:flexFX|`` recipe is used flexibly, creating different performances simply by changing the parameters for pitch, volume or duration.
+As its name suggests, a``|flexFX:flexFX|`` recipe is re-used flexibly, creating different performances simply by changing the parameters for pitch, volume or duration.
 
+You can choose a FlexFX from a selection of built-in sounds, or create your own (see ``|flexFX:Building a FlexFX|`` below). You can also queue-up performance to happen in the background.
 
-## Performing a FlexFX #performFlexFX
+# Performing a FlexFX #performFlexFX
 Each FlexFX has a unique name (its **id**), assigned when it is first created.
 
 This is supplied to the block ``|flexFX:performFlexFX|``, together with your chosen play-settings:
@@ -21,17 +22,23 @@ This is supplied to the block ``|flexFX:performFlexFX|``, together with your cho
 
 ``||flexFX:duration||`` sets how long the overall performance will last in milliseconds.
 
-You can choose a FlexFX from a selection of built-in sounds, or create your own *(see below)*
 
-Often, a sound-effect is intended to accompany other actions that require codes to be executed, so there is a final optional parameter ``||flexFX:background||``that (if set *true*) allows the FlexFX to be performed in the background *(see |Play-list| below)*.
+Often, a sound-effect is intended to accompany other actions that require codes to be executed, so there is a final optional parameter ``||flexFX:background||``that, if set *true*, allows the FlexFX performance to be handled in the background (see |flexFX: Background Play-list| below).
 
-The following example would play the built-in FlexFX called **Ping** quietly, based on a pitch around middle-C, 
-with the whole performance lasting 1.5 seconds:
+The following example would play the built-in FlexFX called **Ping** three times over, with descending pitch, and increasing volume. The first two performances last just 0.4 seconds each, while the final performance takes 1.6 seconds to complete.
 
 ```block
-flexFX.performFlexFX("Ping", 250, 50, 1500, false);
+flexFX.performFlexFX("Ting", Note.G5, 100, 400, false);
+flexFX.performFlexFX("Ting", Note.E5, 175, 400, false);
+flexFX.performFlexFX("Ting", Note.C5, 250, 1600, false);
 ```
 
+### ~alert
+Note that you can use a ``||music:note||`` built-in reporter block to specify the pitch frequency more conveniently.
+### ~
+
+
+# Building a FlexFX
 
 ## Anatomy of a FlexFX
 The basic idea is that a FlexFX is built from one, two or three **parts**.
@@ -84,7 +91,7 @@ So it might start at 75% of the specified pitch (a musical fifth below), rise to
 Similarly, it might start quietly (at 50% of the specified volume), then grow to a maximum (100%) before fading away to silence (0%). (Note that 100% of "quiet" is still quiet!)
 Percentages also say how the total duration should be split between the different parts, so the same FlexFX can be performed slowly or fast. 
 
-### Creating a Simple FlexFX #createFlexFX
+## Creating a Simple FlexFX #createFlexFX
 The simplest FlexFX has just one part (so is really just a tuneable version of a standard sound-expression)
 Here is an example:
 ```block
@@ -92,7 +99,7 @@ flexFX.createFlexFX("Ting", 100, 100,
     Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10);
 ```
 
-### Creating a 2-Part FlexFX #create2PartFlexFX
+## Creating a 2-Part FlexFX #create2PartFlexFX
 A **2-part FlexFX** allows profiles passing through three [pitch,volume] settings: start, middle and end.
 For example:
 ```block
@@ -101,7 +108,7 @@ flexFX.create2PartFlexFX("Miaow", 70, 50,
     Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 80, 30);
 ```
 
-### Creating a 3-Part FlexFX #create3PartFlexFX
+## Creating a 3-Part FlexFX #create3PartFlexFX
 The most complex **3-part FlexFX** has profiles that move smoothly between four points.
 For example:
 ```block
@@ -111,7 +118,7 @@ flexFX.create3PartFlexFX("Wail", 50, 50,
     Wave.SQUARE, Attack.SLOW, Effect.NONE, 150, 50, 33, 33);
 ```
 
-### Creating a Double FlexFX #createDoubleFlexFX
+## Creating a Double FlexFX #createDoubleFlexFX
 For some special sounds (e.g a two-tone police siren) we need a silent gap separating two simple sound-expressions.
 This is called a **double FlexFX**. Each part has play-settings for its start-point and end-point, 
 and the duration percentages controls the lengths of the first sound, and of the silence in-between.
@@ -127,13 +134,15 @@ and the duration percentages controls the lengths of the first sound, and of the
 Any FlexFX can be freely modified using any of the ``|flexFX:create...|`` blocks, by specifying its **id**. 
 The basic rule is that if it exists, it gets changed; otherwise it is created from scratch.
 
-## The Play-list
+# Background Play-list
 
-By setting the final parameter of `|flexFX:performFlexFX|` to *true*, the function will return immediately, and queue the FlexFX performance (called a **Play**) to happen in the background. In this way, you can in fact queue-up many different Plays on the internal Play-list, and the background process will just work through them one-at-a-time, while your code gets on with something else. 
+By setting the final parameter of `|flexFX:performFlexFX|` to *true*, the function will return immediately, and queue this FlexFX performance (which we call a **Play**) to happen in the background. You can queue-up many different Plays on the internal Play-list, and the background process will just work steadily through them one-at-a-time, while your code can get on with something else. 
 
 Sometimes you might want tighter control over just when each queued Play occurs, so some advanced functions are provided that let you interact with the Play-list.
 
-### Spacing-out background Plays #performSilence
+## Spacing-out background Plays
+
+``||flexFX:flexFX.performSilence #performSilence ||``
 	When queueing-up a series of FlexFX Plays, you may not always want them to follow-on straightaway. Use this function to space-out your Plays, by adding a silent pause onto the play-list.
 	
 	This example separates two Plays with a 1.5 second silence:
@@ -142,25 +151,57 @@ Sometimes you might want tighter control over just when each queued Play occurs,
 	flexFX.performSilence(1500);
 ```
 	
-### Synchronise with the next Play #awaitPlayStart #awaitPlayFinish()
+## Synchronising with the next Play 
+
+``||flexFX:flexFX.awaitPlayStart #awaitPlayStart ||``
+``||flexFX:flexFX.awaitPlayFinish #awaitPlayFinish ||``
+
 	If your codes need to synchronise servo actions or display changes precisely to a queued sequence of sound-effects, you can use the wait functions.
 	
-	flexFX.awaitPlayStart()  Awaits start of next FLexFX on the play-list
+		
+```block
+	flexFX.awaitPlayStart()  
+```
+	Awaits start of next FLexFX on the play-list
 
-	flexFX.awaitPlayFinish() Awaits completion of FlexFX currently playing
+		
+```block
+	flexFX.awaitPlayFinish() 
+```
+	Awaits completion of FlexFX currently playing
 
-	flexFX.awaitAllFinished()  Awaits completion of everything on the play-list
+		
+```block
+	flexFX.awaitAllFinished()  
+```
+	Awaits completion of everything on the play-list
 
-	flexFX.waitingToPlay() Returns the current length of the play-list
+		
+```block
+	flexFX.waitingToPlay() 
+```
+	Returns the current length of the play-list
 
-	flexFX.stopPlaying() Suspends background playing from the play-list
+		
+```block
+	flexFX.stopPlaying() 
+```
+	Suspends background playing from the play-list
 
-	flexFX.startPlaying() Resums background playing from the play-list
+		
+```block
+	flexFX.startPlaying() 
+```
+	Resumes background playing from the play-list
 
-	flexFX.deletePlaylist()  Delets from the play-list everything left unplayed
+		
+```block
+	flexFX.deletePlaylist()  
+```
+	Deletes from the play-list everything left unplayed
 	
 	
-	
+## Lip-synch Example
 	
 	So for example this code snippet would lip-synch a crying face.
 ```block
@@ -197,7 +238,7 @@ while(flexFX.isActive()) {
 }
 pause(500);
 basic.showIcon(IconNames.Happy);
-`
+```
 -----------------------------------------------------------------------
 -----------------------------------------------------------------------
 # Acknowledgements 

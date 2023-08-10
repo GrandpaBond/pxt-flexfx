@@ -2,12 +2,36 @@
 morse=github:grandpabond/pxt-flexfx
 ```
 
-# FlexFX Extension  for  Flexible Sound-effects
+# FlexFX Extension: Flexible Sound-effects
 
 The ``|music:Music|`` category has a ``||music:micro:bit(V2)||`` section with blocks for **sound-expressions**. 
 These let you build some amazing sounds, but sometimes you need something more complex.
-``|flexFX:FlexFX|`` sounds are *re-usable* recipes for sound-effects, that can stitch together up to three sound-expressions, to be played one after the other.
-Using different settings of pitch, volume, or duration, the same FlexFX recipe can be used for many different performances.
+``|flexFX:flexFX|`` sounds are *re-usable recipes* for sound-effects that can stitch together up to three sound-expressions, to be played one after the other.
+As its name suggests, a``|flexFX:flexFX|`` recipe is used flexibly, creating different performances simply by changing the parameters for pitch, volume or duration.
+
+
+## Performing a FlexFX #performFlexFX
+Each FlexFX has a unique name (its **id**), assigned when it is first created.
+
+This is supplied to the block ``|flexFX:performFlexFX|``, together with your chosen play-settings:
+
+``||flexFX:pitch||`` sets the basic pitch as a numeric frequency.
+
+``||flexFX:volume||`` sets the basic volume as a number in the range 0-255.
+
+``||flexFX:duration||`` sets how long the overall performance will last in milliseconds.
+
+You can choose a FlexFX from a selection of built-in sounds, or create your own *(see below)*
+
+Often, a sound-effect is intended to accompany other actions that require codes to be executed, so there is a final optional parameter ``||flexFX:background||``that (if set *true*) allows the FlexFX to be performed in the background *(see |Play-list| below)*.
+
+The following example would play the built-in FlexFX called **Ping** quietly, based on a pitch around middle-C, 
+with the whole performance lasting 1.5 seconds:
+
+```block
+flexFX.performFlexFX("Ping", 250, 50, 1500, false);
+```
+
 
 ## Anatomy of a FlexFX
 The basic idea is that a FlexFX is built from one, two or three **parts**.
@@ -18,35 +42,35 @@ style of sound, specified by its own **wave-shape**, **attack**, plus a possible
 ### Style: Wave-shape
 The wave-shape sets the basic tonal quality: the spikier the wave, the harsher the sound. There are five shapes available:
 
-``||Pure||`` selects a Sine-wave, a smooth, clean shape giving a smooth, clean tone.
+``||flexFX:Pure||`` selects a Sine-wave, a smooth, clean shape giving a smooth, clean tone.
 
-``||Buzzy||`` selects a Square-wave containing harmonics, partial tones that are multiples (in this case 3,5,7...) of the main frequency. This gives a square wave a richer and buzzier sound.
+``||flexFX:Buzzy||`` selects a Square-wave containing harmonics, partial tones that are multiples (in this case 3,5,7...) of the main frequency. This gives a square wave a richer and buzzier sound.
 
-``||Bright||`` selects a Triangular-wave containing the same odd harmonics as a square wave, but with the higher ones tapering off. It sounds clear and bright.
+``||flexFX:Bright||`` selects a Triangular-wave containing the same odd harmonics as a square wave, but with the higher ones tapering off. It sounds clear and bright.
 
-``||Harsh||`` selects a Sawtooth-wave which is the richest in terms of harmonics, making it sound even harsher than a square wave,
+``||flexFX:Harsh||`` selects a Sawtooth-wave which is the richest in terms of harmonics, making it sound even harsher than a square wave,
 
-``||Noisy||`` selects a randomised wave-shape that takes harshness to the extreme: it doesn't have any real pitch left at all!
+``||flexFX:Noisy||`` selects a randomised wave-shape that takes harshness to the extreme: it doesn't have any real pitch left at all!
 
 ### Style: Attack
 The attack chooses how fast the pitch and volume move from the start-point to the end-point of the FlexFX part.
 
-``||Slow||`` selects a simple straight-line path, changing evenly over time.
+``||flexFX:Slow||`` selects a simple straight-line path, changing evenly over time.
 
-``||Medium||`` follows a curved path, changing more quickly to start with, then gradually slowing down.
+``||flexFX:Medium||`` follows a curved path, changing more quickly to start with, then gradually slowing down.
 
-``||Fast||`` gives the most extreme attack, moving very rapidly away from the start-point towards the end-point. 
+``||flexFX:Fast||`` gives the most extreme attack, moving very rapidly away from the start-point towards the end-point. 
 
 ### Style: Effect
 There are three special-effects that can optionally be added.
 
-``||Vibrato||`` wobbles the pitch up and down as it progresses.
+``||flexFX:Vibrato||`` wobbles the pitch up and down as it progresses.
 
-``||Tremolo||`` flutters the volume throughout.
+``||flexFX:Tremolo||`` flutters the volume throughout.
 
-``||Warble||`` is a rather more extreme version of Vibrato.
+``||flexFX:Warble||`` is a rather more extreme version of Vibrato.
 
-``||None||`` skips any of these effects.
+``||flexFX:None||`` skips any of these effects.
 
 There is currently no control of how rapidly or deeply these effects are applied.
 
@@ -59,29 +83,6 @@ Because a FlexFX is a *tuneable* object, all of its parameters are given as **pe
 So it might start at 75% of the specified pitch (a musical fifth below), rise to 125% (a musical third above) before settling on 100%.
 Similarly, it might start quietly (at 50% of the specified volume), then grow to a maximum (100%) before fading away to silence (0%). (Note that 100% of "quiet" is still quiet!)
 Percentages also say how the total duration should be split between the different parts, so the same FlexFX can be performed slowly or fast. 
-
-
-## Performing a FlexFX #performFlexFX
-Each FlexFX has a unique name (its **id**), assigned when it is first created. 
-This is supplied to the block ``|flexFX:performFlexFX|``, together with your chosen play-settings:
-
-``||Pitch||`` sets the basic pitch as a numeric frequency.
-
-``||Volume||`` sets the basic volume as a number in the range 0-255.
-
-``||Duration||`` sets how long the overall performance will last in milliseconds.
-
-You can choose a FlexFX from a selection of built-in sounds, or create your own (see below).
-
-Often, a sound-effect is intended to accompany other actions that require codes to be executed, so there is a final optional parameter that (if set true) allows the FlexFX to be performed in the background (see |Play-list| below).
-
-The following example would play the built-in FlexFX called **Ping** quietly, based on a pitch around middle-C, 
-with the whole performance lasting 1.5 seconds:
-
-```block
-flexFX.performFlexFX("Ping", 250, 50, 1.500, false);
-```
-
 
 ### Creating a Simple FlexFX #createFlexFX
 The simplest FlexFX has just one part (so is really just a tuneable version of a standard sound-expression)
@@ -199,7 +200,8 @@ basic.showIcon(IconNames.Happy);
 `
 -----------------------------------------------------------------------
 -----------------------------------------------------------------------
-
+# Acknowledgements 
+Credit must go to Bill Siever (on the Micro:bit Developer Slack Forum) for his experienced insights into the workings of the Micro:bit run-time, and his unstinting assistance in navigating the complex process of publishing this Extension.
 
 
 > Open this page at [https://grandpabond.github.io/pxt-flexfx/](https://grandpabond.github.io/pxt-flexfx/)

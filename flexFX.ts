@@ -441,7 +441,7 @@ namespace flexFX {
     /**
      * Perform a custom FlexFX 
      */
-    //% block="perform FlexFX $id at pitch $pitch with strength $vol for $ms || queued = $background"
+    //% block="perform FlexFX $id at pitch $pitch with strength $volume lasting $duration ms || queued = $background"
     //% group="Playing..."
     //% help=pxt-flexfx/performflexfx
     //% id.defl="Ting"
@@ -452,11 +452,11 @@ namespace flexFX {
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
     //% weight=150
-    export function performFlexFX(id: string, pitch: number, vol: number, ms: number, background: boolean) {
+    export function performFlexFX(id: string, pitch: number, volume: number, duration: number, background: boolean) {
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
             // first compile and add our Play onto the playList
-            target.compilePlay(pitch, vol, ms); 
+            target.compilePlay(pitch, volume, duration); 
             activatePlayer();  // make sure it will get played
             if (!background) { // ours was the lastest Play, so simply await completion of player.
                 control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);

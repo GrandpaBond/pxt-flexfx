@@ -469,6 +469,7 @@ namespace flexFX {
      */
     //% block="add a pause of $ms ms next in the play-list"
     //% group="Play-list..."
+    //% advanced=true
     //% weight=50
     export function performSilence(ms: number) {
         let play = new Play;
@@ -482,6 +483,7 @@ namespace flexFX {
      */
     //% block="wait until next FLexFX starts"
     //% group="Play-list..."
+    //% advanced=true
     //% weight=45
     export function awaitPlayStart() {
         if (playList.length >= 0) {
@@ -496,6 +498,7 @@ namespace flexFX {
      */
     //% block="wait until current FlexFX finished"
     //% group="Play-list..."
+    //% advanced=true
     //% weight=40
     export function awaitPlayFinish() {
         if (playerPlaying) {
@@ -508,6 +511,7 @@ namespace flexFX {
      */
     //% block="wait until everything played"
     //% group="Play-list..."
+    //% advanced=true
     //% weight=35
     export function awaitAllFinished() {
         if (playList.length >= 0) {
@@ -522,6 +526,7 @@ namespace flexFX {
      */
     //% block="length of play-list"
     //% group="Play-list..."
+    //% advanced=true
     //% weight=30
     export function waitingToPlay(): number {
         return playList.length;
@@ -532,6 +537,7 @@ namespace flexFX {
      */
     //% block="pause play-list"
     //% group="Play-list..."
+    //% advanced=true
     //% weight=25
     export function stopPlaying() {
         playerStopped = true;
@@ -542,10 +548,23 @@ namespace flexFX {
      */
     //% block="play play-list"
     //% group="Play-list..."
+    //% advanced=true
     //% weight=20
     export function startPlaying() {
         playerStopped = false;
         activatePlayer();
+    }
+
+
+    /**
+     * Delete from the play-list everything left unplayed
+     */
+    //% block="forget play-list"
+    //% group="Play-list..."
+    //% advanced=true
+    //% weight=15
+    export function deletePlaylist() {
+        while (playList.length > 0) { playList.pop() }
     }
 
     // create a simple default "chime" flexFX

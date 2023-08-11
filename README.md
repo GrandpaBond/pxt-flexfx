@@ -6,15 +6,19 @@ morse=github:grandpabond/pxt-flexfx
 
 The ``|music:Music|`` category has a ``||music:micro:bit(V2)||`` section with blocks for **sound-expressions**. 
 These let you build some amazing sounds, but sometimes you need something more complex.
-``|flexFX:flexFX|`` sounds are *re-usable recipes* for sound-effects that can stitch together up to three sound-expressions, to be played one after the other.
-As its name suggests, a``|flexFX:flexFX|`` recipe is re-used flexibly, creating different performances simply by changing the parameters for pitch, volume or duration.
+``|flexFX:flexFX|`` sounds are *re-usable recipes* for sound-effects that can stitch together up to three sound-expressions, 
+to be played one after the other. As its name suggests, a``|flexFX:flexFX|`` recipe is re-used flexibly, creating different 
+performances simply by changing the parameters for pitch, volume or duration.
 
-You can choose a FlexFX from a selection of built-in sounds, or create your own (see ``|flexFX:Building a FlexFX|`` below). You can also queue-up performance to happen in the background.
+You can choose a FlexFX from a selection of built-in sounds, or create your own (see ``||flexFX:Building a FlexFX||`` below). 
+You can also queue-up performance to happen in the background.
 
-# Performing a FlexFX #flexFX-performFlexFX
-Each FlexFX has a unique name (its **id**), assigned when it is first created.
+## Performing a FlexFX #flexFX-performFlexFX
+```sig
+flexFX.performFlexFX()
+```
 
-This is supplied to the block ``|flexFX:performFlexFX|``, together with your chosen play-settings:
+``||flexFX:pitch||`` is the unique name of a ``|flexFX:flexFX|``, assigned when it is first created.
 
 ``||flexFX:pitch||`` sets the basic pitch as a numeric frequency.
 
@@ -23,20 +27,21 @@ This is supplied to the block ``|flexFX:performFlexFX|``, together with your cho
 ``||flexFX:duration||`` sets how long the overall performance will last in milliseconds.
 
 
-Often, a sound-effect is intended to accompany other actions that require codes to be executed, so there is a final optional parameter ``||flexFX:background||``that, if set *true*, allows the FlexFX performance to be handled in the background (see |flexFX: Background Play-list| below).
+Often, a sound-effect is intended to accompany other actions that require codes to be executed, so there is a final optional 
+parameter ``||flexFX:background||``that, if set *true*, allows the FlexFX performance to be handled in the background (see |flexFX: Background Play-list| below).
 
-The following example would play the built-in FlexFX called **Ping** three times over, with descending pitch, and increasing volume. The first two performances last just 0.5 seconds each, while the final performance takes 1.6 seconds to complete.
-
+The following example would play the built-in FlexFX called **Ping** three times over, with descending pitch, and increasing volume. 
+The first two performances last just 0.4 seconds each, while the final performance takes 1.6 seconds to complete.
 ```block
 flexFX.performFlexFX("Ting", Note.G5, 100, 400, false);
 flexFX.performFlexFX("Ting", Note.E5, 175, 400, false);
 flexFX.performFlexFX("Ting", Note.C5, 250, 1600, false);
 ```
 
-### ~alert
-Note that you can use a ``||music:note||`` built-in reporter block to specify the pitch frequency more conveniently.
+### ~reminder
+#### Note-names
+|Note that you can use the built-in note-name enumerations (e.g. ``|Note.G5|``) to specify the pitch frequency more conveniently.
 ### ~
-
 
 # Building a FlexFX
 
@@ -93,6 +98,9 @@ Percentages also say how the total duration should be split between the differen
 
 ## Creating a Simple FlexFX #flexFX-createFlexFX
 The simplest FlexFX has just one part (so is really just a tuneable version of a standard sound-expression)
+```sig
+flexFX.createFlexFX()
+```
 Here is an example:
 ```block
 flexFX.createFlexFX("Ting", 100, 100,

@@ -56,7 +56,7 @@ enum Effect {
  * Tools for creating composite sound-effects of class FlexFX that can be performed 
  * (either directly or queued-up) with dynamically-specified pitch, volume and duration.
  */
-//% color=#70e030 weight=100 icon="\uf0a1 block="FlexFX"
+//% color=#70e030 weight=100 icon="\uf72e block="FlexFX"
 //% groups=['Creating...', 'Playing...', 'Play-list...']
 namespace flexFX {
     // Each performance will comprise an array of the "compiled" sound-strings for its several parts.

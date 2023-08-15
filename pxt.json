@@ -1,6 +1,6 @@
 {
     "name": "pxt-flexFX",
-    "version": "1.1.3",
+    "version": "1.1.4",
     "description": "",
     "dependencies": {
         "core": "*"

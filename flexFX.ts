@@ -52,12 +52,14 @@ enum Effect {
     //% block="Warble"
     WARBLE = SoundExpressionEffect.Warble
 }
+
+
 /**
  * Tools for creating composite sound-effects of class FlexFX that can be performed 
  * (either directly or queued-up) with dynamically-specified pitch, volume and duration.
  */
-//% color=#70e030 weight=100 icon="\uf72e block="FlexFX"
-//% groups=['Creating...', 'Playing...', 'Play-list...']
+//% color=#70e030 weight=100 icon="\uf72e" block="FlexFX"
+//% groups=['Playing', 'Creating', 'Play-list']
 namespace flexFX {
     // Each performance will comprise an array of the "compiled" sound-strings for its several parts.
     class Play {
@@ -66,7 +68,7 @@ namespace flexFX {
             this.parts = [];
         }
     }
-    // Performances get queued on the play-list to ensure proper asynch sequencing
+    // Performances get queued on the play-list to ensure proper asynchronous sequencing
     let playList: Play[] = []; 
     
     // control flags:
@@ -165,15 +167,9 @@ namespace flexFX {
             this.timeRatioA = this.goodTimeRatio(ms1,1.0);
             this.waveA = wave;
             this.attackA = attack;
-            this.effectA = effect;
-
-            // To allow a soundExpression string to be read as a normal string
-            // we need it to form part of a temporary (throw-away) Sound object
-            // let sex = new soundExpression.Sound;
-
-            
+            this.effectA = effect;    
             this.playPartA = true;
-        // clear other flags for parts B & C that might have been set...
+        // clear other flags for parts B & C that might have previously been set...
             this.playPartB = false;
             this.playPartC = false;
             this.usesPoint2 = false;
@@ -278,7 +274,7 @@ namespace flexFX {
             let sound = "";
             play = playList.shift();
             if (play.parts[0].charAt(0) == 's') {
-                // this is just a queued pause, so doesn't count as "PLAYING"
+                // this Play is just a queued pause, so doesn't count as "PLAYING"
                 sound = play.parts.shift();
                 pause(parseInt(sound.slice(1, sound.length)));
             } else {
@@ -286,7 +282,7 @@ namespace flexFX {
                 playerPlaying = true;
                 while (play.parts.length > 0) {  // play its sounds in turn
                     sound = play.parts.shift();
-                    if (sound.charAt(0) == ' ') {
+                    if (sound.charAt(0) == '_') {
                     // this is a gap within a sound, so DOES still count as "PLAYING"
                         pause(parseInt(sound.slice(1, sound.length)));
                     } else {
@@ -304,6 +300,32 @@ namespace flexFX {
     }
 
     // ---- UI BLOCKS ----
+
+    /**
+     * Perform a FlexFX (built-in or user-created)
+     */
+    //% block="perform FlexFX $id at pitch $pitch with strength $volume lasting $duration ms || queued = $background"
+    //% group="Playing..."
+    //% help=pxt-flexfx/performflexfx
+    //% id.defl="Ting"
+    //% pitch.min=50 pitch.max=2000 pitch.defl=800
+    //% vol.min=0 vol.max=255 vol.defl=200
+    //% ms.min=0 ms.max=10000 ms.defl=800
+    //% background.defl=false
+    //% inlineInputMode=inline
+    //% expandableArgumentMode="enabled"
+    //% weight=150
+    export function performFlexFX(id: string, pitch: number, volume: number, duration: number, background: boolean) {
+        let target: FlexFX = flexFXList.find(i => i.id === id);
+        if (target != null) {
+            // first compile and add our Play onto the playList
+            target.compilePlay(pitch, volume, duration);
+            activatePlayer();  // make sure it will get played
+            if (!background) { // ours was the lastest Play, so simply await completion of player.
+                control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+            }
+        }
+    }
 
     /**
      * Create a simple custom FlexFX 
@@ -436,32 +458,6 @@ namespace flexFX {
         target.setPartA(startPitchAPercent / 100, startVolAPercent / 100, waveA, attackA, effectA, endPitchAPercent / 100, endVolAPercent / 100, timePercentA / 100);
         target.silentPartB(startPitchBPercent / 100, startVolBPercent / 100, timeGapPercent / 100);
         target.setPartC(waveB, attackB, effectB, endPitchBPercent / 100, endVolBPercent / 100, (100 - timePercentA - timeGapPercent) / 100);
-    }
-
-    /**
-     * Perform a custom FlexFX 
-     */
-    //% block="perform FlexFX $id at pitch $pitch with strength $volume lasting $duration ms || queued = $background"
-    //% group="Playing..."
-    //% help=pxt-flexfx/performflexfx
-    //% id.defl="Ting"
-    //% pitch.min=50 pitch.max=2000 pitch.defl=800
-    //% vol.min=0 vol.max=255 vol.defl=200
-    //% ms.min=0 ms.max=10000 ms.defl=800
-    //% background.defl=false
-    //% inlineInputMode=inline
-    //% expandableArgumentMode="enabled"
-    //% weight=150
-    export function performFlexFX(id: string, pitch: number, volume: number, duration: number, background: boolean) {
-        let target: FlexFX = flexFXList.find(i => i.id === id);
-        if (target != null) {
-            // first compile and add our Play onto the playList
-            target.compilePlay(pitch, volume, duration); 
-            activatePlayer();  // make sure it will get played
-            if (!background) { // ours was the lastest Play, so simply await completion of player.
-                control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
-            }
-        }
     }
 
     /**

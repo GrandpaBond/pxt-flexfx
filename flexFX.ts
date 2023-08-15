@@ -338,9 +338,9 @@ namespace flexFX {
     //% weight=230
     //% id.defl="simple"
     //% startPitchPercent.min=25 startPitchPercent.max=400 startPitchPercent.defl=100
-    //% startVolPercent.min=1 startVolPercent.max=100 startVolPercent.defl=100
+    //% startVolPercent.min=0 startVolPercent.max=100 startVolPercent.defl=100
     //% endPitchPercent.min=10 endPitchPercent.max=400 endPitchPercent.defl=100
-    //% endVolPercent.min=1 endVolPercent.max=100 endVolPercent.defl=100
+    //% endVolPercent.min=0 endVolPercent.max=100 endVolPercent.defl=100
     export function createFlexFX(
         id: string, startPitchPercent: number, startVolPercent: number,
         wave: Wave, attack: Attack, effect: Effect, endPitchPercent: number, endVolPercent: number) {
@@ -363,12 +363,12 @@ namespace flexFX {
     //% weight=220
     //% id.defl="2-part"
     //% startPitchPercent.min=10 startPitchPercent.max=400 startPitchPercent.defl=100
-    //% startVolPercent.min=1 startVolPercent.max=100 startVolPercent.defl=100
+    //% startVolPercent.min=0 startVolPercent.max=100 startVolPercent.defl=100
     //% midPitchPercent.min=10 midPitchPercent.max=400 midPitchPercent.defl=100
-    //% midVolPercent.min=1 midVolPercent.max=0 midVolPercent.defl=100
+    //% midVolPercent.min=0 midVolPercent.max=100 midVolPercent.defl=100
     //% endPitchPercent.min=10 endPitchPercent.max=400 endPitchPercent.defl=100
-    //% endVolPercent.min=1 endVolPercent.max=100 endVolPercent.defl=100
-    //% timePercentA.min=1 timePercentA.max=99 timePercentA.defl=50
+    //% endVolPercent.min=0 endVolPercent.max=100 endVolPercent.defl=100
+    //% timePercentA.min=0 timePercentA.max=100 timePercentA.defl=50
     export function create2PartFlexFX(
         id: string, startPitchPercent: number, startVolPercent: number,
         waveA: Wave, attackA: Attack, effectA: Effect, midPitchPercent: number, midVolPercent: number,
@@ -394,15 +394,15 @@ namespace flexFX {
     //% weight=210
     //% id.defl="3-part"
     //% startPitchPercent.min=10 startPitchPercent.max=400 startPitchPercent.defl=100
-    //% startVolPercent.min=1 startVolPercent.max=100 startVolPercent.defl=100
+    //% startVolPercent.min=0 startVolPercent.max=100 startVolPercent.defl=100
     //% pitchABPercent.min=10 pitchABPercent.max=400 pitchABPercent.defl=100
-    //% volABPercent.min=1 volABPercent.max=0 volABPercent.defl=100
+    //% volABPercent.min=0 volABPercent.max=100 volABPercent.defl=100
     //% pitchBCPercent.min=10 pitchBCPercent.max=400 pitchBCPercent.defl=100
-    //% volBCPercent.min=1 volBCPercent.max=0 volBCPercent.defl=100
+    //% volBCPercent.min=0 volBCPercent.max=100 volBCPercent.defl=100
     //% endPitchPercent.min=10 endPitchPercent.max=400 endPitchPercent.defl=100
-    //% endVolPercent.min=1 endVolPercent.max=100 endVolPercent.defl=100
-    //% timePercentA.min=1 timePercentA.max=99 timePercentA.defl=33
-    //% timePercentB.min=1 timePercentB.max=99 timePercentB.defl=33
+    //% endVolPercent.min=0 endVolPercent.max=100 endVolPercent.defl=100
+    //% timePercentA.min=0 timePercentA.max=100 timePercentA.defl=33
+    //% timePercentB.min=0 timePercentB.max=100 timePercentB.defl=33
     export function create3PartFlexFX(
         id: string, startPitchPercent: number, startVolPercent: number,
         waveA: Wave, attackA: Attack, effectA: Effect, pitchABPercent: number, volABPercent: number,
@@ -432,15 +432,15 @@ namespace flexFX {
     //% weight=200
     //% id.defl="double"
     //% startPitchAPercent.min=10 startPitchAPercent.max=400 startPitchAPercent.defl=100
-    //% startVolAPercent.min=1 startVolAPercent.max=100 startVolAPercent.defl=100
+    //% startVolAPercent.min=0 startVolAPercent.max=100 startVolAPercent.defl=100
     //% endPitchAPercent.min=10 endPitchAPercent.max=400 endPitchAPercent.defl=100
-    //% endVolAPercent.min=1 endVolAPercent.max=100 endVolAPercent.defl=100
+    //% endVolAPercent.min=0 endVolAPercent.max=100 endVolAPercent.defl=100
     //% startPitchBPercent.min=10 startPitchBPercent.max=400 startPitchBPercent.defl=75
-    //% startVolBPercent.min=1 startVolBPercent.max=100 startVolBPercent.defl=100
+    //% startVolBPercent.min=0 startVolBPercent.max=100 startVolBPercent.defl=100
     //% endPitchBPercent.min=10 endPitchBPercent.max=400 endPitchBPercent.defl=75
-    //% endVolBPercent.min=1 endVolBPercent.max=100 endVolBPercent.defl=100
-    //% timePercentA.min=1 timePercentA.max=99 timePercentA.defl=40
-    //% timeGapPercent.min=1 timeGapPercent.max=99 timeGapPercent.defl=20
+    //% endVolBPercent.min=0 endVolBPercent.max=100 endVolBPercent.defl=100
+    //% timePercentA.min=0 timePercentA.max=100 timePercentA.defl=40
+    //% timeGapPercent.min=0 timeGapPercent.max=100 timeGapPercent.defl=20
     export function createDoubleFlexFX(
         id: string, startPitchAPercent: number, startVolAPercent: number,
         waveA: Wave, attackA: Attack, effectA: Effect, endPitchAPercent: number, endVolAPercent: number,

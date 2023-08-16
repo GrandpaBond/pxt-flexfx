@@ -60,7 +60,7 @@ enum Effect {
  */
 
 //% color=#70e030
-//% icon="\uf72e"
+//% icon="\uf0a1"
 //% block="FlexFX"
 //% groups="['Playing', 'Creating', 'Play-list']"
 namespace flexFX {

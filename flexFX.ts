@@ -30,7 +30,7 @@ enum Wave {
     //%block="Harsh"
     SAWTOOTH = WaveShape.Sawtooth,
     //%block="Noisy"
-    NOISE = WaveShape.Noise,
+    NOISE = WaveShape.Noise
 }
 // Simplify the selection of frequency interpolation trajectory...
 enum Attack {

@@ -25,7 +25,7 @@ enum Wave {
     SINE = WaveShape.Sine,
     //%block="Buzzy"
     SQUARE = WaveShape.Square,
-    //%block="Bright"music.builtinPlayableSoundEffect(soundExpression.giggle)
+    //%block="Bright"
     TRIANGLE = WaveShape.Triangle,
     //%block="Harsh"
     SAWTOOTH = WaveShape.Sawtooth,

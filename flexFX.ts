@@ -53,6 +53,49 @@ enum Effect {
     WARBLE = SoundExpressionEffect.Warble
 }
 
+// list of built-in FlexFXs
+enum BuiltInFlexFX {
+    //% block="laugh"
+    LAUGH,
+    //% block="uh-oh"
+    UHOH,
+    //% block="scream"
+    SCREAM,
+    //% block="cry"
+    CRY,
+    //% block="moan"
+    MOAN,
+    //% block="shout"
+    SHOUT,
+    //% block="violin"
+    VIOLIN,
+    //% block="horn"
+    HORN,
+    //% block="sax"
+    FLUTE,
+    //% block="flute"
+    SAX,
+    //% block="tweet"
+    TWEET,
+    //% block="ting"
+    TING,
+    //% block="chime"
+    CHIME,
+    //% block="whale"
+    WHALE,
+    //% block="miaow"
+    MIAOW,
+    //% block="cluck"
+    CLUCK,
+    //% block="woof"
+    WOOF,
+    //% block="moo"
+    MOO,
+    //% block="motor"
+    MOTOR,
+    //% block="siren"
+    SIREN
+}
 
 /**
  * Tools for creating composite sound-effects of class FlexFX that can be performed 
@@ -91,11 +134,12 @@ namespace flexFX {
         ALLPLAYED = 3,
     }
 
-    // ---- Central array of currently defined FlexFX objects ----
+    // ---- Central arrays of built-in and user-defined FlexFX objects ----
+    let builtInFlexFXList: FlexFX[] = [];
     let flexFXList: FlexFX[] = [];
 
-    // A FlexFX contains the recipe to compile a composite sound string.
-    // It has up to three component soundExpressions, PartA, PartB & PartC
+    // A FlexFX contains the recipe to compile a composite sound.
+    // It can specify up to three component soundExpressions, PartA, PartB & PartC
     // Each part has a start and an end [frequency,volume], but endA=startB and endB=startC,
     // so an n-part FlexFX moves through (n+1)) [frequency,volume,time] points
     class FlexFX {
@@ -103,22 +147,19 @@ namespace flexFX {
         id: string; // identifier
         // Points are defined to be fixed ratios of the "performance" [frequency,volume,duration] arguments
         playPartA: boolean;
-        //partA: string;
         waveA: number;
         attackA: number;
         effectA: number;
         timeRatioA: number;
 
-        skipPartB: boolean;     // marks a double FlexFX, which has a silent gap in the middle
+        skipPartB: boolean;     // marks a special "double" FlexFX, which has a silent gap in the middle
         playPartB: boolean;
-        //partB: string;
         waveB: number;
         attackB: number;
         effectB: number;
         timeRatioB: number;
 
         playPartC: boolean;
-        //partC: string;
         waveC: number;
         attackC: number;
         effectC: number;
@@ -138,6 +179,11 @@ namespace flexFX {
         usesPoint3: boolean;
         freqRatio3: number;
         volRatio3: number;
+
+        // Performance defaults
+        defaultFreq: number;
+        defaultVol: number;
+        defaultMs: number;
 
         constructor(id: string) {
             this.id = id;
@@ -214,13 +260,17 @@ namespace flexFX {
 
         // Compiles a performance (called a Play) for this FlexFX and adds it to the Play-list
         compilePlay(freq: number, vol: number, ms: number) {
-            let loud = vol * 4 // map from [0...255] into range [0...1023]
+            // pick up performance defaults?
+            if (freq == 0) { freq = this.defaultFreq; }
+            if (vol == 0) { vol = this.defaultVol; }
+            if (ms == 0) { ms = this.defaultMs; }
+        
             // Point 0
             let f0 = freq * this.freqRatio0;
-            let v0 = loud * this.volRatio0;
+            let v0 = vol * this.volRatio0;
             // Point 1
             let f1 = freq * this.freqRatio1;
-            let v1 = loud * this.volRatio1;
+            let v1 = vol * this.volRatio1;
             let ms1 = ms * this.timeRatioA;
             // declarations required, even if unused...
             let f2 = 0;
@@ -232,13 +282,13 @@ namespace flexFX {
             // Point 2
             if (this.usesPoint2) {
                 f2 = freq * this.freqRatio2;
-                v2 = loud * this.volRatio2;
+                v2 = vol * this.volRatio2;
                 ms2 = ms * this.timeRatioB;
             }
             // Point 3
             if (this.usesPoint3) {
                 f3 = freq * this.freqRatio3;
-                v3 = loud * this.volRatio3;
+                v3 = vol * this.volRatio3;
                 ms3 = ms * this.timeRatioC;
             }
 
@@ -305,7 +355,32 @@ namespace flexFX {
     // ---- UI BLOCKS ----
 
     /**
-     * Perform a FlexFX (built-in or user-created)
+     * Perform a FlexFX (built-in)
+     */
+    //% block="play FlexFX $id || at pitch $pitch with strength $volume lasting $duration ms || queued = $background"
+    //% group="Playing"
+    //% inlineInputMode=inline
+    //% expandableArgumentMode="enabled"
+    //% weight=300
+    //% id.defl="Ting"
+    //% pitch.min=50 pitch.max=2000 pitch.defl=800
+    //% vol.min=0 vol.max=255 vol.defl=200
+    //% ms.min=0 ms.max=10000 ms.defl=800
+    //% background.defl=false
+    export function performFlexFX(choice: BuiltInFlexFX, pitch: number, volume: number, duration: number, background: boolean) {
+        let target: FlexFX = builtInFlexFXList[choice];
+        if (target != null) {
+            // first compile and add our Play onto the playList
+            target.compilePlay(pitch, volume, duration);
+            activatePlayer();  // make sure it will get played
+            if (!background) { // ours was the lastest Play, so simply await completion of player.
+                control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+            }
+        }
+    }
+
+    /**
+     * Perform a FlexFX (user-created)
      */
     //% block="perform FlexFX $id at pitch $pitch with strength $volume lasting $duration ms || queued = $background"
     //% group="Playing"
@@ -317,7 +392,7 @@ namespace flexFX {
     //% vol.min=0 vol.max=255 vol.defl=200
     //% ms.min=0 ms.max=10000 ms.defl=800
     //% background.defl=false
-    export function performFlexFX(id: string, pitch: number, volume: number, duration: number, background: boolean) {
+    export function performMyFlexFX(id: string, pitch: number, volume: number, duration: number, background: boolean) {
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
             // first compile and add our Play onto the playList
@@ -562,6 +637,15 @@ namespace flexFX {
         while (playList.length > 0) { playList.pop() }
     }
 
+// Create all the built-in FlexFXs...
     // create a simple default "chime" flexFX
     flexFX.createFlexFX("Ting", 100, 100, Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10);
+
+    /*
+SNORE       700  10%
+NOI VIB LIN  14 100%   | 50%
+NOI VIB LIN 100   0%   | 50%
+NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, and these strange values have been experimentally derived.
+Always invoke Snore.performUsing() with the lowest (freq=50)
+*/
 }

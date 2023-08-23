@@ -10,6 +10,7 @@ pause(1000);
 flexFX.create2PartFlexFX("Miaow", 70, 50,
     Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 100, 100,
     Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 80, 30);
+// perform a cat - like 2 - part flexFX
 flexFX.performFlexFX("Miaow", 900, 255, 1000, false);
 pause(300);
 flexFX.performFlexFX("Miaow", 1100, 255, 500, false);

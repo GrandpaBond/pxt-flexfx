@@ -310,6 +310,12 @@ namespace flexFX {
             //append new Play onto the end of the playList
             playList.push(play);
         }
+        setDefaults(freq: number, vol: number, ms: number) {
+            this.defaultFreq = freq;
+            this.defaultVol = vol;
+            this.defaultMs = ms;
+
+        }
     }
 
     // kick off the background player (if not already running)
@@ -357,7 +363,7 @@ namespace flexFX {
     /**
      * Perform a FlexFX (built-in)
      */
-    //% block="play FlexFX $id || at pitch $pitch with strength $volume lasting $duration ms || queued = $background"
+    //% block="play FlexFX $choice || at pitch $pitch with strength $volume lasting $duration ms || queued = $background"
     //% group="Playing"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
@@ -367,7 +373,7 @@ namespace flexFX {
     //% vol.min=0 vol.max=255 vol.defl=200
     //% ms.min=0 ms.max=10000 ms.defl=800
     //% background.defl=false
-    export function performFlexFX(choice: BuiltInFlexFX, pitch: number, volume: number, duration: number, background: boolean) {
+    export function playFlexFX(choice: BuiltInFlexFX, pitch: number = 0, volume: number = 0, duration: number = 0, background: boolean = false) {
         let target: FlexFX = builtInFlexFXList[choice];
         if (target != null) {
             // first compile and add our Play onto the playList
@@ -382,17 +388,16 @@ namespace flexFX {
     /**
      * Perform a FlexFX (user-created)
      */
-    //% block="perform FlexFX $id at pitch $pitch with strength $volume lasting $duration ms || queued = $background"
+    //% block="play my FlexFX $id || at pitch $pitch with strength $volume lasting $duration ms || queued = $background"
     //% group="Playing"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
     //% weight=300
-    //% id.defl="Ting"
     //% pitch.min=50 pitch.max=2000 pitch.defl=800
     //% vol.min=0 vol.max=255 vol.defl=200
     //% ms.min=0 ms.max=10000 ms.defl=800
     //% background.defl=false
-    export function performMyFlexFX(id: string, pitch: number, volume: number, duration: number, background: boolean) {
+    export function playMyFlexFX(id: string, pitch: number = 0, volume: number = 0, duration: number = 0, background: boolean = false) {
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
             // first compile and add our Play onto the playList
@@ -407,7 +412,7 @@ namespace flexFX {
     /**
      * Create a simple custom FlexFX 
      */
-    //% block="create simple FlexFX: $id using wave-shape $wave      with attack $attack       and effect $effect|  pitch profile goes from $startPitchPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $endVolPercent"
+    //% block="create simple FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch profile goes from $startPitchPercent|                       to $endPitchPercent|volume profile goes from $startVolPercent|                       to $endVolPercent|default    pitch=$pitch|default   volume=$volume|default duration=$duration"
     //% group="Creating"
     //% inlineInputMode=external
     //% weight=230
@@ -416,9 +421,13 @@ namespace flexFX {
     //% startVolPercent.min=0 startVolPercent.max=100 startVolPercent.defl=100
     //% endPitchPercent.min=10 endPitchPercent.max=400 endPitchPercent.defl=100
     //% endVolPercent.min=0 endVolPercent.max=100 endVolPercent.defl=100
+    //% pitch.min=50 pitch.max=2000 pitch.defl=800
+    //% volume.min=0 volume.max=255 volume.defl=200
+    //% duration.min=0 duration.max=10000 duration.defl=800
     export function createFlexFX(
         id: string, startPitchPercent: number, startVolPercent: number,
-        wave: Wave, attack: Attack, effect: Effect, endPitchPercent: number, endVolPercent: number) {
+        wave: Wave, attack: Attack, effect: Effect, endPitchPercent: number, endVolPercent: number,
+        pitch: number, volume: number, duration: number) {
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target == null) {
@@ -426,13 +435,14 @@ namespace flexFX {
             flexFXList.push(target);
         }
         target.setPartA(startPitchPercent / 100, startVolPercent / 100, wave, attack, effect, endPitchPercent / 100, endVolPercent / 100, 1.0);
+        target.setDefaults(pitch,volume,duration);
     }
 
 
     /**
      * Create a more complex two-part custom FlexFX 
      */
-    //% block="create 2-part FlexFX: $id| first using wave-shape $waveA            with attack $attackA             and effect $effectA|  then using wave-shape $waveB            with attack $attackB             and effect $effectB|  pitch profile goes from $startPitchPercent                       to $midPitchPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $midVolPercent                       to $endVolPercent|duration used for 1st part: $timePercentA"
+    //% block="create 2-part FlexFX: $id| first using wave-shape $waveA            with attack $attackA             and effect $effectA|  then using wave-shape $waveB            with attack $attackB             and effect $effectB|  pitch profile goes from $startPitchPercent                       to $midPitchPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $midVolPercent                       to $endVolPercent|duration used for 1st part: $timePercentA|default    pitch=$pitch|default   volume=$volume|default duration=$duration"
     //% group="Creating"
     //% inlineInputMode=external
     //% weight=220
@@ -444,26 +454,37 @@ namespace flexFX {
     //% endPitchPercent.min=10 endPitchPercent.max=400 endPitchPercent.defl=100
     //% endVolPercent.min=0 endVolPercent.max=100 endVolPercent.defl=100
     //% timePercentA.min=0 timePercentA.max=100 timePercentA.defl=50
+    //% pitch.min=50 pitch.max=2000 pitch.defl=800
+    //% volume.min=0 volume.max=255 volume.defl=200
+    //% duration.min=0 duration.max=10000 duration.defl=800
     export function create2PartFlexFX(
         id: string, startPitchPercent: number, startVolPercent: number,
         waveA: Wave, attackA: Attack, effectA: Effect, midPitchPercent: number, midVolPercent: number,
-        waveB: Wave, attackB: Attack, effectB: Effect, endPitchPercent: number, endVolPercent: number, timePercentA: number) {
-        // select or create target...        
-        let target: FlexFX = flexFXList.find(i => i.id === id);
-        if (target == null) {
-            target = new FlexFX(id);
-            flexFXList.push(target);
+        waveB: Wave, attackB: Attack, effectB: Effect, endPitchPercent: number, endVolPercent: number, timePercentA: number,
+        pitch: number, volume: number, duration: number, builtIn: number = -1) {
+        // select or create a target FlexFX
+        let target: FlexFX = null;
+        if (builtIn >= 0 ) {
+            target = builtInFlexFXList[builtIn]; // (re)defining a built-in
+        } else {
+            target = flexFXList.find(i => i.id === id); // (re)defining a user FlexFX
+            if (target == null) {
+                target = new FlexFX(id);
+                flexFXList.push(target);
+            }
         }
+
         target.setPartA(startPitchPercent / 100, startVolPercent / 100, waveA, attackA, effectA, midPitchPercent / 100, midVolPercent / 100, timePercentA / 100);
         target.setPartB(waveB, attackB, effectB, endPitchPercent / 100, endVolPercent / 100,
             (100 - timePercentA / 100));
+        target.setDefaults(pitch, volume, duration);
 
     }
 
     /**
      * Create a really complex three-part custom FlexFX 
      */
-    //% block="create 3-part FlexFX: $id|  first using wave-shape $waveA             with attack $attackA              and effect $effectA|   then using wave-shape $waveB             with attack $attackB              and effect $effectB|lastly using wave-shape $waveC             with attack $attackC              and effect $effectC|  pitch profile goes from $startPitchPercent                       to $pitchABPercent                       to $pitchBCPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $volABPercent                       to $volBCPercent                       to $endVolPercent|duration used for 1st part:$timePercentA|                   2nd part: $timePercentB"
+    //% block="create 3-part FlexFX: $id|  first using wave-shape $waveA             with attack $attackA              and effect $effectA|   then using wave-shape $waveB             with attack $attackB              and effect $effectB|lastly using wave-shape $waveC             with attack $attackC              and effect $effectC|  pitch profile goes from $startPitchPercent                       to $pitchABPercent                       to $pitchBCPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $volABPercent                       to $volBCPercent                       to $endVolPercent|duration used for 1st part:$timePercentA|                   2nd part: $timePercentB|default    pitch=$pitch|default   volume=$volume|default duration=$duration"
     //% group="Creating"
     //% inlineInputMode=external
     //% weight=210
@@ -478,12 +499,16 @@ namespace flexFX {
     //% endVolPercent.min=0 endVolPercent.max=100 endVolPercent.defl=100
     //% timePercentA.min=0 timePercentA.max=100 timePercentA.defl=33
     //% timePercentB.min=0 timePercentB.max=100 timePercentB.defl=33
+    //% pitch.min=50 pitch.max=2000 pitch.defl=800
+    //% volume.min=0 volume.max=255 volume.defl=200
+    //% duration.min=0 duration.max=10000 duration.defl=800
     export function create3PartFlexFX(
         id: string, startPitchPercent: number, startVolPercent: number,
         waveA: Wave, attackA: Attack, effectA: Effect, pitchABPercent: number, volABPercent: number,
         waveB: Wave, attackB: Attack, effectB: Effect, pitchBCPercent: number, volBCPercent: number,
         waveC: Wave, attackC: Attack, effectC: Effect, endPitchPercent: number, endVolPercent: number,
-        timePercentA: number, timePercentB: number) {
+        timePercentA: number, timePercentB: number,
+        pitch: number, volume: number, duration: number) {
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target == null) {
@@ -492,15 +517,15 @@ namespace flexFX {
         }
         target.setPartA(startPitchPercent / 100, startVolPercent / 100, waveA, attackA, effectA, pitchABPercent / 100, volABPercent / 100, timePercentA / 100);
         target.setPartB(waveB, attackB, effectB, pitchBCPercent / 100, volBCPercent / 100, timePercentB / 100);
-        target.setPartC(waveC, attackC, effectC, endPitchPercent / 100, endVolPercent / 100,
-            (100 - timePercentA - timePercentB) / 100);
+        target.setPartC(waveC, attackC, effectC, endPitchPercent / 100, endVolPercent / 100, (100 - timePercentA - timePercentB) / 100);
+        target.setDefaults(pitch, volume, duration);
     }
 
     /**
      * Create a FlexFx with two parts separated by a silence.
     */
     // NOTE: Since it's the second actual sound, PartC is called PartB in the UI
-    //% block="create double FlexFX: $id|1st part using wave-shape $waveA               with attack $attackA                and effect $effectA|  pitch profile goes from $startPitchAPercent                       to $endPitchAPercent|volume profile goes from $startVolAPercent                       to $endVolAPercent|duration used for 1st part:$timePercentA|duration used for silence:  $timeGapPercent|2nd part using wave-shape $waveB               with attack $attackB                and effect $effectB|  pitch profile goes from $startPitchBPercent                       to $endPitchBPercent|volume profile goes from $startVolBPercent                       to $endVolBPercent"
+    //% block="create double FlexFX: $id|1st part using wave-shape $waveA               with attack $attackA                and effect $effectA|  pitch profile goes from $startPitchAPercent                       to $endPitchAPercent|volume profile goes from $startVolAPercent                       to $endVolAPercent|duration used for 1st part:$timePercentA|duration used for silence:  $timeGapPercent|2nd part using wave-shape $waveB               with attack $attackB                and effect $effectB|  pitch profile goes from $startPitchBPercent                       to $endPitchBPercent|volume profile goes from $startVolBPercent                       to $endVolBPercent|default    pitch=$pitch|default   volume=$volume|default duration=$duration"
     //% group="Creating"
     //% help=pxt-flexfx/createDoubleFlexFX
     //% inlineInputMode=external
@@ -516,12 +541,16 @@ namespace flexFX {
     //% endVolBPercent.min=0 endVolBPercent.max=100 endVolBPercent.defl=100
     //% timePercentA.min=0 timePercentA.max=100 timePercentA.defl=40
     //% timeGapPercent.min=0 timeGapPercent.max=100 timeGapPercent.defl=20
+    //% pitch.min=50 pitch.max=2000 pitch.defl=800
+    //% volume.min=0 volume.max=255 volume.defl=200
+    //% duration.min=0 duration.max=10000 duration.defl=800
     export function createDoubleFlexFX(
         id: string, startPitchAPercent: number, startVolAPercent: number,
         waveA: Wave, attackA: Attack, effectA: Effect, endPitchAPercent: number, endVolAPercent: number,
         startPitchBPercent: number, startVolBPercent: number,
         waveB: Wave, attackB: Attack, effectB: Effect, endPitchBPercent: number, endVolBPercent: number,
-        timePercentA: number, timeGapPercent: number) {
+        timePercentA: number, timeGapPercent: number,
+        pitch: number, volume: number, duration: number) {
 
         // select or create target...        
         let target: FlexFX = flexFXList.find(i => i.id === id);
@@ -532,6 +561,7 @@ namespace flexFX {
         target.setPartA(startPitchAPercent / 100, startVolAPercent / 100, waveA, attackA, effectA, endPitchAPercent / 100, endVolAPercent / 100, timePercentA / 100);
         target.silentPartB(startPitchBPercent / 100, startVolBPercent / 100, timeGapPercent / 100);
         target.setPartC(waveB, attackB, effectB, endPitchBPercent / 100, endVolBPercent / 100, (100 - timePercentA - timeGapPercent) / 100);
+        target.setDefaults(pitch, volume, duration);
     }
 
     /**
@@ -639,7 +669,7 @@ namespace flexFX {
 
 // Create all the built-in FlexFXs...
     // create a simple default "chime" flexFX
-    flexFX.createFlexFX("Ting", 100, 100, Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10);
+    flexFX.createFlexFX("Ting", 100, 100, Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10, 2000, 255, 200);
 
     /*
 SNORE       700  10%

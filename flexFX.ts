@@ -106,7 +106,14 @@ enum BuiltInFlexFX {
 //% icon="\uf0a1"
 //% block="FlexFX"
 //% groups="['Playing', 'Creating', 'Play-list']"
-namespace flexFX {
+namespace flexFX {  
+    // array of built-in FlexFX ids **** must precicely match the enum BuiltInFlexFX above ****
+    let builtInId: string[] = [
+        "laugh","uh-oh","scream","cry","moan",      // [0...4]
+        "shout", "violin", "horn", "sax", "flute",  // [5...9]
+        "tweet", "ting", "chime", "whale", "miaow", // [10...14]
+        "cluck", "woof", "moo", "motor", "siren"];  // [15...19]
+
     // Each performance will comprise an array of the "compiled" sound-strings for its several parts.
     class Play {
         parts: string[];
@@ -134,8 +141,8 @@ namespace flexFX {
         ALLPLAYED = 3,
     }
 
-    // ---- Central arrays of built-in and user-defined FlexFX objects ----
-    let builtInFlexFXList: FlexFX[] = [];
+  
+    //  array of all defined FlexFX objects (built-in and user-defined)
     let flexFXList: FlexFX[] = [];
 
     // A FlexFX contains the recipe to compile a composite sound.
@@ -318,6 +325,20 @@ namespace flexFX {
         }
     }
 
+
+    // Store a flexFX (overwriting any previous instance)
+    // (When inititalising a built-in FlexFX, <builtIn> must be the non-negative BuiltInFlexFX
+    // enum value that indexes its <id> in the BuiltInId[] array)
+        function storeFlexFX(builtIn: number, target: FlexFX) {
+        // first delete any existing definition having this id (works even when missing!)
+        flexFXList.splice(flexFXList.indexOf(flexFXList.find(i => i.id === target.id), 1), 1); 
+        if (builtIn > -1) {
+            target.id = builtInId[builtIn]; // enforce a match (as a precaution)
+        }
+        // add this new definition
+        flexFXList.push(target); 
+    }
+
     // kick off the background player (if not already running)
     function activatePlayer() {
         if (!(playerActive || playerStopped)){ 
@@ -373,22 +394,14 @@ namespace flexFX {
     //% vol.min=0 vol.max=255 vol.defl=200
     //% ms.min=0 ms.max=10000 ms.defl=800
     //% background.defl=false
-    export function playFlexFX(choice: BuiltInFlexFX, pitch: number = 0, volume: number = 0, duration: number = 0, background: boolean = false) {
-        let target: FlexFX = builtInFlexFXList[choice];
-        if (target != null) {
-            // first compile and add our Play onto the playList
-            target.compilePlay(pitch, volume, duration);
-            activatePlayer();  // make sure it will get played
-            if (!background) { // ours was the lastest Play, so simply await completion of player.
-                control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
-            }
-        }
+    export function playBuiltInFlexFX(choice: BuiltInFlexFX, pitch: number = 0, volume: number = 0, duration: number = 0, background: boolean = false) {
+        playFlexFX(builtInId[choice], pitch, volume, duration, background);
     }
 
     /**
      * Perform a FlexFX (user-created)
      */
-    //% block="play my FlexFX $id || at pitch $pitch with strength $volume lasting $duration ms || queued = $background"
+    //% block="play FlexFX $id || at pitch $pitch with strength $volume lasting $duration ms || queued = $background"
     //% group="Playing"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
@@ -397,7 +410,7 @@ namespace flexFX {
     //% vol.min=0 vol.max=255 vol.defl=200
     //% ms.min=0 ms.max=10000 ms.defl=800
     //% background.defl=false
-    export function playMyFlexFX(id: string, pitch: number = 0, volume: number = 0, duration: number = 0, background: boolean = false) {
+    export function playFlexFX(id: string, pitch: number = 0, volume: number = 0, duration: number = 0, background: boolean = false) {
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
             // first compile and add our Play onto the playList
@@ -427,15 +440,11 @@ namespace flexFX {
     export function createFlexFX(
         id: string, startPitchPercent: number, startVolPercent: number,
         wave: Wave, attack: Attack, effect: Effect, endPitchPercent: number, endVolPercent: number,
-        pitch: number, volume: number, duration: number) {
-        // select or create target...        
-        let target: FlexFX = flexFXList.find(i => i.id === id);
-        if (target == null) {
-            target = new FlexFX(id);
-            flexFXList.push(target);
-        }
+        pitch: number, volume: number, duration: number, builtIn: number = -1) {
+        let target = new FlexFX(id);
         target.setPartA(startPitchPercent / 100, startVolPercent / 100, wave, attack, effect, endPitchPercent / 100, endVolPercent / 100, 1.0);
         target.setDefaults(pitch,volume,duration);
+        storeFlexFX(builtIn, target);
     }
 
 
@@ -462,22 +471,12 @@ namespace flexFX {
         waveA: Wave, attackA: Attack, effectA: Effect, midPitchPercent: number, midVolPercent: number,
         waveB: Wave, attackB: Attack, effectB: Effect, endPitchPercent: number, endVolPercent: number, timePercentA: number,
         pitch: number, volume: number, duration: number, builtIn: number = -1) {
-        // select or create a target FlexFX
-        let target: FlexFX = null;
-        if (builtIn >= 0 ) {
-            target = builtInFlexFXList[builtIn]; // (re)defining a built-in
-        } else {
-            target = flexFXList.find(i => i.id === id); // (re)defining a user FlexFX
-            if (target == null) {
-                target = new FlexFX(id);
-                flexFXList.push(target);
-            }
-        }
-
+        let target = new FlexFX(id);
         target.setPartA(startPitchPercent / 100, startVolPercent / 100, waveA, attackA, effectA, midPitchPercent / 100, midVolPercent / 100, timePercentA / 100);
         target.setPartB(waveB, attackB, effectB, endPitchPercent / 100, endVolPercent / 100,
             (100 - timePercentA / 100));
         target.setDefaults(pitch, volume, duration);
+        storeFlexFX(builtIn, target);
 
     }
 
@@ -508,17 +507,13 @@ namespace flexFX {
         waveB: Wave, attackB: Attack, effectB: Effect, pitchBCPercent: number, volBCPercent: number,
         waveC: Wave, attackC: Attack, effectC: Effect, endPitchPercent: number, endVolPercent: number,
         timePercentA: number, timePercentB: number,
-        pitch: number, volume: number, duration: number) {
-        // select or create target...        
-        let target: FlexFX = flexFXList.find(i => i.id === id);
-        if (target == null) {
-            target = new FlexFX(id);
-            flexFXList.push(target);
-        }
+        pitch: number, volume: number, duration: number, builtIn: number = -1) {
+        let target = new FlexFX(id);
         target.setPartA(startPitchPercent / 100, startVolPercent / 100, waveA, attackA, effectA, pitchABPercent / 100, volABPercent / 100, timePercentA / 100);
         target.setPartB(waveB, attackB, effectB, pitchBCPercent / 100, volBCPercent / 100, timePercentB / 100);
         target.setPartC(waveC, attackC, effectC, endPitchPercent / 100, endVolPercent / 100, (100 - timePercentA - timePercentB) / 100);
         target.setDefaults(pitch, volume, duration);
+        storeFlexFX(builtIn, target);
     }
 
     /**
@@ -550,18 +545,13 @@ namespace flexFX {
         startPitchBPercent: number, startVolBPercent: number,
         waveB: Wave, attackB: Attack, effectB: Effect, endPitchBPercent: number, endVolBPercent: number,
         timePercentA: number, timeGapPercent: number,
-        pitch: number, volume: number, duration: number) {
-
-        // select or create target...        
-        let target: FlexFX = flexFXList.find(i => i.id === id);
-        if (target == null) {
-            target = new FlexFX(id);
-            flexFXList.push(target);
-        }
+        pitch: number, volume: number, duration: number, builtIn: number = -1) {
+        let target = new FlexFX(id);
         target.setPartA(startPitchAPercent / 100, startVolAPercent / 100, waveA, attackA, effectA, endPitchAPercent / 100, endVolAPercent / 100, timePercentA / 100);
         target.silentPartB(startPitchBPercent / 100, startVolBPercent / 100, timeGapPercent / 100);
         target.setPartC(waveB, attackB, effectB, endPitchBPercent / 100, endVolBPercent / 100, (100 - timePercentA - timeGapPercent) / 100);
         target.setDefaults(pitch, volume, duration);
+        storeFlexFX(builtIn, target);
     }
 
     /**
@@ -668,8 +658,31 @@ namespace flexFX {
     }
 
 // Create all the built-in FlexFXs...
-    // create a simple default "chime" flexFX
-    flexFX.createFlexFX("Ting", 100, 100, Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10, 2000, 255, 200);
+    // simple "chime" flexFX
+    flexFX.createFlexFX("Ting", 100, 100, Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10,
+         2000, 255, 200, BuiltInFlexFX.TING);
+    // cat-like 2-part flexFX
+    flexFX.create2PartFlexFX("Miaow", 70, 50,
+        Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 100, 100,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 80, 30, 
+        900, 255, 1000, BuiltInFlexFX.MIAOW);
+    // Horn 2-part flexFX
+    flexFX.create2PartFlexFX("Horn", 5, 50,
+        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 100,
+        Wave.SINE, Attack.SLOW, Effect.NONE, 100, 80, 7,
+        250, 255, 500, BuiltInFlexFX.HORN);
+    // Police siren is a double flexFX
+    flexFX.createDoubleFlexFX("Siren",
+        95, 80, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 100,
+        70, 100, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 80, 45, 10,
+        800, 200, 1000, BuiltInFlexFX.SIREN);
+
+    // Violin-like 3-part flexFX
+    flexFX.create3PartFlexFX("Violin", 1, 100,
+        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 75,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 75,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 10, 100, 10, 85,
+        440, 200, 500, BuiltInFlexFX.VIOLIN);
 
     /*
 SNORE       700  10%

@@ -1,58 +1,56 @@
 // *********** test codes **********
-// simple "ting" flexFX
-flexFX.createFlexFX("", 100, 100, Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10,
-    2000, 255, 200, BuiltInFlexFX.TING);
+
 // perform the simple built-in chime flexFX
-flexFX.playFlexFX("Ting", Note.G5, 250, 400, false);
-flexFX.playFlexFX("Ting", Note.E5, 250, 400, false);
-flexFX.playFlexFX("Ting", Note.C5, 250, 1600, false);
+flexFX.playFlexFX("ting", Note.G5, 250, 400, false);
+flexFX.playFlexFX("ting", Note.E5, 250, 400, false);
+flexFX.playFlexFX("ting", Note.C5, 250, 1600, false);
 
 pause(1000);
 
 
 // perform like a cat
 
-flexFX.playFlexFX("Miaow", 900, 255, 1000, false);
+flexFX.playFlexFX("miaow", 900, 255, 1000, false);
 pause(300);
-flexFX.playFlexFX("Miaow", 1100, 255, 500, false);
+flexFX.playFlexFX("miaow", 1100, 255, 500, false);
 pause(300);
-flexFX.playFlexFX("Miaow", 800, 255, 1500, false);
+flexFX.playFlexFX("miaow", 800, 255, 1500, false);
 
 pause(1000);
 
 
-// perform "New World" theme on the 2-part Horn flexFX
-flexFX.playFlexFX("Horn", Note.E3, 255, 900, false);
-flexFX.playFlexFX("Horn", Note.G3, 255, 300, false);
-flexFX.playFlexFX("Horn", Note.G3, 255, 1200, false);
-flexFX.playFlexFX("Horn", Note.E3, 255, 900, false);
-flexFX.playFlexFX("Horn", Note.D3, 255, 300, false);
-flexFX.playFlexFX("Horn", Note.C3, 255, 1200, false);
-flexFX.playFlexFX("Horn", Note.D3, 255, 600, false);
-flexFX.playFlexFX("Horn", Note.E3, 255, 600, false);
-flexFX.playFlexFX("Horn", Note.G3, 255, 600, false);
-flexFX.playFlexFX("Horn", Note.E3, 255, 600, false);
-flexFX.playFlexFX("Horn", Note.D3, 255, 2400, false);
+// perform "New World" theme on the 2-part horn flexFX
+flexFX.playFlexFX("horn", Note.E3, 255, 900, false);
+flexFX.playFlexFX("horn", Note.G3, 255, 300, false);
+flexFX.playFlexFX("horn", Note.G3, 255, 1200, false);
+flexFX.playFlexFX("horn", Note.E3, 255, 900, false);
+flexFX.playFlexFX("horn", Note.D3, 255, 300, false);
+flexFX.playFlexFX("horn", Note.C3, 255, 1200, false);
+flexFX.playFlexFX("horn", Note.D3, 255, 600, false);
+flexFX.playFlexFX("horn", Note.E3, 255, 600, false);
+flexFX.playFlexFX("horn", Note.G3, 255, 600, false);
+flexFX.playFlexFX("horn", Note.E3, 255, 600, false);
+flexFX.playFlexFX("horn", Note.D3, 255, 2400, false);
 
 pause(1000);
 
 // create a double flexFX
-flexFX.createDoubleFlexFX("Siren", 
+flexFX.createDoubleFlexFX("siren", 
         95, 80, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 100,
         70, 100, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 80, 45, 10,
         800, 200, 1000);
 
 // queue-up a sequence of Plays on the Play-list (complete with Doppler-shift)
-flexFX.playFlexFX("Siren", 800, 16, 1000, true);
-flexFX.playFlexFX("Siren", 800, 32, 1000, true);
-flexFX.playFlexFX("Siren", 800, 64, 1000, true);
-flexFX.playFlexFX("Siren", 800, 128, 1000, true);
-flexFX.playFlexFX("Siren", 800, 255, 1000, true);
-flexFX.playFlexFX("Siren", 785, 255, 1000, true);
-flexFX.playFlexFX("Siren", 770, 128, 1000, true);
-flexFX.playFlexFX("Siren", 770, 64, 1000, true);
-flexFX.playFlexFX("Siren", 770, 32, 1000, true);
-flexFX.playFlexFX("Siren", 770, 16, 1000, true);
+flexFX.playFlexFX("siren", 800, 16, 1000, true);
+flexFX.playFlexFX("siren", 800, 32, 1000, true);
+flexFX.playFlexFX("siren", 800, 64, 1000, true);
+flexFX.playFlexFX("siren", 800, 128, 1000, true);
+flexFX.playFlexFX("siren", 800, 255, 1000, true);
+flexFX.playFlexFX("siren", 785, 255, 1000, true);
+flexFX.playFlexFX("siren", 770, 128, 1000, true);
+flexFX.playFlexFX("siren", 770, 64, 1000, true);
+flexFX.playFlexFX("siren", 770, 32, 1000, true);
+flexFX.playFlexFX("siren", 770, 16, 1000, true);
 
 // while the Play-list is playing, flash the blue light (sort of)
 while(flexFX.isActive()) {

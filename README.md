@@ -8,23 +8,37 @@ The ``||music:Music||`` category has a ``||music:micro:bit(V2)||`` section with 
 These let you build some amazing sounds, but sometimes you need something more complex.
 ``||flexFX:flexFX||`` sounds are *re-usable recipes* for sound-effects that can stitch together up to three sound-expressions, to be played one after the other. As its name suggests, a``|flexFX:flexFX|`` recipe is re-used flexibly, creating different performances simply by changing the parameters for pitch, volume or duration.
 
-You can choose a FlexFX from a selection of built-in sounds, or create your own (see ``|flexFX:Building a FlexFX|`` below). You can also queue-up performance to happen in the background.
+You can choose which FlexFX to play from a drop-down list of built-in sounds.
+Alternatively, you can supply the name of you have created yourself (see ``|flexFX:Building a FlexFX|`` below). 
+You can also queue-up performance to happen in the background.
 
-# Performing a FlexFX #flexFX-performFlexFX
+# Performing a Built-in FlexFX #flexFX-playBuiltInFlexFX
+#                              #flexFX-playFlexFX
 
 ```sig
-flexFX.performFlexFX(id, pitch,volume,duration)
+flexFX.playBuiltInFlexFX()
 ```
+Use the drop-down list on ||FlexFX:playBuiltInFlexFX|| to choose which built-in FlexFX to hear. 
+```sig
+flexFX.playFlexFX()
+```
+Alternatively, by specifying a string to ||FlexFX:playFlexFX|| you can choose your own (or a built-in) FlexFX by name
+Each FlexFX has a unique name (its **id**), assigned when it is first created. 
 
-Each FlexFX has a unique name (its **id**), assigned when it is first created.
+In either case, if you click on the "+" extender, you can choose what pitch it should be played at.
 
-This is supplied to the block ``|flexFX:performFlexFX|``, together with your chosen play-settings:
+``||flexFX:pitch||`` sets the pitch as a numeric frequency.
 
-``||flexFX:pitch||`` sets the basic pitch as a numeric frequency.
+By clicking on the "+" extender again, you can also specify two more performance parameters
 
-``||flexFX:volume||`` sets the basic volume as a number in the range 0-255.
+``||flexFX:volume||`` sets the volume as a number in the range 0-255.
 
 ``||flexFX:duration||`` sets how long the overall performance will last in milliseconds.
+
+### ~reminder
+#### Note-names
+|You can use the built-in note-name enumerations (e.g. ``|Note.G5|``) to specify the pitch frequency more conveniently.
+### ~
 
 
 Often, a sound-effect is intended to accompany other actions that require codes to be executed, so there is a final optional parameter ``||flexFX:background||``that, if set *true*, allows the FlexFX performance to be handled in the background (see |flexFX: Background Play-list| below).
@@ -32,15 +46,10 @@ Often, a sound-effect is intended to accompany other actions that require codes 
 The following example would play the built-in FlexFX called **Ping** three times over, with descending pitch, and increasing volume. The first two performances last just 0.4 seconds each, while the final performance takes 1.6 seconds to complete.
 
 ```block
-flexFX.performFlexFX("Ting", Note.G5, 100, 400, false);
-flexFX.performFlexFX("Ting", Note.E5, 175, 400, false);
-flexFX.performFlexFX("Ting", Note.C5, 250, 1600, false);
+flexFX.playFlexFX("ting", Note.G5, 100, 400, false);
+flexFX.playFlexFX("ting", Note.E5, 175, 400, false);
+flexFX.playFlexFX("ting", Note.C5, 250, 1600, false);
 ```
-
-### ~reminder
-#### Note-names
-|Note that you can use the built-in note-name enumerations (e.g. ``|Note.G5|``) to specify the pitch frequency more conveniently.
-### ~
 
 # Building a FlexFX
 
@@ -96,6 +105,10 @@ Similarly, it might start quietly (at 50% of the specified volume), then grow to
 Percentages also say how the total duration should be split between the different parts, so the same FlexFX can be performed slowly or fast. 
 
 ## Creating a Simple FlexFX #flexFX-createFlexFX
+
+```sig
+flexFX.createFlexFX()
+```
 The simplest FlexFX has just one part (so is really just a tuneable version of a standard sound-expression)
 Here is an example:
 ```block
@@ -143,7 +156,7 @@ By setting the final parameter of `|flexFX:performFlexFX|` to *true*, the functi
 
 Sometimes you might want tighter control over just when each queued Play occurs, so some advanced functions are provided that let you interact with the Play-list.
 
-## Spacing-out background Plays  #flexFX--performSilence 
+## Spacing-out background Plays  #flexFX-performSilence 
 	When queueing-up a series of FlexFX Plays, you may not always want them to follow-on straightaway. Use this function to space-out your Plays, by adding a silent pause onto the Play-list.
 	
 	This example separates two Plays with a 1.5 second silence:

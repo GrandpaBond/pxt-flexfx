@@ -657,7 +657,9 @@ namespace flexFX {
     }
 
 // Populate the FlexFX array with a selection of built-in sounds
-
+    // simple "ting" flexFX
+    flexFX.createFlexFX("", 100, 100, Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10,
+        2000, 255, 200, BuiltInFlexFX.TING);
     // cat-like 2-part flexFX
     flexFX.create2PartFlexFX("", 70, 50,
         Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 100, 100,

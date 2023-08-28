@@ -109,7 +109,7 @@ enum BuiltInFlexFX {
 namespace flexFX {  
     // array of built-in FlexFX ids **** must precicely match the enum BuiltInFlexFX above ****
     let builtInId: string[] = [
-        "laugh","uh-oh","scream","cry","moan",      // [0...4]
+        "laugh", "uh-oh", "scream", "cry", "moan",  // [0...4]
         "shout", "violin", "horn", "sax", "flute",  // [5...9]
         "tweet", "ting", "chime", "whale", "miaow", // [10...14]
         "cluck", "woof", "moo", "motor", "siren"];  // [15...19]
@@ -140,7 +140,6 @@ namespace flexFX {
         FINISHED = 2,
         ALLPLAYED = 3,
     }
-
   
     //  array of all defined FlexFX objects (built-in and user-defined)
     let flexFXList: FlexFX[] = [];
@@ -327,13 +326,13 @@ namespace flexFX {
 
 
     // Store a flexFX (overwriting any previous instance)
-    // (When inititalising a built-in FlexFX, <builtIn> must be the non-negative BuiltInFlexFX
-    // enum value that indexes its <id> in the BuiltInId[] array)
+    // (When inititalising a built-in FlexFX, <builtIn> must be the BuiltInFlexFX
+    // enum value that indexes its <id> in the BuiltInId[] array. Otherwise, it must be 1000)
         function storeFlexFX(builtIn: number, target: FlexFX) {
         // first delete any existing definition having this id (works even when missing!)
         flexFXList.splice(flexFXList.indexOf(flexFXList.find(i => i.id === target.id), 1), 1); 
-        if (builtIn > -1) {
-            target.id = builtInId[builtIn]; // enforce a match (as a precaution)
+        if (builtIn < 1000) {
+            target.id = builtInId[builtIn]; // pick up its id
         }
         // add this new definition
         flexFXList.push(target); 
@@ -440,7 +439,7 @@ namespace flexFX {
     export function createFlexFX(
         id: string, startPitchPercent: number, startVolPercent: number,
         wave: Wave, attack: Attack, effect: Effect, endPitchPercent: number, endVolPercent: number,
-        pitch: number, volume: number, duration: number, builtIn: number = -1) {
+        pitch: number, volume: number, duration: number, builtIn: number = 1000) {
         let target = new FlexFX(id);
         target.setPartA(startPitchPercent / 100, startVolPercent / 100, wave, attack, effect, endPitchPercent / 100, endVolPercent / 100, 1.0);
         target.setDefaults(pitch,volume,duration);
@@ -470,7 +469,7 @@ namespace flexFX {
         id: string, startPitchPercent: number, startVolPercent: number,
         waveA: Wave, attackA: Attack, effectA: Effect, midPitchPercent: number, midVolPercent: number,
         waveB: Wave, attackB: Attack, effectB: Effect, endPitchPercent: number, endVolPercent: number, timePercentA: number,
-        pitch: number, volume: number, duration: number, builtIn: number = -1) {
+        pitch: number, volume: number, duration: number, builtIn: number = 1000) {
         let target = new FlexFX(id);
         target.setPartA(startPitchPercent / 100, startVolPercent / 100, waveA, attackA, effectA, midPitchPercent / 100, midVolPercent / 100, timePercentA / 100);
         target.setPartB(waveB, attackB, effectB, endPitchPercent / 100, endVolPercent / 100,
@@ -507,7 +506,7 @@ namespace flexFX {
         waveB: Wave, attackB: Attack, effectB: Effect, pitchBCPercent: number, volBCPercent: number,
         waveC: Wave, attackC: Attack, effectC: Effect, endPitchPercent: number, endVolPercent: number,
         timePercentA: number, timePercentB: number,
-        pitch: number, volume: number, duration: number, builtIn: number = -1) {
+        pitch: number, volume: number, duration: number, builtIn: number = 1000) {
         let target = new FlexFX(id);
         target.setPartA(startPitchPercent / 100, startVolPercent / 100, waveA, attackA, effectA, pitchABPercent / 100, volABPercent / 100, timePercentA / 100);
         target.setPartB(waveB, attackB, effectB, pitchBCPercent / 100, volBCPercent / 100, timePercentB / 100);
@@ -545,7 +544,7 @@ namespace flexFX {
         startPitchBPercent: number, startVolBPercent: number,
         waveB: Wave, attackB: Attack, effectB: Effect, endPitchBPercent: number, endVolBPercent: number,
         timePercentA: number, timeGapPercent: number,
-        pitch: number, volume: number, duration: number, builtIn: number = -1) {
+        pitch: number, volume: number, duration: number, builtIn: number = 1000) {
         let target = new FlexFX(id);
         target.setPartA(startPitchAPercent / 100, startVolAPercent / 100, waveA, attackA, effectA, endPitchAPercent / 100, endVolAPercent / 100, timePercentA / 100);
         target.silentPartB(startPitchBPercent / 100, startVolBPercent / 100, timeGapPercent / 100);
@@ -657,38 +656,36 @@ namespace flexFX {
         while (playList.length > 0) { playList.pop() }
     }
 
-// Create all the built-in FlexFXs...
-    // simple "chime" flexFX
-    flexFX.createFlexFX("Ting", 100, 100, Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10,
-         2000, 255, 200, BuiltInFlexFX.TING);
+// Populate the FlexFX array with a selection of built-in sounds
+
     // cat-like 2-part flexFX
-    flexFX.create2PartFlexFX("Miaow", 70, 50,
+    flexFX.create2PartFlexFX("", 70, 50,
         Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 100, 100,
-        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 80, 30, 
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 80, 30,
         900, 255, 1000, BuiltInFlexFX.MIAOW);
     // Horn 2-part flexFX
-    flexFX.create2PartFlexFX("Horn", 5, 50,
+    flexFX.create2PartFlexFX("", 5, 50,
         Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 100,
         Wave.SINE, Attack.SLOW, Effect.NONE, 100, 80, 7,
         250, 255, 500, BuiltInFlexFX.HORN);
     // Police siren is a double flexFX
-    flexFX.createDoubleFlexFX("Siren",
+    flexFX.createDoubleFlexFX("",
         95, 80, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 100,
         70, 100, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 80, 45, 10,
         800, 200, 1000, BuiltInFlexFX.SIREN);
 
     // Violin-like 3-part flexFX
-    flexFX.create3PartFlexFX("Violin", 1, 100,
+    flexFX.create3PartFlexFX("", 1, 100,
         Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 75,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 75,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 10, 100, 10, 85,
         440, 200, 500, BuiltInFlexFX.VIOLIN);
 
     /*
-SNORE       700  10%
-NOI VIB LIN  14 100%   | 50%
-NOI VIB LIN 100   0%   | 50%
-NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, and these strange values have been experimentally derived.
-Always invoke Snore.performUsing() with the lowest (freq=50)
-*/
+    SNORE       700  10%
+    NOI VIB LIN  14 100%   | 50%
+    NOI VIB LIN 100   0%   | 50%
+    NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, and these strange values have been experimentally derived.
+    Always invoke Snore.performUsing() with the lowest (freq=50)
+    */
 }

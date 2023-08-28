@@ -1,4 +1,7 @@
 // *********** test codes **********
+// simple "ting" flexFX
+flexFX.createFlexFX("", 100, 100, Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10,
+    2000, 255, 200, BuiltInFlexFX.TING);
 // perform the simple built-in chime flexFX
 flexFX.playFlexFX("Ting", Note.G5, 250, 400, false);
 flexFX.playFlexFX("Ting", Note.E5, 250, 400, false);
@@ -86,13 +89,7 @@ while (flexFX.isActive()) {
 
 basic.showIcon(IconNames.Target);
 pause(1000);
-
-// create a wailing 3-part flexFX
-flexFX.create3PartFlexFX("Wail", 50, 50,
-    Wave.SQUARE, Attack.SLOW, Effect.NONE, 200, 100,
-    Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 100,
-    Wave.SQUARE, Attack.SLOW, Effect.NONE, 150, 50, 33, 33,
-    500, 250, 800);
+ 
 
 // queue up some Plays on the Play-list, with pauses queued in-between
 flexFX.stopPlaying();  // don't start Playing yet...
@@ -122,7 +119,7 @@ pause(500);
 basic.showIcon(IconNames.Happy);
 
 pause(2000)
-// now re-build the Play-list 
+// now re-build the Play-list of 5 cries
 basic.showIcon(IconNames.Sad);
 flexFX.stopPlaying();  // inhibit Playing
 flexFX.playFlexFX("Wail", 200, 250, 1000, true);
@@ -145,7 +142,7 @@ while (flexFX.waitingToPlay() > 0) {
     flexFX.awaitPlayFinish();
     basic.showIcon(IconNames.Sad); // close the mouth again
     pause(delay); 
-    delay -= 200; // increase the silence in-between 
+    delay -= 200; // decrease the silence in-between 
 }
 
 pause(500);

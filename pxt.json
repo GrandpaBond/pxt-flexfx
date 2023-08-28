@@ -10,7 +10,8 @@
         "README.md",
         "_locales/en-GB/README.md",
         "help/createflexfx.md",
-        "tutorial-info-cache.json"
+        "tutorial-info-cache.json",
+        "builtIn.ts"
     ],
     "testFiles": [
         "test.ts"

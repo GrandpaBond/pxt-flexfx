@@ -690,9 +690,11 @@ namespace flexFX {
         700, 10, Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 14, 100,
         Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 100, 0, 
         800, 200, 1000, BuiltInFlexFX.SNORE);
-    /*
-    SNORE       700  10%
-    NOI VIB LIN  14 100%   | 50%
-    NOI VIB LIN 100   0%   | 50%
-    */
+
+    // create a wailing 3-part flexFX
+    flexFX.create3PartFlexFX("", 50, 50,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 200, 100,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 100,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 150, 50, 33, 33,
+        400, 250, 800, BuiltInFlexFX.CRY);
 }

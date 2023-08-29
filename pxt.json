@@ -8,10 +8,7 @@
     "files": [
         "flexFX.ts",
         "README.md",
-        "_locales/en-GB/README.md",
-        "help/createflexfx.md",
-        "tutorial-info-cache.json",
-        "builtIn.ts"
+        "tutorial-info-cache.json"
     ],
     "testFiles": [
         "test.ts"

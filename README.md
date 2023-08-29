@@ -121,22 +121,22 @@ Deletes from the play-list everything left unplayed
 	
 # Lip-sync Example
 So for example this code snippet would choreograph a crying face, alternating the two icons to achieve lip-sync. 
-The code first creates a wailing 3-part flexFX. It then queues up some Plays on the Play-list, 
+The code queues up some Plays of the built-in FlexFX "cry" on the Play-list, 
 with different pauses queued in-between. Note that by calling ``|flexFX:stopPlaying()|`` first, 
 we prevent the first Play happening until we are ready to  ``|flexFX:startPlaying()|``. 
 Within the loop, we use ``|flexFX:awaitPlayStart()|`` and ``|flexFX:awaitPlayFinish()|`` to synchronise the mouth changes.
 ```block
 // first queue up some Plays on the Play-list, with pauses queued in-between
 flexFX.stopPlaying();  // don't start Playing yet...
-flexFX.performFlexFX("Wail", 200, 250, 1000, true);
+flexFX.performFlexFX("cry", 200, 250, 1000, true);
 flexFX.performSilence(2000);
-flexFX.performFlexFX("Wail", 300, 250, 1000, true);
+flexFX.performFlexFX("cry", 300, 250, 1000, true);
 flexFX.performSilence(1500);
-flexFX.performFlexFX("Wail", 400, 250, 1000, true);
+flexFX.performFlexFX("cry", 400, 250, 1000, true);
 flexFX.performSilence(1000);
-flexFX.performFlexFX("Wail", 600, 250, 1000, true);
+flexFX.performFlexFX("cry", 600, 250, 1000, true);
 flexFX.performSilence(800);
-flexFX.performFlexFX("Wail", 800, 250, 1000, true);
+flexFX.performFlexFX("cry", 800, 250, 1000, true);
 basic.showNumber(flexFX.waitingToPlay());
 pause(500);
 // use events to choreograph faces to sounds
@@ -156,7 +156,7 @@ basic.showIcon(IconNames.Happy);
 
 # Building a FlexFX
 There are lots of ``||flexFX:flexFX||`` sounds already built-in, but if you wanted something different
-there are some advanced blocks (under ``||FlexFX:more...||``) that will let you build your own.
+there are some advanced blocks (under ``||FlexFX:more...||``) that will let you build your own from scratch.
 
 ## Anatomy of a FlexFX
 The basic idea is that a FlexFX is built from one, two or three **parts**.
@@ -217,7 +217,7 @@ flexFX.createFlexFX()
 The simplest FlexFX has just one part (so is really just a tuneable version of a standard sound-expression)
 Here is an example:
 ```block
-flexFX.createFlexFX("Ting", 100, 100,
+flexFX.createFlexFX("Bell", 100, 100,
     Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10);
 ```
 
@@ -225,7 +225,7 @@ flexFX.createFlexFX("Ting", 100, 100,
 A **2-part FlexFX** allows profiles passing through three [pitch,volume] settings: start, middle and end.
 For example:
 ```block
-flexFX.create2PartFlexFX("Miaow", 70, 50,
+flexFX.create2PartFlexFX("Cat", 70, 50,
     Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 100, 100,
     Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 80, 30);
 ```
@@ -245,7 +245,7 @@ For some special sounds (e.g a two-tone police siren) we need a silent gap separ
 This is called a **double FlexFX**. Each part has play-settings for its start-point and end-point, 
 and the duration percentages will controls the lengths of the first sound, and of the silence in-between.
 ```block
-	flexFX.createDoubleFlexFX("NeeNaw", 95, 80,
+	flexFX.createDoubleFlexFX("Siren", 95, 80,
 		Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 100,
 		70, 100,
 		Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 80, 45, 10);

@@ -10,19 +10,22 @@ These let you build some amazing sounds, but sometimes you need something more c
 
 You can choose which FlexFX to play from a drop-down list of built-in sounds.
 This can happen straightaway, or you can queue-up performances to happen in the background.
-You can interact with the Play-list to synchronise the sound-track with your other codes (see ``|flexFX:Bachground Play-list|`` below).
+You can interact with the Play-list to synchronise the sound-track with your other codes (see ``|flexFX:Background Play-list|`` below).
 If you need a sound that is not built-in, you can create your own (see ``|flexFX:Building a FlexFX|`` below).
 
 
 # Playing a FlexFX #flexFX-playBuiltInFlexFX
-#                              #flexFX-playFlexFX
+
+                           
 ```sig
 flexFX.playBuiltInFlexFX()
-```Use the drop-down list on ||FlexFX:playBuiltInFlexFX|| to choose which built-in FlexFX to hear. 
+```
+Use the drop-down list on ``||FlexFX:playBuiltInFlexFX||`` to choose which built-in FlexFX to hear. 
+
 ```sig
 flexFX.playFlexFX()
 ```
-Each FlexFX has a unique name, assigned when it is first created. ||FlexFX:playFlexFX|| lets you choose a FlexFX by name.
+Each FlexFX has a unique name, assigned when it is first created. ``||FlexFX:playFlexFX||`` lets you choose a FlexFX by name.
 This may either be a built-in one, or one that you have created for yourself.
 
 For either block, if you click on the "+" extender, you can specify a different pitch from the default one.

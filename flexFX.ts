@@ -54,6 +54,7 @@ enum Effect {
 }
 
 // list of built-in FlexFXs
+// **** must precicely match the array BuiltInId below ****
 enum BuiltInFlexFX {
     //% block="laugh"
     LAUGH,
@@ -67,6 +68,8 @@ enum BuiltInFlexFX {
     MOAN,
     //% block="shout"
     SHOUT,
+    //% block="snore"
+    SNORE,
     //% block="violin"
     VIOLIN,
     //% block="horn"
@@ -105,14 +108,16 @@ enum BuiltInFlexFX {
 //% color=#70e030
 //% icon="\uf0a1"
 //% block="FlexFX"
-//% groups="['Playing', 'Creating', 'Play-list']"
+//% groups="['Playing', 'Play-list', 'Creating']"
 namespace flexFX {  
-    // array of built-in FlexFX ids **** must precicely match the enum BuiltInFlexFX above ****
+    // array of built-in FlexFX ids 
+    // **** must precicely match the enum BuiltInFlexFX above ****
     let builtInId: string[] = [
         "laugh", "uh-oh", "scream", "cry", "moan",  // [0...4]
-        "shout", "violin", "horn", "sax", "flute",  // [5...9]
-        "tweet", "ting", "chime", "whale", "miaow", // [10...14]
-        "cluck", "woof", "moo", "motor", "siren"];  // [15...19]
+        "shout", "snore", "violin", "horn", "sax",  // [5...9]
+        "flute", "tweet", "ting", "chime", "whale", // [10...14]
+        "miaow", "cluck", "woof", "moo", "motor",   // [15...19]
+        "siren"];                                   // [20]
 
     // Each performance will comprise an array of the "compiled" sound-strings for its several parts.
     class Play {
@@ -388,7 +393,7 @@ namespace flexFX {
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
     //% weight=300
-    //% id.defl="Ting"
+    //% id.defl="ting"
     //% pitch.min=50 pitch.max=2000 pitch.defl=800
     //% vol.min=0 vol.max=255 vol.defl=200
     //% ms.min=0 ms.max=10000 ms.defl=800
@@ -422,12 +427,107 @@ namespace flexFX {
     }
 
     /**
+     * Await start of next FLexFX on the play-list
+     */
+    //% block="wait until next FlexFX starts"
+    //% group="Play-list"
+    //% weight=270
+    export function awaitPlayStart() {
+        if (playList.length >= 0) {
+            playerStopped = false; // in case it was
+            activatePlayer(); // it case it wasn't
+            control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
+        } // else nothing to wait for
+    }
+
+    /**
+     * Await completion of FLexFX currently playing
+     */
+    //% block="wait until current FlexFX finished"
+    //% group="Play-list"
+    //% weight=260
+    export function awaitPlayFinish() {
+        if (playerPlaying) {
+            control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
+        } // else nothing to wait for
+    }
+
+    /**
+     * Await completion of everything on the play-list
+     */
+    //% block="wait until everything played"
+    //% group="Play-list"
+    //% weight=250
+    export function awaitAllFinished() {
+        if (playList.length >= 0) {
+            playerStopped = false; // in case it was
+            activatePlayer(); // it case it wasn't
+            control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+        } // else nothing to wait for
+    }
+
+    /**
+     * Add a silent pause to the play-list
+     */
+    //% block="add a pause of $ms ms next in the play-list"
+    //% group="Play-list"
+    //% weight=240
+    export function performSilence(ms: number) {
+        let play = new Play;
+        play.parts.push("s" + convertToText(Math.floor(ms)));
+        playList.push(play);
+        activatePlayer();  // make sure it gets played
+    }
+
+    /**
+     * Check the length of the play-list
+     */
+    //% block="length of play-list"
+    //% group="Play-list"
+    //% weight=230
+    export function waitingToPlay(): number {
+        return playList.length;
+    }
+
+    /**
+     * Suspend background playing from the play-list
+     */
+    //% block="pause play-list"
+    //% group="Play-list"
+    //% weight=220
+    export function stopPlaying() {
+        playerStopped = true;
+    }
+
+    /**
+     * Resume background playing from the play-list
+     */
+    //% block="play play-list"
+    //% group="Play-list"
+    //% weight=210
+    export function startPlaying() {
+        playerStopped = false;
+        activatePlayer();
+    }
+
+
+    /**
+     * Delete from the play-list everything left unplayed
+     */
+    //% block="forget play-list"
+    //% group="Play-list"
+    //% weight=200
+    export function deletePlaylist() {
+        while (playList.length > 0) { playList.pop() }
+    }
+/**
      * Create a simple custom FlexFX 
      */
     //% block="create simple FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch profile goes from $startPitchPercent|                       to $endPitchPercent|volume profile goes from $startVolPercent|                       to $endVolPercent|default    pitch=$pitch|default   volume=$volume|default duration=$duration"
     //% group="Creating"
     //% inlineInputMode=external
-    //% weight=230
+    //% advanced=true
+    //% weight=130
     //% id.defl="simple"
     //% startPitchPercent.min=25 startPitchPercent.max=400 startPitchPercent.defl=100
     //% startVolPercent.min=0 startVolPercent.max=100 startVolPercent.defl=100
@@ -446,14 +546,14 @@ namespace flexFX {
         storeFlexFX(builtIn, target);
     }
 
-
     /**
      * Create a more complex two-part custom FlexFX 
      */
     //% block="create 2-part FlexFX: $id| first using wave-shape $waveA            with attack $attackA             and effect $effectA|  then using wave-shape $waveB            with attack $attackB             and effect $effectB|  pitch profile goes from $startPitchPercent                       to $midPitchPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $midVolPercent                       to $endVolPercent|duration used for 1st part: $timePercentA|default    pitch=$pitch|default   volume=$volume|default duration=$duration"
     //% group="Creating"
     //% inlineInputMode=external
-    //% weight=220
+    //% weight=120
+    //% advanced=true
     //% id.defl="2-part"
     //% startPitchPercent.min=10 startPitchPercent.max=400 startPitchPercent.defl=100
     //% startVolPercent.min=0 startVolPercent.max=100 startVolPercent.defl=100
@@ -476,7 +576,6 @@ namespace flexFX {
             (100 - timePercentA / 100));
         target.setDefaults(pitch, volume, duration);
         storeFlexFX(builtIn, target);
-
     }
 
     /**
@@ -485,7 +584,8 @@ namespace flexFX {
     //% block="create 3-part FlexFX: $id|  first using wave-shape $waveA             with attack $attackA              and effect $effectA|   then using wave-shape $waveB             with attack $attackB              and effect $effectB|lastly using wave-shape $waveC             with attack $attackC              and effect $effectC|  pitch profile goes from $startPitchPercent                       to $pitchABPercent                       to $pitchBCPercent                       to $endPitchPercent|volume profile goes from $startVolPercent                       to $volABPercent                       to $volBCPercent                       to $endVolPercent|duration used for 1st part:$timePercentA|                   2nd part: $timePercentB|default    pitch=$pitch|default   volume=$volume|default duration=$duration"
     //% group="Creating"
     //% inlineInputMode=external
-    //% weight=210
+    //% weight=110
+    //% advanced=true
     //% id.defl="3-part"
     //% startPitchPercent.min=10 startPitchPercent.max=400 startPitchPercent.defl=100
     //% startVolPercent.min=0 startVolPercent.max=100 startVolPercent.defl=100
@@ -523,7 +623,8 @@ namespace flexFX {
     //% group="Creating"
     //% help=pxt-flexfx/createDoubleFlexFX
     //% inlineInputMode=external
-    //% weight=200
+    //% weight=100
+    //% advanced=true
     //% id.defl="double"
     //% startPitchAPercent.min=10 startPitchAPercent.max=400 startPitchAPercent.defl=100
     //% startVolAPercent.min=0 startVolAPercent.max=100 startVolAPercent.defl=100
@@ -553,109 +654,6 @@ namespace flexFX {
         storeFlexFX(builtIn, target);
     }
 
-    /**
-     * Add a silent pause to the play-list
-     */
-    //% block="add a pause of $ms ms next in the play-list"
-    //% group="Play-list"
-    //% advanced=true
-    //% weight=170
-    export function performSilence(ms: number) {
-        let play = new Play;
-        play.parts.push("s" + convertToText(Math.floor(ms)));
-        playList.push(play);
-        activatePlayer();  // make sure it gets played
-    }
-
-    /**
-     * Await start of next FLexFX on the play-list
-     */
-    //% block="wait until next FlexFX starts"
-    //% group="Play-list"
-    //% advanced=true
-    //% weight=160
-    export function awaitPlayStart() {
-        if (playList.length >= 0) {
-            playerStopped = false; // in case it was
-            activatePlayer(); // it case it wasn't
-            control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
-        } // else nothing to wait for
-    }
-
-    /**
-     * Await completion of FLexFX currently playing
-     */
-    //% block="wait until current FlexFX finished"
-    //% group="Play-list"
-    //% advanced=true
-    //% weight=150
-    export function awaitPlayFinish() {
-        if (playerPlaying) {
-            control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
-        } // else nothing to wait for
-    }
-
-    /**
-     * Await completion of everything on the play-list
-     */
-    //% block="wait until everything played"
-    //% group="Play-list"
-    //% advanced=true
-    //% weight=140
-    export function awaitAllFinished() {
-        if (playList.length >= 0) {
-            playerStopped = false; // in case it was
-            activatePlayer(); // it case it wasn't
-            control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
-        } // else nothing to wait for
-    }
-
-    /**
-     * Check the length of the play-list
-     */
-    //% block="length of play-list"
-    //% group="Play-list"
-    //% advanced=true
-    //% weight=130
-    export function waitingToPlay(): number {
-        return playList.length;
-    }
-
-    /**
-     * Suspend background playing from the play-list
-     */
-    //% block="pause play-list"
-    //% group="Play-list"
-    //% advanced=true
-    //% weight=120
-    export function stopPlaying() {
-        playerStopped = true;
-    }
-    
-    /**
-     * Resume background playing from the play-list
-     */
-    //% block="play play-list"
-    //% group="Play-list"
-    //% advanced=true
-    //% weight=110
-    export function startPlaying() {
-        playerStopped = false;
-        activatePlayer();
-    }
-
-
-    /**
-     * Delete from the play-list everything left unplayed
-     */
-    //% block="forget play-list"
-    //% group="Play-list"
-    //% advanced=true
-    //% weight=100
-    export function deletePlaylist() {
-        while (playList.length > 0) { playList.pop() }
-    }
-
 // Populate the FlexFX array with a selection of built-in sounds
     // simple "ting" flexFX
     flexFX.createFlexFX("", 100, 100, Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10,
@@ -683,11 +681,18 @@ namespace flexFX {
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 10, 100, 10, 85,
         440, 200, 500, BuiltInFlexFX.VIOLIN);
 
+    /* Police siren is a double flexFX
+    NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, 
+    and these strange values have been experimentally derived.
+    Always invoke Snore.performUsing() with the default freq 0f 50
+    */
+    flexFX.create2PartFlexFX("",
+        700, 10, Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 14, 100,
+        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 100, 0, 
+        800, 200, 1000, BuiltInFlexFX.SNORE);
     /*
     SNORE       700  10%
     NOI VIB LIN  14 100%   | 50%
     NOI VIB LIN 100   0%   | 50%
-    NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, and these strange values have been experimentally derived.
-    Always invoke Snore.performUsing() with the lowest (freq=50)
     */
 }

@@ -658,16 +658,19 @@ namespace flexFX {
     // simple "ting" flexFX
     flexFX.createFlexFX("", 100, 100, Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10,
         2000, 255, 200, BuiltInFlexFX.TING);
+
     // cat-like 2-part flexFX
     flexFX.create2PartFlexFX("", 70, 50,
         Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 100, 100,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 80, 30,
         900, 255, 1000, BuiltInFlexFX.MIAOW);
+
     // Horn 2-part flexFX
     flexFX.create2PartFlexFX("", 5, 50,
         Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 100,
         Wave.SINE, Attack.SLOW, Effect.NONE, 100, 80, 7,
         250, 255, 500, BuiltInFlexFX.HORN);
+
     // Police siren is a double flexFX
     flexFX.createDoubleFlexFX("",
         95, 80, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 100,
@@ -681,11 +684,7 @@ namespace flexFX {
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 10, 100, 10, 85,
         440, 200, 500, BuiltInFlexFX.VIOLIN);
 
-    /* Police siren is a double flexFX
-    NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, 
-    and these strange values have been experimentally derived.
-    Always invoke Snore.performUsing() with the default freq 0f 50
-    */
+    // Police siren is a double flexFX
     flexFX.create2PartFlexFX("",
         700, 10, Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 14, 100,
         Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 100, 0, 
@@ -697,4 +696,103 @@ namespace flexFX {
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 100,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 150, 50, 33, 33,
         400, 250, 800, BuiltInFlexFX.CRY);
+
+    // Approximation to a snore!
+    /* NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, 
+    and these strange values have been experimentally derived to work with the default freq of 50
+    */
+    /*
+SNORE       3508  10% 
+NOI VIB LIN  715 100%   | 50%
+NOI VIB LIN 5008   0%   | 50%
+NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, and these strange values have been experimentally derived.
+By always invoking Snore.performUsing() with (freq=1), these literal frequencies will get used as specified here!
+*/
+    flexFX.create2PartFlexFX("snore", 3508, 10,
+        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 715, 100,
+        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 5008, 0, 50,
+        111, 222, 333);
+
+    /*
+    DOO          300% 80% 
+    SAW LOG NONE 100% 90%   |  5%
+    SQU LIN NONE 100% 70%   | 95%
+    */
+    flexFX.create2PartFlexFX("doo", 300, 80,
+        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 90,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 70, 5,
+        111, 222, 333);
+
+    /*
+    QUERY        110%  20% 
+    SQU LIN NONE 100% 100%   | 20%
+    SQU CUR NONE 150%  30%   | 80%
+    */
+    flexFX.create2PartFlexFX("query", 110, 20,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 100,
+        Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 150, 30, 20,
+        111, 222, 333);
+
+    /*
+     
+    UHOH         110%  40% 
+    SAW LOG NONE 120% 100%   | 20%
+    SILENCE                  | 20%
+                  95% 100% 
+    SQU LIN NONE  85%  75%   | 60%
+    */
+    flexFX.createDoubleFlexFX("uh-oh",
+        110, 40, Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 120, 100,
+        95, 100, Wave.SQUARE, Attack.SLOW, Effect.NONE, 85, 75,
+        20, 20,
+        111, 222, 333);
+
+    /*
+    MOAN         120%  60%
+    TRI CUR NONE 100% 100%   | 60%
+    TRI CUR NONE  95%  80%   | 30%
+    TRI LIN NONE 115%  55%   | 10%
+    */
+    flexFX.create3PartFlexFX("moan", 120, 60,
+        Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 100, 100,
+        Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 95, 80,
+        Wave.TRIANGLE, Attack.SLOW, Effect.NONE, 115, 55, 60, 30,
+        111, 222, 333);
+
+    /*
+    DUH          100%  60%
+    SQU LIN NONE  95% 100%   | 10%
+    SQU LIN NONE 110%  80%   | 25%
+    SQU LIN NONE  66%  40%   | 65%
+    */
+    flexFX.create3PartFlexFX("duh", 100, 60,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 95, 100,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 110, 80,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 66, 40, 10, 25,
+        111,222,333);
+
+    /*
+    WAAH         100%  10%
+    SAW CUR NONE 140% 100%   | 70%
+    SAW LIN NONE 110%  60%   | 20%
+    SAW LIN NONE  30%   5%   | 10%
+    */
+    flexFX.create3PartFlexFX("waah", 100, 10,
+        Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 140, 100,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 110, 60,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 30, 5, 70, 20,
+        111, 222, 333);
+
+    /*
+    GROWL         30%  50%
+    SAW LOG NONE 100%  80%   | 60%
+    SAW LIN NONE  90% 100%   | 15%
+    SAW LIN NONE  30%  75%   | 15%
+    */
+    flexFX.create3PartFlexFX("growl", 30, 50,
+        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 80,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 100,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 30, 75, 60, 15,
+        111, 222, 333);
+
 }

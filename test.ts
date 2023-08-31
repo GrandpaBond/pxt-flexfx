@@ -46,11 +46,11 @@ flexFX.playFlexFX("siren", 800, 32, 1000, true);
 flexFX.playFlexFX("siren", 800, 64, 1000, true);
 flexFX.playFlexFX("siren", 800, 128, 1000, true);
 flexFX.playFlexFX("siren", 800, 255, 1000, true);
-flexFX.playFlexFX("siren", 785, 255, 1000, true);
-flexFX.playFlexFX("siren", 770, 128, 1000, true);
-flexFX.playFlexFX("siren", 770, 64, 1000, true);
-flexFX.playFlexFX("siren", 770, 32, 1000, true);
-flexFX.playFlexFX("siren", 770, 16, 1000, true);
+flexFX.playFlexFX("siren", 775, 255, 1000, true);
+flexFX.playFlexFX("siren", 750, 128, 1000, true);
+flexFX.playFlexFX("siren", 750, 64, 1000, true);
+flexFX.playFlexFX("siren", 750, 32, 1000, true);
+flexFX.playFlexFX("siren", 750, 16, 1000, true);
 
 // while the Play-list is playing, flash the blue light (sort of)
 while(flexFX.isActive()) {
@@ -61,21 +61,21 @@ while(flexFX.isActive()) {
 pause(1000);
 
 // queue-up a sequence of Plays on the Play-list
-flexFX.playFlexFX("Violin", Note.E5, 250, 300, true);
-flexFX.playFlexFX("Violin", Note.A5, 250, 900, true);
-flexFX.playFlexFX("Violin", Note.E5, 250, 300, true);
-flexFX.playFlexFX("Violin", Note.F5, 250, 900, true);
-flexFX.playFlexFX("Violin", Note.D5, 250, 300, true);
-flexFX.playFlexFX("Violin", Note.E5, 250, 150, true);
-flexFX.playFlexFX("Violin", Note.D5, 250, 150, true);
-flexFX.playFlexFX("Violin", Note.C5, 250, 150, true);
-flexFX.playFlexFX("Violin", Note.E5, 250, 150, true);
-flexFX.playFlexFX("Violin", Note.D5, 250, 150, true);
-flexFX.playFlexFX("Violin", Note.C5, 250, 150, true);
-flexFX.playFlexFX("Violin", Note.B4, 250, 150, true);
-flexFX.playFlexFX("Violin", Note.D5, 250, 150, true);
-flexFX.playFlexFX("Violin", Note.C5, 250, 300, true);
-flexFX.playFlexFX("Violin", Note.A4, 250, 900, true);
+flexFX.playFlexFX("violin", Note.E5, 250, 300, true);
+flexFX.playFlexFX("violin", Note.A5, 250, 900, true);
+flexFX.playFlexFX("violin", Note.E5, 250, 300, true);
+flexFX.playFlexFX("violin", Note.F5, 250, 900, true);
+flexFX.playFlexFX("violin", Note.D5, 250, 300, true);
+flexFX.playFlexFX("violin", Note.E5, 250, 150, true);
+flexFX.playFlexFX("violin", Note.D5, 250, 150, true);
+flexFX.playFlexFX("violin", Note.C5, 250, 150, true);
+flexFX.playFlexFX("violin", Note.E5, 250, 150, true);
+flexFX.playFlexFX("violin", Note.D5, 250, 150, true);
+flexFX.playFlexFX("violin", Note.C5, 250, 150, true);
+flexFX.playFlexFX("violin", Note.B4, 250, 150, true);
+flexFX.playFlexFX("violin", Note.D5, 250, 150, true);
+flexFX.playFlexFX("violin", Note.C5, 250, 300, true);
+flexFX.playFlexFX("violin", Note.A4, 250, 900, true);
 
  // while the Play-list is playing, jiggle a note around
 while (flexFX.isActive()) { 
@@ -91,15 +91,15 @@ pause(1000);
 
 // queue up some Plays on the Play-list, with pauses queued in-between
 flexFX.stopPlaying();  // don't start Playing yet...
-flexFX.playFlexFX("Wail", 200, 250, 1000, true);
+flexFX.playFlexFX("cry", 200, 250, 1000, true);
 flexFX.performSilence(2000);
-flexFX.playFlexFX("Wail", 300, 250, 1000, true);
+flexFX.playFlexFX("cry", 300, 250, 1000, true);
 flexFX.performSilence(1500);
-flexFX.playFlexFX("Wail", 400, 250, 1000, true);
+flexFX.playFlexFX("cry", 400, 250, 1000, true);
 flexFX.performSilence(1000);
-flexFX.playFlexFX("Wail", 600, 250, 1000, true);
+flexFX.playFlexFX("cry", 600, 250, 1000, true);
 flexFX.performSilence(800);
-flexFX.playFlexFX("Wail", 800, 250, 1000, true);
+flexFX.playFlexFX("cry", 800, 250, 1000, true);
 basic.showNumber(flexFX.waitingToPlay());
 pause(500);
 // use events to choreograph faces to sounds
@@ -120,11 +120,11 @@ pause(2000)
 // now re-build the Play-list of 5 cries
 basic.showIcon(IconNames.Sad);
 flexFX.stopPlaying();  // inhibit Playing
-flexFX.playFlexFX("Wail", 200, 250, 1000, true);
-flexFX.playFlexFX("Wail", 300, 250, 1000, true);
-flexFX.playFlexFX("Wail", 400, 250, 1000, true);
-flexFX.playFlexFX("Wail", 600, 250, 1000, true);
-flexFX.playFlexFX("Wail", 800, 250, 1000, true);
+flexFX.playFlexFX("cry", 200, 250, 1000, true);
+flexFX.playFlexFX("cry", 300, 250, 1000, true);
+flexFX.playFlexFX("cry", 400, 250, 1000, true);
+flexFX.playFlexFX("cry", 600, 250, 1000, true);
+flexFX.playFlexFX("cry", 800, 250, 1000, true);
 basic.showNumber(flexFX.waitingToPlay());
 
 pause(1000)

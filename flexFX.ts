@@ -60,8 +60,8 @@ enum BuiltInFlexFX {
     LAUGH,
     //% block="uh-oh"
     UHOH,
-    //% block="scream"
-    SCREAM,
+    //% block="hum"
+    HUM,
     //% block="cry"
     CRY,
     //% block="moan"
@@ -70,6 +70,8 @@ enum BuiltInFlexFX {
     SHOUT,
     //% block="snore"
     SNORE,
+    //% block="query"
+    QUERY,
     //% block="violin"
     VIOLIN,
     //% block="horn"
@@ -113,11 +115,11 @@ namespace flexFX {
     // array of built-in FlexFX ids 
     // **** must precicely match the enum BuiltInFlexFX above ****
     let builtInId: string[] = [
-        "laugh", "uh-oh", "scream", "cry", "moan",  // [0...4]
-        "shout", "snore", "violin", "horn", "sax",  // [5...9]
-        "flute", "tweet", "ting", "chime", "whale", // [10...14]
-        "miaow", "cluck", "woof", "moo", "motor",   // [15...19]
-        "siren"];                                   // [20]
+        "laugh", "uh-oh", "hum", "cry", "moan",      // [0...4]
+        "shout", "snore", "query","violin", "horn",  // [5...9]
+        "sax", "flute", "tweet", "ting", "chime",    // [10...14]
+        "whale", "miaow", "cluck", "woof", "moo",    // [15...19]
+        "motor",  "siren"];                          // [20...21]
 
     // Each performance will comprise an array of the "compiled" sound-strings for its several parts.
     class Play {
@@ -701,98 +703,69 @@ namespace flexFX {
     /* NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, 
     and these strange values have been experimentally derived to work with the default freq of 50
     */
-    /*
-SNORE       3508  10% 
-NOI VIB LIN  715 100%   | 50%
-NOI VIB LIN 5008   0%   | 50%
-NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, and these strange values have been experimentally derived.
-By always invoking Snore.performUsing() with (freq=1), these literal frequencies will get used as specified here!
-*/
-    flexFX.create2PartFlexFX("snore", 3508, 10,
-        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 715, 100,
-        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 5008, 0, 50,
-        111, 222, 333);
+    // (Original exact pitch-profile was 3508 --> 715 --> 5008)
 
-    /*
-    DOO          300% 80% 
-    SAW LOG NONE 100% 90%   |  5%
-    SQU LIN NONE 100% 70%   | 95%
-    */
-    flexFX.create2PartFlexFX("doo", 300, 80,
+    flexFX.create2PartFlexFX("", 7000, 10,
+        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 1400, 100,
+        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 9999, 0, 50,
+        50, 222, 1000, BuiltInFlexFX.SNORE);
+
+    // a gentle hum...
+    flexFX.create2PartFlexFX("", 300, 80,
         Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 90,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 70, 5,
-        111, 222, 333);
+        250, 100, 600, BuiltInFlexFX.HUM);
 
-    /*
-    QUERY        110%  20% 
-    SQU LIN NONE 100% 100%   | 20%
-    SQU CUR NONE 150%  30%   | 80%
-    */
-    flexFX.create2PartFlexFX("query", 110, 20,
+
+    // questioning... 
+    flexFX.create2PartFlexFX("", 110, 20,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 100,
         Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 150, 30, 20,
-        111, 222, 333);
+        300, 250, 900, BuiltInFlexFX.QUERY);
 
-    /*
-     
-    UHOH         110%  40% 
-    SAW LOG NONE 120% 100%   | 20%
-    SILENCE                  | 20%
-                  95% 100% 
-    SQU LIN NONE  85%  75%   | 60%
-    */
-    flexFX.createDoubleFlexFX("uh-oh",
+    // trouble ahead!
+    flexFX.createDoubleFlexFX("",
         110, 40, Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 120, 100,
         95, 100, Wave.SQUARE, Attack.SLOW, Effect.NONE, 85, 75,
         20, 20,
-        111, 222, 333);
+        150, 200, 1600, BuiltInFlexFX.UHOH);
 
-    /*
-    MOAN         120%  60%
-    TRI CUR NONE 100% 100%   | 60%
-    TRI CUR NONE  95%  80%   | 30%
-    TRI LIN NONE 115%  55%   | 10%
-    */
-    flexFX.create3PartFlexFX("moan", 120, 60,
+    // sad whimpering moan
+    flexFX.create3PartFlexFX("", 120, 60,
         Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 100, 100,
         Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 95, 80,
         Wave.TRIANGLE, Attack.SLOW, Effect.NONE, 115, 55, 60, 30,
-        111, 222, 333);
+        450, 150, 700, BuiltInFlexFX.MOAN);
 
-    /*
-    DUH          100%  60%
-    SQU LIN NONE  95% 100%   | 10%
-    SQU LIN NONE 110%  80%   | 25%
-    SQU LIN NONE  66%  40%   | 65%
-    */
-    flexFX.create3PartFlexFX("duh", 100, 60,
+    // moo like a cow
+    flexFX.create3PartFlexFX("", 100, 60,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 95, 100,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 110, 80,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 66, 40, 10, 25,
-        111,222,333);
+        111, 222, 333, BuiltInFlexFX.MOO);
 
-    /*
-    WAAH         100%  10%
-    SAW CUR NONE 140% 100%   | 70%
-    SAW LIN NONE 110%  60%   | 20%
-    SAW LIN NONE  30%   5%   | 10%
-    */
-    flexFX.create3PartFlexFX("waah", 100, 10,
-        Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 140, 100,
-        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 110, 60,
-        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 30, 5, 70, 20,
-        111, 222, 333);
+    // whale-song
+    flexFX.create3PartFlexFX("", 80, 10,
+        Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 100, 100,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 120, 60,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 50, 5, 10, 40,
+        450, 222, 2000, BuiltInFlexFX.WHALE);
 
-    /*
-    GROWL         30%  50%
-    SAW LOG NONE 100%  80%   | 60%
-    SAW LIN NONE  90% 100%   | 15%
-    SAW LIN NONE  30%  75%   | 15%
-    */
-    flexFX.create3PartFlexFX("growl", 30, 50,
+    // angry shout
+    flexFX.create3PartFlexFX("", 30, 50,
         Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 80,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 100,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 30, 75, 60, 15,
-        111, 222, 333);
+        400, 250, 500, BuiltInFlexFX.SHOUT);
 
+    // tweet
+    flexFX.createFlexFX("", 80, 45,
+        Wave.SINE, Attack.FAST, Effect.NONE, 100, 100,
+        600, 250, 400, BuiltInFlexFX.TWEET);
+
+    // single laugh (repeat for giggles)
+    flexFX.create2PartFlexFX("", 70, 40,
+        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 100,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 70, 75, 90,
+        400, 250, 500, BuiltInFlexFX.LAUGH);
 }

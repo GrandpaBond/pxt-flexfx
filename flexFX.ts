@@ -768,4 +768,23 @@ namespace flexFX {
         Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 100,
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 70, 75, 90,
         400, 250, 500, BuiltInFlexFX.LAUGH);
+
+    // engine-noise (kind-of)
+    flexFX.create2PartFlexFX("", 70, 120,
+        Wave.SAWTOOTH, Attack.FAST, Effect.TREMOLO, 100, 100,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.TREMOLO, 80, 50, 15,
+        150, 200, 3000,BuiltInFlexFX.MOTOR)
+
+    // chime effect
+    flexFX.create2PartFlexFX("", 105, 100,
+        Wave.SINE, Attack.FAST, Effect.NONE, 100, 50,
+        Wave.SINE, Attack.SLOW, Effect.NONE, 100, 10, 20,
+        300, 200, 2000,BuiltInFlexFX.CHIME)
+
+    // strange breed of dog
+    flexFX.create3PartFlexFX("", 120, 100,
+        Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 40, 90,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 100,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 120, 50,
+        10, 30, 250, 250, 300, BuiltInFlexFX.WOOF)
 }

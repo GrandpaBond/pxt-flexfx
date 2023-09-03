@@ -738,12 +738,11 @@ namespace flexFX {
         450, 150, 700, BuiltInFlexFX.MOAN);
 
     // moo like a cow
-    flexFX.create3PartFlexFX("", 100, 60,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 95, 100,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 110, 80,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 66, 40, 10, 25,
-        111, 222, 333, BuiltInFlexFX.MOO);
-
+    flexFX.create2PartFlexFX("", 70 ,80,
+        Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 100, 100,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 70, 30, 40,
+        140, 200, 1500, BuiltInFlexFX.MOO);
+        
     // whale-song
     flexFX.create3PartFlexFX("", 80, 10,
         Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 100, 100,
@@ -786,5 +785,13 @@ namespace flexFX {
         Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 40, 90,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 100,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 120, 50,
-        10, 30, 250, 250, 300, BuiltInFlexFX.WOOF)
+        10, 30, 250, 250, 300, BuiltInFlexFX.WOOF)   
+        
+    // breathy flute
+    flexFX.create3PartFlexFX(
+        "", 10, 100,
+        Wave.NOISE, Attack.FAST, Effect.VIBRATO, 105, 100,
+        Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 30,
+        Wave.TRIANGLE, Attack.SLOW, Effect.NONE, 80, 0,
+        5, 80, 250, 250, 1500, BuiltInFlexFX.FLUTE);
 }

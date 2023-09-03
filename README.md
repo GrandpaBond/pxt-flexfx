@@ -224,7 +224,7 @@ There are three special-effects that can optionally be added.
 
 ``||flexFX:None||`` skips any of these effects.
 
-There is currently no control of how rapidly or deeply these effects are applied.
+There is currently no control of how rapidly or deeply these effects are applied. This functionality would be a welcome upgrade.
 
 ### Profiles
 A FlexFX stitches its parts together, so that the end-point of one part forms the start-point of the next part.
@@ -297,10 +297,12 @@ Any FlexFX can be freely modified using any of the ``||FlexFX:create...||`` bloc
 
 The basic rule is that if it exists, it gets changed; otherwise it is created from scratch.
 
+
 -----------------------------------------------------------------------
 -----------------------------------------------------------------------
 # Acknowledgements 
-Credit must go to Bill Siever (on the Micro:bit Developer Slack Forum) for his experienced insights into the workings of the Micro:bit run-time, and his unstinting assistance in navigating the complex process of publishing this Extension.
+Credit must go to Bill Siever (on the Micro:bit Developer Slack Forum) for his experienced insights into the workings 
+of the Micro:bit run-time, and his unstinting assistance in navigating the complex process of publishing this Extension.
 
 
 > Open this page at [https://grandpabond.github.io/pxt-flexfx/](https://grandpabond.github.io/pxt-flexfx/)

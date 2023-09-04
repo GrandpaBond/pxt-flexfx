@@ -388,6 +388,8 @@ namespace flexFX {
     /**
      * Perform a FlexFX (built-in)
      */
+    //% block="play FlexFX $choice || at pitch $pitch with strength $volume lasting (ms) $duration queued? $background"
+
     //% block="play FlexFX $choice || at pitch $pitch || with strength $volume || lasting $duration ms || queued: $background"
     //% group="Playing"
     //% inlineInputMode=inline
@@ -405,7 +407,7 @@ namespace flexFX {
     /**
      * Perform a FlexFX (user-created)
      */
-    //% block="play FlexFX $id || at pitch $pitch || with strength $volume || lasting $duration ms || queued: $background"
+    //% block="play FlexFX $id || at pitch $pitch with strength $volume lasting (ms) $duration queued? $background"
     //% group="Playing"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"

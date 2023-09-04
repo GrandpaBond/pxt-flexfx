@@ -56,50 +56,49 @@ enum Effect {
 // list of built-in FlexFXs
 // **** must precicely match the array BuiltInId below ****
 enum BuiltInFlexFX {
-    //% block="laugh"
-    LAUGH,
-    //% block="uh-oh"
-    UHOH,
-    //% block="hum"
-    HUM,
-    //% block="cry"
-    CRY,
-    //% block="moan"
-    MOAN,
-    //% block="shout"
-    SHOUT,
-    //% block="snore"
-    SNORE,
-    //% block="query"
-    QUERY,
-    //% block="violin"
-    VIOLIN,
-    //% block="horn"
-    HORN,
-    //% block="sax"
-    FLUTE,
-    //% block="flute"
-    SAX,
-    //% block="tweet"
-    TWEET,
-    //% block="ting"
-    TING,
     //% block="chime"
     CHIME,
-    //% block="whale"
-    WHALE,
+    //% block="cry"
+    CRY,
+    //% block="flute"
+    FLUTE,
+    //% block="horn"
+    HORN,
+    //% block="hum"
+    HUM,
+
+    //% block="laugh"
+    LAUGH,
     //% block="miaow"
     MIAOW,
-    //% block="cluck"
-    CLUCK,
-    //% block="woof"
-    WOOF,
+    //% block="moan"
+    MOAN,
     //% block="moo"
     MOO,
     //% block="motor"
     MOTOR,
+
+    //% block="query"
+    QUERY,
+    //% block="shout"
+    SHOUT,
     //% block="siren"
-    SIREN
+    SIREN,
+    //% block="snore"
+    SNORE,
+    //% block="ting"
+    TING,
+
+    //% block="tweet"
+    TWEET,
+    //% block="uh-oh"
+    UHOH,
+    //% block="violin"
+    VIOLIN,
+    //% block="whale"
+    WHALE,
+    //% block="woof"
+    WOOF
 }
 
 /**
@@ -115,12 +114,11 @@ namespace flexFX {
     // array of built-in FlexFX ids 
     // **** must precicely match the enum BuiltInFlexFX above ****
     let builtInId: string[] = [
-        "laugh", "uh-oh", "hum", "cry", "moan",      // [0...4]
-        "shout", "snore", "query","violin", "horn",  // [5...9]
-        "sax", "flute", "tweet", "ting", "chime",    // [10...14]
-        "whale", "miaow", "cluck", "woof", "moo",    // [15...19]
-        "motor",  "siren"];                          // [20...21]
-
+        "chime", "cry", "flute", "horn", "hum",        // [0...4]
+        "laugh", "miaow", "moan", "moo", "motor",      // [5...9]
+        "query", "shout", "siren", "snore","ting",     // [10...14]
+        "tweet", "uh-oh", "violin", "whale", "woof" ]; // [15...19]
+      
     // Each performance will comprise an array of the "compiled" sound-strings for its several parts.
     class Play {
         parts: string[];
@@ -657,40 +655,12 @@ namespace flexFX {
     }
 
 // Populate the FlexFX array with a selection of built-in sounds
-    // simple "ting" flexFX
-    flexFX.createFlexFX("", 100, 100, Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10,
-        2000, 255, 200, BuiltInFlexFX.TING);
 
-    // cat-like 2-part flexFX
-    flexFX.create2PartFlexFX("", 70, 50,
-        Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 100, 100,
-        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 80, 30,
-        900, 255, 1000, BuiltInFlexFX.MIAOW);
-
-    // Horn 2-part flexFX
-    flexFX.create2PartFlexFX("", 5, 50,
-        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 100,
-        Wave.SINE, Attack.SLOW, Effect.NONE, 100, 80, 7,
-        250, 255, 500, BuiltInFlexFX.HORN);
-
-    // Police siren is a double flexFX
-    flexFX.createDoubleFlexFX("",
-        95, 80, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 100,
-        70, 100, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 80, 45, 10,
-        800, 200, 1000, BuiltInFlexFX.SIREN);
-
-    // Violin-like 3-part flexFX
-    flexFX.create3PartFlexFX("", 1, 100,
-        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 75,
-        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 75,
-        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 10, 100, 10, 85,
-        440, 200, 500, BuiltInFlexFX.VIOLIN);
-
-    // Police siren is a double flexFX
-    flexFX.create2PartFlexFX("",
-        700, 10, Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 14, 100,
-        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 100, 0, 
-        800, 200, 1000, BuiltInFlexFX.SNORE);
+    // chime effect
+    flexFX.create2PartFlexFX("", 105, 100,
+        Wave.SINE, Attack.FAST, Effect.NONE, 100, 50,
+        Wave.SINE, Attack.SLOW, Effect.NONE, 100, 10, 20,
+        300, 200, 2000,BuiltInFlexFX.CHIME)
 
     // create a wailing 3-part flexFX
     flexFX.create3PartFlexFX("", 50, 50,
@@ -699,16 +669,19 @@ namespace flexFX {
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 150, 50, 33, 33,
         400, 250, 800, BuiltInFlexFX.CRY);
 
-    // Approximation to a snore!
-    /* NOTE: The noise-generator is highly sensitive to the chosen frequency-trajectory, 
-    and these strange values have been experimentally derived to work with the default freq of 50
-    */
-    // (Original exact pitch-profile was 3508 --> 715 --> 5008)
+    // breathy flute
+    flexFX.create3PartFlexFX(
+        "", 10, 100,
+        Wave.NOISE, Attack.FAST, Effect.VIBRATO, 105, 100,
+        Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 30,
+        Wave.TRIANGLE, Attack.SLOW, Effect.NONE, 80, 0,
+        5, 80, 250, 250, 1500, BuiltInFlexFX.FLUTE);
 
-    flexFX.create2PartFlexFX("", 7000, 10,
-        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 1400, 100,
-        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 9999, 0, 50,
-        50, 222, 1000, BuiltInFlexFX.SNORE);
+    // Horn 2-part flexFX
+    flexFX.create2PartFlexFX("", 5, 50,
+        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 100,
+        Wave.SINE, Attack.SLOW, Effect.NONE, 100, 80, 7,
+        250, 255, 500, BuiltInFlexFX.HORN);
 
     // a gentle hum...
     flexFX.create2PartFlexFX("", 300, 80,
@@ -716,19 +689,17 @@ namespace flexFX {
         Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 70, 5,
         250, 100, 600, BuiltInFlexFX.HUM);
 
+    // single laugh (repeat for giggles)
+    flexFX.create2PartFlexFX("", 70, 40,
+        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 100,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 70, 75, 90,
+        400, 250, 500, BuiltInFlexFX.LAUGH);
 
-    // questioning... 
-    flexFX.create2PartFlexFX("", 110, 20,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 100,
-        Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 150, 30, 20,
-        300, 250, 900, BuiltInFlexFX.QUERY);
-
-    // trouble ahead!
-    flexFX.createDoubleFlexFX("",
-        110, 40, Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 120, 100,
-        95, 100, Wave.SQUARE, Attack.SLOW, Effect.NONE, 85, 75,
-        20, 20,
-        150, 200, 1600, BuiltInFlexFX.UHOH);
+    // cat-like 2-part flexFX
+    flexFX.create2PartFlexFX("", 70, 50,
+        Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 100, 100,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 80, 30,
+        900, 255, 1000, BuiltInFlexFX.MIAOW);
 
     // sad whimpering moan
     flexFX.create3PartFlexFX("", 120, 60,
@@ -742,56 +713,71 @@ namespace flexFX {
         Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 100, 100,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 70, 30, 40,
         140, 200, 1500, BuiltInFlexFX.MOO);
-        
-    // whale-song
-    flexFX.create3PartFlexFX("", 80, 10,
-        Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 100, 100,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 120, 60,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 50, 5, 10, 40,
-        450, 222, 2000, BuiltInFlexFX.WHALE);
 
+    // engine-noise (kind-of)
+    flexFX.create2PartFlexFX("", 70, 120,
+        Wave.SAWTOOTH, Attack.FAST, Effect.TREMOLO, 100, 100,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.TREMOLO, 80, 50, 15,
+        150, 200, 3000,BuiltInFlexFX.MOTOR);
+
+    // questioning... 
+    flexFX.create2PartFlexFX("", 110, 20,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 100,
+        Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 150, 30, 20,
+        300, 250, 900, BuiltInFlexFX.QUERY);
+        
     // angry shout
     flexFX.create3PartFlexFX("", 30, 50,
         Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 80,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 100,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 30, 75, 60, 15,
         400, 250, 500, BuiltInFlexFX.SHOUT);
+        
+    // Police siren is a double flexFX
+    flexFX.createDoubleFlexFX("",
+        95, 80, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 100,
+        70, 100, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 80, 45, 10,
+        800, 200, 1000, BuiltInFlexFX.SIREN);
+
+    // Approximation to a snore!
+    flexFX.create2PartFlexFX("", 7000, 10,
+        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 1400, 100,
+        Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 9999, 0, 50,
+        50, 222, 1000, BuiltInFlexFX.SNORE);
+
+    // simple "ting" flexFX
+    flexFX.createFlexFX("", 100, 100, Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10,
+        2000, 255, 200, BuiltInFlexFX.TING);
 
     // tweet
     flexFX.createFlexFX("", 80, 45,
         Wave.SINE, Attack.FAST, Effect.NONE, 100, 100,
-        600, 250, 400, BuiltInFlexFX.TWEET);
+        600, 250, 700, BuiltInFlexFX.TWEET);
 
-    // single laugh (repeat for giggles)
-    flexFX.create2PartFlexFX("", 70, 40,
-        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 100,
-        Wave.SQUARE, Attack.SLOW, Effect.NONE, 70, 75, 90,
-        400, 250, 500, BuiltInFlexFX.LAUGH);
+    // trouble ahead!
+    flexFX.createDoubleFlexFX("",
+        110, 40, Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 120, 100,
+        95, 100, Wave.SQUARE, Attack.SLOW, Effect.NONE, 85, 75, 20, 20,
+        150, 200, 1000, BuiltInFlexFX.UHOH);
 
-    // engine-noise (kind-of)
-    flexFX.create2PartFlexFX("", 70, 120,
-        Wave.SAWTOOTH, Attack.FAST, Effect.TREMOLO, 100, 100,
-        Wave.SAWTOOTH, Attack.SLOW, Effect.TREMOLO, 80, 50, 15,
-        150, 200, 3000,BuiltInFlexFX.MOTOR)
-
-    // chime effect
-    flexFX.create2PartFlexFX("", 105, 100,
-        Wave.SINE, Attack.FAST, Effect.NONE, 100, 50,
-        Wave.SINE, Attack.SLOW, Effect.NONE, 100, 10, 20,
-        300, 200, 2000,BuiltInFlexFX.CHIME)
+    // Violin-like 3-part flexFX
+    flexFX.create3PartFlexFX("", 1, 100,
+        Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 75,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 75,
+        Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 10, 100, 10, 85,
+        440, 200, 500, BuiltInFlexFX.VIOLIN);
+        
+    // whale-song
+    flexFX.create3PartFlexFX("", 120, 10,
+        Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 90, 100,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 60,
+        Wave.SQUARE, Attack.SLOW, Effect.NONE, 80, 5, 10, 40,
+        450, 222, 2000, BuiltInFlexFX.WHALE);    
 
     // strange breed of dog
     flexFX.create3PartFlexFX("", 120, 100,
         Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 40, 90,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 100,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 120, 50,
-        10, 30, 250, 250, 300, BuiltInFlexFX.WOOF)   
-        
-    // breathy flute
-    flexFX.create3PartFlexFX(
-        "", 10, 100,
-        Wave.NOISE, Attack.FAST, Effect.VIBRATO, 105, 100,
-        Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 30,
-        Wave.TRIANGLE, Attack.SLOW, Effect.NONE, 80, 0,
-        5, 80, 250, 250, 1500, BuiltInFlexFX.FLUTE);
+        10, 30, 250, 250, 300, BuiltInFlexFX.WOOF);
 }

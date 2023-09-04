@@ -14,12 +14,12 @@ As its name suggests, a ``||flexFX:flexFX||`` recipe is re-used flexibly, creati
 simply by changing the parameters for pitch, volume or duration.
 
 You can choose which FlexFX to play from a drop-down list of built-in sounds.
-This can happen straightaway, or you can queue-up performances to happen in the background.
+You can choose to hear them straightaway, or you can queue-up performances to happen in the background.
 
 You can interact with the Play-list to synchronise the sound-track with your other codes 
 (see ``||flexFX:Background Play-list||`` below).
 
-If you need a sound that is not built-in, you can create your own (see ``||flexFX:Building a FlexFX||`` below).
+If you need a sound that is not built-in, you can even create your own (see ``||flexFX:Building a FlexFX||`` below).
 
 
 # Playing a selected FlexFX #flexFX-playBuiltInFlexFX
@@ -44,7 +44,7 @@ from the default one.
 
 ``||flexFX:pitch||`` sets the pitch as a numeric frequency.
 
-By clicking on the "+" extender again, you can also specify two more performance parameters:
+By clicking on the "+" extender repeatedly, you can also specify two more performance parameters:
 
 ``||flexFX:volume||`` sets the volume as a number in the range 0-255.
 
@@ -55,26 +55,25 @@ By clicking on the "+" extender again, you can also specify two more performance
 You can use the built-in note-name enumerations (e.g. ``||music:Note.G5||``) to specify the pitch frequency more conveniently.
 ### ~
 
-Often, a sound-effect is intended to accompany other actions that require codes to be executed, 
-so there is a final optional parameter ``||flexFX:background||``that, if set *true*, 
-allows the FlexFX performance to be handled in the background (see |flexFX: Background Play-list| below).
 
-The following example would play the built-in FlexFX called **Ping** three times over, 
+The following example would play the built-in FlexFX called **"chime"** three times over, 
 with descending pitch, and increasing volume. The first two performances last just 0.4 seconds each, 
 while the final performance takes 1.6 seconds to complete.
 
 ```block
-flexFX.playFlexFX("ting", Note.G5, 100, 400, false);
-flexFX.playFlexFX("ting", Note.E5, 175, 400, false);
-flexFX.playFlexFX("ting", Note.C5, 250, 1600, false);
+flexFX.playFlexFX("chime", Note.G5, 100, 400);
+flexFX.playFlexFX("chime", Note.E5, 175, 400);
+flexFX.playFlexFX("chime", Note.C5, 250, 1600);
 ```
 
 # Background Play-list
-By setting the final parameter of ``||flexFX:performBuiltInFlexFX||`` or ``||flexFX:playFlexFX||`` to *true*, 
-the function will return immediately, and queue this FlexFX performance (which we call a ``||flexFX:Play||``) 
-to happen in the background. 
+Often, a sound-effect is intended to accompany other actions that require codes to be executed.
 
-You can queue-up many different ``||flexFX:Play||`` on the internal ``||flexFX:Play-list||``, 
+By setting the final, optional, parameter of ``||flexFX:performBuiltInFlexFX||`` or ``||flexFX:playFlexFX||`` 
+to **true**, the function will return immediately, and queue this FlexFX performance 
+(which we call a ``||flexFX:Play||``) to happen in the background. 
+
+You can queue-up many different ``||flexFX:Plays||`` on the internal ``||flexFX:Play-list||``, 
 and the background process will just work steadily through them one-at-a-time, 
 allowing your code to get on with something else. 
 

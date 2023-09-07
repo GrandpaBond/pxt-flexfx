@@ -60,7 +60,7 @@ while(flexFX.isActive()) {
 
 pause(1000);
 
-// queue-up a sequence of Plays on the Play-list
+// queue-up a sequence of Plays on the Play-list (J.S.Bach)
 flexFX.playFlexFX("violin", Note.E5, 250, 300, true);
 flexFX.playFlexFX("violin", Note.A5, 250, 900, true);
 flexFX.playFlexFX("violin", Note.E5, 250, 300, true);
@@ -92,13 +92,13 @@ pause(1000);
 // queue up some Plays on the Play-list, with pauses queued in-between
 flexFX.stopPlaying();  // don't start Playing yet...
 flexFX.playFlexFX("cry", 200, 250, 1000, true);
-flexFX.performSilence(2000);
+flexFX.playSilence(2000);
 flexFX.playFlexFX("cry", 300, 250, 1000, true);
-flexFX.performSilence(1500);
+flexFX.playSilence(1500);
 flexFX.playFlexFX("cry", 400, 250, 1000, true);
-flexFX.performSilence(1000);
+flexFX.playSilence(1000);
 flexFX.playFlexFX("cry", 600, 250, 1000, true);
-flexFX.performSilence(800);
+flexFX.playSilence(800);
 flexFX.playFlexFX("cry", 800, 250, 1000, true);
 basic.showNumber(flexFX.waitingToPlay());
 pause(500);
@@ -145,3 +145,21 @@ while (flexFX.waitingToPlay() > 0) {
 
 pause(500);
 basic.showIcon(IconNames.Happy);
+pause(2000)
+
+// finally: check we can delete an unwanted Play-list of 5 tweets
+flexFX.stopPlaying();  // inhibit Playing
+flexFX.playFlexFX("tweet", 200, 250, 1000, true);
+flexFX.playFlexFX("tweet", 300, 250, 1000, true);
+flexFX.playFlexFX("tweet", 400, 250, 1000, true);
+flexFX.playFlexFX("tweet", 600, 250, 1000, true);
+flexFX.playFlexFX("tweet", 800, 250, 1000, true);
+basic.showNumber(flexFX.waitingToPlay());
+pause(1000);
+basic.showIcon(IconNames.No);
+pause(1000);
+flexFX.deletePlaylist();
+basic.showNumber(flexFX.waitingToPlay());
+pause(2000)
+
+

@@ -3,6 +3,7 @@ morse=github:grandpabond/pxt-flexfx
 ```
 
 # FlexFX Extension: Flexible Sound-effects
+Many microbit projects can be brought to life by adding sound-effects to indicate their state.
 
 The ``||music:Music||`` category has a ``||music:micro:bit(V2)||`` section with blocks for **sound-expressions**. 
 These let you build some amazing sounds, but sometimes you need something more complex.
@@ -23,14 +24,12 @@ If you need a sound that is not built-in, you can even create your own (see ``||
 
 
 # Playing a selected FlexFX #flexFX-playBuiltInFlexFX
-                  
 ```sig
 flexFX.playBuiltInFlexFX()
 ```
 Use the drop-down list on ``||FlexFX:playBuiltInFlexFX||`` to choose which built-in FlexFX to hear. 
 
-# Playing a named FlexFX #flexFX-playFlexFX
-                  
+# Playing a named FlexFX #flexFX-playFlexFX            
 ```sig
 flexFX.playFlexFX()
 ```
@@ -55,7 +54,6 @@ By clicking on the "+" extender repeatedly, you can also specify two more perfor
 You can use the built-in note-name enumerations (e.g. ``||music:Note.G5||``) to specify the pitch frequency more conveniently.
 ### ~
 
-
 The following example would play the built-in FlexFX called **"chime"** three times over, 
 with descending pitch, and increasing volume. The first two performances last just 0.4 seconds each, 
 while the final performance takes 1.6 seconds to complete.
@@ -69,7 +67,7 @@ flexFX.playFlexFX("chime", Note.C5, 250, 1600);
 # Background Play-list
 Often, a sound-effect is intended to accompany other actions that require codes to be executed.
 
-By setting the final, optional, parameter of ``||flexFX:performBuiltInFlexFX||`` or ``||flexFX:playFlexFX||`` 
+By setting the final, optional, parameter of ``||flexFX:playBuiltInFlexFX||`` or ``||flexFX:playFlexFX||`` 
 to **true**, the function will return immediately, and queue this FlexFX performance 
 (which we call a ``||flexFX:Play||``) to happen in the background. 
 
@@ -80,7 +78,11 @@ allowing your code to get on with something else.
 Sometimes you might want tighter control over just when each queued ``||flexFX:Play||`` occurs, so various blocks 
 are provided that let you interact with the ``||flexFX:Play-list||``.
 
-## Spacing-out background Plays  #flexFX-performSilence
+## Spacing-out background Plays  #flexFX-playSilence                
+```sig
+flexFX.playSilence()
+```
+
 When queueing-up a series of ``||flexFX:Plays||``, you may not always want them to follow-on straightaway. 
 
 Use this function to space-out your ``||flexFX:Plays||``, by adding a silent pause onto the ``||flexFX:Play-list||``.
@@ -88,16 +90,18 @@ Use this function to space-out your ``||flexFX:Plays||``, by adding a silent pau
 This example plays three bell-sounds in the background, separated by gaps of 1.5 seconds:
 ```block
     flexFX.playFlexFX("ting", Note.G5, 100, 400, true);
-	flexFX.performSilence(1500);
+	flexFX.playSilence(1500);
     flexFX.playFlexFX("ting", Note.E5, 175, 400, true);
-	flexFX.performSilence(1500);
+	flexFX.playSilence(1500);
     flexFX.playFlexFX("ting", Note.C5, 250, 1600, true);
 ;
 ```
 	
-## Waiting for the next Play to start  #flexFX-awaitPlayStart
+## Waiting for the Play-list...
 If your codes need to synchronise other activites (such as servo-actions or display-changes)  precisely 
 to the performance of a queued sequence of sound-effects, you can use one of these **wait** blocks:
+
+## Waiting for the next Play to start  #flexFX-awaitPlayStart
 ```sig
 	flexFX.awaitPlayStart()  
 ```
@@ -116,24 +120,23 @@ Awaits completion of the FlexFX performance currently playing. (Returns immediat
 Awaits completion of everything on the ``||flexFX:Play-list||``.  (Returns immediately if there is none.)
 
 ## Pausing play-back of the Play-list  #flexFX-stopPlaying
-You can also stop and start the background ``||flexFX:Play-list||``:
 ```sig
 	flexFX.stopPlaying() 
 ```
-After any current ``||flexFX:Play||`` has finished, suspends future background playing from the ``||flexFX:Play-list||``.
+You can also stop and later re-start the background ``||flexFX:Play-list||``:
+After any current ``||flexFX:Play||`` has finished, ``||flexFX:stopPlaying||`` suspends future background playing from the ``||flexFX:Play-list||``.
 
 ## Playing the rest of the Play-list  #flexFX-startPlaying
 ```sig
 	flexFX.startPlaying() 
 ```
-Resumes background playing from the ``||flexFX:Play-list||`` of any queued or future ``||flexFX:Plays||``.  
-
+This unlocks the ``||flexFX:Play-list||``, resuming background playing of any queued (or future) ``||flexFX:Plays||``.  
 
 ## Checking how many Plays remain on the Play-list  #flexFX-waitingToPlay
-Sometimes it may be important for your codes to know how far the ``||flexFX:Play-list||`` has got:
 ```sig
 	flexFX.waitingToPlay(): number 
 ```
+Sometimes it may be important for your codes to know how far the ``||flexFX:Play-list||`` has got.
 This reporter block returns the current length of the (unplayed) ``||flexFX:Play-list||``.
 
 ## Abandoning a Play-list you don't need any more  #flexFX-deletePlaylist
@@ -154,13 +157,13 @@ Within the loop, we use ``||flexFX:awaitPlayStart||`` and ``||flexFX:awaitPlayFi
 // first queue up some Plays on the Play-list, with pauses queued in-between
 flexFX.stopPlaying();  // don't start Playing yet...
 flexFX.playFlexFX("cry", 200, 250, 1000, true);
-flexFX.performSilence(2000);
+flexFX.playSilence(2000);
 flexFX.playFlexFX("cry", 300, 250, 1000, true);
-flexFX.performSilence(1500);
+flexFX.playSilence(1500);
 flexFX.playFlexFX("cry", 400, 250, 1000, true);
-flexFX.performSilence(1000);
+flexFX.playSilence(1000);
 flexFX.playFlexFX("cry", 600, 250, 1000, true);
-flexFX.performSilence(800);
+flexFX.playSilence(800);
 flexFX.playFlexFX("cry", 800, 250, 1000, true);
 basic.showNumber(flexFX.waitingToPlay());
 basic.pause(500);
@@ -288,7 +291,8 @@ For example:
 	flexFX.createDoubleFlexFX("Siren", 95, 80,
 		Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 100,
 		70, 100,
-		Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 80, 45, 10);
+		Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 80, 45, 10,
+        800, 200, 1000);
 ```
 
 ## Changing a FlexFX

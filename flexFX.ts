@@ -389,8 +389,6 @@ namespace flexFX {
      * Perform a FlexFX (built-in)
      */
     //% block="play FlexFX $choice || at pitch $pitch with strength $volume lasting (ms) $duration queued? $background"
-
-    //% block="play FlexFX $choice || at pitch $pitch || with strength $volume || lasting $duration ms || queued: $background"
     //% group="Playing"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
@@ -474,7 +472,7 @@ namespace flexFX {
     //% block="add a pause of $ms ms next in the play-list"
     //% group="Play-list"
     //% weight=240
-    export function performSilence(ms: number) {
+    export function playSilence(ms: number) {
         let play = new Play;
         play.parts.push("s" + convertToText(Math.floor(ms)));
         playList.push(play);

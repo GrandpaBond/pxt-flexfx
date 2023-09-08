@@ -1,8 +1,7 @@
 ```package
 morse=github:grandpabond/pxt-flexfx
 ```
-
-# FlexFX Extension: Flexible Sound-effects
+# FlexFX - Flexible Sound-effect Recipes
 Many microbit projects can be brought to life by adding sound-effects to indicate their state.
 
 The ``||music:Music||`` category has a ``||music:micro:bit(V2)||`` section with blocks for **sound-expressions**. 
@@ -15,13 +14,12 @@ As its name suggests, a ``||flexFX:flexFX||`` recipe is re-used flexibly, creati
 simply by changing the parameters for pitch, volume or duration.
 
 You can choose which FlexFX to play from a drop-down list of built-in sounds.
-You can choose to hear them straightaway, or you can queue-up performances to happen in the background.
+You can hear them straightaway, or you can queue-up performances to happen in the background.
 
 You can interact with the Play-list to synchronise the sound-track with your other codes 
 (see ``||flexFX:Background Play-list||`` below).
 
 If you need a sound that is not built-in, you can even create your own (see ``||flexFX:Building a FlexFX||`` below).
-
 
 # Playing a selected FlexFX #flexFX-playBuiltInFlexFX
 ```sig
@@ -67,7 +65,7 @@ flexFX.playFlexFX("chime", Note.C5, 250, 1600);
 # Background Play-list
 Often, a sound-effect is intended to accompany other actions that require codes to be executed.
 
-By setting the final, optional, parameter of ``||flexFX:playBuiltInFlexFX||`` or ``||flexFX:playFlexFX||`` 
+By switching the final optional parameter of ``||flexFX:playBuiltInFlexFX||`` or ``||flexFX:playFlexFX||`` 
 to **true**, the function will return immediately, and queue this FlexFX performance 
 (which we call a ``||flexFX:Play||``) to happen in the background. 
 
@@ -124,7 +122,7 @@ Awaits completion of everything on the ``||flexFX:Play-list||``.  (Returns immed
 	flexFX.stopPlaying() 
 ```
 You can also stop and later re-start the background ``||flexFX:Play-list||``:
-After any current ``||flexFX:Play||`` has finished, ``||flexFX:stopPlaying||`` suspends future background playing from the ``||flexFX:Play-list||``.
+``||flexFX:stopPlaying||`` suspends future background playing from the ``||flexFX:Play-list||`` (once any current ``||flexFX:Play||`` has finished).
 
 ## Playing the rest of the Play-list  #flexFX-startPlaying
 ```sig
@@ -152,7 +150,6 @@ The code queues up some ``||flexFX:Plays||`` of the built-in FlexFX "cry" on the
 with different pauses queued in-between. Note that by calling ``||flexFX:stopPlaying||`` first, 
 we prevent the first ``||flexFX:Plays||`` happening until we are ready to  ``||flexFX:startPlaying||``. 
 Within the loop, we use ``||flexFX:awaitPlayStart||`` and ``||flexFX:awaitPlayFinish||`` to synchronise the mouth-changes.
-
 ```block
 // first queue up some Plays on the Play-list, with pauses queued in-between
 flexFX.stopPlaying();  // don't start Playing yet...

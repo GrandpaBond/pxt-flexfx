@@ -388,12 +388,12 @@ namespace flexFX {
     /**
      * Perform a FlexFX (built-in)
      */
-    //% block="play FlexFX $choice || at pitch $pitch with strength $volume lasting (ms) $duration queued? $background"
+    //% block="play FlexFX $choice | at pitch $pitch with strength $volume lasting (ms) $duration queued: $background"
     //% group="Playing"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
     //% weight=300
-    //% id.defl="ting"
+    //% choice.defl=BuiltInFlexFX.TING
     //% pitch.min=50 pitch.max=2000 pitch.defl=800
     //% vol.min=0 vol.max=255 vol.defl=200
     //% ms.min=0 ms.max=10000 ms.defl=800
@@ -405,11 +405,12 @@ namespace flexFX {
     /**
      * Perform a FlexFX (user-created)
      */
-    //% block="play FlexFX $id || at pitch $pitch with strength $volume lasting (ms) $duration queued? $background"
+    //% block="play FlexFX $id | at pitch $pitch with strength $volume lasting (ms) $duration queued: $background"
     //% group="Playing"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
-    //% weight=300
+    //% weight=310
+    //% id.defl="ting"
     //% pitch.min=50 pitch.max=2000 pitch.defl=800
     //% vol.min=0 vol.max=255 vol.defl=200
     //% ms.min=0 ms.max=10000 ms.defl=800

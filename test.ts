@@ -1,5 +1,8 @@
 // *********** test codes **********
 
+// perform a built-in FlexFX with all the defaults
+flexFX.playBuiltInFlexFX(BuiltInFlexFX.WHALE)
+
 // perform the simple built-in chime flexFX
 flexFX.playFlexFX("ting", Note.G5, 250, 400, false);
 flexFX.playFlexFX("ting", Note.E5, 250, 400, false);
@@ -9,7 +12,6 @@ pause(1000);
 
 
 // perform like a cat
-
 flexFX.playFlexFX("miaow", 900, 255, 1000, false);
 pause(300);
 flexFX.playFlexFX("miaow", 1100, 255, 500, false);

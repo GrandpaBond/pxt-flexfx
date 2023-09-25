@@ -1,5 +1,5 @@
 ```package
-morse=github:grandpabond/pxt-flexfx
+pxt-flexfx=github:grandpabond/pxt-flexfx
 ```
 # FlexFX - Flexible Sound-effect Recipes
 Many microbit projects can be brought to life by adding sound-effects to indicate their state.

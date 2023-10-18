@@ -19,87 +19,6 @@ implements its own play-list to achieve this.
             if we pass them over a function-call as arguments of type: number.
 */
 
-// Simplify the selection of wave-shape...
-enum Wave {
-    //%block="Pure"
-    SINE = WaveShape.Sine,
-    //%block="Buzzy"
-    SQUARE = WaveShape.Square,
-    //%block="Bright"
-    TRIANGLE = WaveShape.Triangle,
-    //%block="Harsh"
-    SAWTOOTH = WaveShape.Sawtooth,
-    //%block="Noisy"
-    NOISE = WaveShape.Noise
-}
-// Simplify the selection of frequency interpolation trajectory...
-enum Attack {
-    //% block="Slow"
-    SLOW = InterpolationCurve.Linear,
-    //% block="Medium"
-    MEDIUM = InterpolationCurve.Curve,
-    //% block="Fast"
-    FAST = InterpolationCurve.Logarithmic
-}
-// Simplify (slightly) the selection of modulation-style...
-enum Effect {
-    //% block="None"
-    NONE = SoundExpressionEffect.None,
-    //% block="Vibrato"
-    VIBRATO = SoundExpressionEffect.Vibrato,
-    //% block="Tremolo"
-    TREMOLO = SoundExpressionEffect.Tremolo,
-    //% block="Warble"
-    WARBLE = SoundExpressionEffect.Warble
-}
-
-// list of built-in FlexFXs
-// **** must precicely match the array BuiltInId below ****
-enum BuiltInFlexFX {
-    //% block="chime"
-    CHIME,
-    //% block="cry"
-    CRY,
-    //% block="flute"
-    FLUTE,
-    //% block="horn"
-    HORN,
-    //% block="hum"
-    HUM,
-
-    //% block="laugh"
-    LAUGH,
-    //% block="miaow"
-    MIAOW,
-    //% block="moan"
-    MOAN,
-    //% block="moo"
-    MOO,
-    //% block="motor"
-    MOTOR,
-
-    //% block="query"
-    QUERY,
-    //% block="shout"
-    SHOUT,
-    //% block="siren"
-    SIREN,
-    //% block="snore"
-    SNORE,
-    //% block="ting"
-    TING,
-
-    //% block="tweet"
-    TWEET,
-    //% block="uh-oh"
-    UHOH,
-    //% block="violin"
-    VIOLIN,
-    //% block="whale"
-    WHALE,
-    //% block="woof"
-    WOOF
-}
 
 /**
  * Tools for creating composite sound-effects of class FlexFX that can be performed 
@@ -111,6 +30,89 @@ enum BuiltInFlexFX {
 //% block="FlexFX"
 //% groups="['Playing', 'Play-list', 'Creating']"
 namespace flexFX {  
+
+    // Simplify the selection of wave-shape...
+    enum Wave {
+        //%block="Pure"
+        Sine = WaveShape.Sine,
+        //%block="Buzzy"
+        SQUARE = WaveShape.Square,
+        //%block="Bright"
+        TRIANGLE = WaveShape.Triangle,
+        //%block="Harsh"
+        SAWTOOTH = WaveShape.Sawtooth,
+        //%block="Noisy"
+        NOISE = WaveShape.Noise
+    }
+    // Simplify the selection of frequency interpolation trajectory...
+    enum Attack {
+        //% block="Slow"
+        SLOW = InterpolationCurve.Linear,
+        //% block="Medium"
+        MEDIUM = InterpolationCurve.Curve,
+        //% block="Fast"
+        FAST = InterpolationCurve.Logarithmic
+    }
+    // Simplify (slightly) the selection of modulation-style...
+    enum Effect {
+        //% block="None"
+        NONE = SoundExpressionEffect.None,
+        //% block="Vibrato"
+        VIBRATO = SoundExpressionEffect.Vibrato,
+        //% block="Tremolo"
+        TREMOLO = SoundExpressionEffect.Tremolo,
+        //% block="Warble"
+        WARBLE = SoundExpressionEffect.Warble
+    }
+
+    // list of built-in FlexFXs
+    // **** must precicely match the array BuiltInId below ****
+    enum BuiltInFlexFX {
+        //% block="chime"
+        CHIME,
+        //% block="cry"
+        CRY,
+        //% block="flute"
+        FLUTE,
+        //% block="horn"
+        HORN,
+        //% block="hum"
+        HUM,
+
+        //% block="laugh"
+        LAUGH,
+        //% block="miaow"
+        MIAOW,
+        //% block="moan"
+        MOAN,
+        //% block="moo"
+        MOO,
+        //% block="motor"
+        MOTOR,
+
+        //% block="query"
+        QUERY,
+        //% block="shout"
+        SHOUT,
+        //% block="siren"
+        SIREN,
+        //% block="snore"
+        SNORE,
+        //% block="ting"
+        TING,
+
+        //% block="tweet"
+        TWEET,
+        //% block="uh-oh"
+        UHOH,
+        //% block="violin"
+        VIOLIN,
+        //% block="whale"
+        WHALE,
+        //% block="woof"
+        WOOF
+    }
+
     // array of built-in FlexFX ids 
     // **** must precicely match the enum BuiltInFlexFX above ****
     let builtInId: string[] = [
@@ -126,15 +128,29 @@ namespace flexFX {
             this.parts = [];
         }
     }
+
+
+
+
+
+
+
     // Performances get queued on the play-list to ensure proper asynchronous sequencing
-    let playList: Play[] = []; 
+    let playList: SoundExpression[] = []; 
     
     // control flags:
     let playerPlaying = false; // a performance is being played
+
+
     export function isPlaying(): boolean { return playerPlaying; } // accessor
+
+
     let playerActive = false;
+
     export function isActive(): boolean { return playerActive; } // accessor
+
     let playerStopped = false; // activation of player inhibited for now
+    
     export function isStopped(): boolean { return playerStopped; } // accessor
 
 
@@ -148,7 +164,7 @@ namespace flexFX {
   
     //  array of all defined FlexFX objects (built-in and user-defined)
     let flexFXList: FlexFX[] = [];
-
+/*********************
     // A FlexFX contains the recipe to compile a composite sound.
     // It can specify up to three component soundExpressions, PartA, PartB & PartC
     // Each part has a start and an end [frequency,volume], but endA=startB and endB=startC,
@@ -206,6 +222,21 @@ namespace flexFX {
             this.usesPoint3 = false;
         }
 
+        ********************/
+    class FlexFX {
+        // properties
+        id: string; // identifier
+        prototype: SoundExpression;
+        nParts: number; 
+        pitchProfile: Number[];
+        volumeProfile: Number[];
+        durationProfile: Number[];
+
+        constructor(id: string) {
+            this.id = id;
+            this.nParts = 0;
+        }
+
         // internal tools...
         protected goodFreqRatio(freq: number): number{
             return Math.min(Math.max(freq, 0), 2000);
@@ -219,7 +250,7 @@ namespace flexFX {
         // methods...  
         // Sets up Part A:  (Point0)--PartA--(Point1)...
         // This implicitly sets the start values for any Part B that might follow
-        setPartA(freq0: number, vol0: number, wave: Wave, attack: number, effect: number, freq1: number, vol1: number, ms1: number) {
+        addPart(freq0: number, vol0: number, wave: Wave, attack: number, effect: number, freq1: number, vol1: number, ms1: number) {
             this.freqRatio0 = this.goodFreqRatio(freq0);
             this.volRatio0 = this.goodVolRatio(vol0);
             this.freqRatio1 = this.goodFreqRatio(freq1);
@@ -268,7 +299,24 @@ namespace flexFX {
             this.usesPoint2 = true;
             this.usesPoint3 = true;
         }
+        /******************
+    To generate a modified "Play" we can tweak a temporary instance of a soundExpression.Sound sub-class
+            // use the Sound class to modify the SoundExpression "notes" string
+            // https://github.com/microsoft/pxt-microbit/blob/master/libs/core/soundexpressions.ts#L136
 
+    function extend(base: SoundExpression, extension: SoundExpression): SoundExpression {
+        let sound = new soundExpression.Sound();
+        sound.src = base.getNotes() + "," + extension.getNotes();
+        return new SoundExpression(sound.src);
+    }
+    let violin = music.createSoundExpression(WaveShape.Sawtooth, 1, 440, 200, 150, 100, SoundExpressionEffect.None, InterpolationCurve.Logarithmic)
+    let part2 = music.createSoundExpression(WaveShape.Sawtooth, 440, 440, 150, 150, 850, SoundExpressionEffect.None, InterpolationCurve.Logarithmic)
+    let part3 = music.createSoundExpression(WaveShape.Sawtooth, 440, 44, 150, 200, 50, SoundExpressionEffect.None, InterpolationCurve.Logarithmic)
+
+
+    music.play(extend(extend(violin,part2),part3), music.PlaybackMode.UntilDone);
+    
+        *******************/
         // Compiles a performance (called a Play) for this FlexFX and adds it to the Play-list
         compilePlay(freq: number, vol: number, ms: number) {
             // pick up performance defaults?
@@ -657,6 +705,141 @@ namespace flexFX {
 
 // Populate the FlexFX array with a selection of built-in sounds
 
+    // simple "ting"
+    createFlexFX("TING", WaveShape.Triangle, 2000, 2000, 255, 25.5, 0,
+        SoundExpressionEffect.None, InterpolationCurve.Logarithmic);
+
+    // a little birdie
+    createFlexFX("TWEET", WaveShape.Sine, 480, 600, 112.5, 250, 0,
+        SoundExpressionEffect.None, InterpolationCurve.Logarithmic);
+
+    // chime effect
+    createFlexFX("CHIME", WaveShape.Sine, 315, 300, 200, 100, 400,
+        SoundExpressionEffect.None, InterpolationCurve.Logarithmic);
+    extendFlexFX("CHIME", WaveShape.Sine, 300, 300, 200, 100, 0,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+
+    // French Horn (-ish)
+    createFlexFX("HORN", WaveShape.Sawtooth, 12.5, 250, 127.5, 255, 35,
+        SoundExpressionEffect.None, InterpolationCurve.Logarithmic);
+    extendFlexFX("HORN", WaveShape.Sine, 250, 250, 127.5, 255, 0,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+
+    // a gentle hum...
+    createFlexFX("HUM", WaveShape.Sawtooth, 750, 250, 80, 90, 30,
+        SoundExpressionEffect.None, InterpolationCurve.Logarithmic);
+    extendFlexFX("HUM", WaveShape.Square, 250, 250, 80, 90, 0,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+
+    // single laugh (repeat for giggles)
+    createFlexFX("LAUGH", WaveShape.Sawtooth, 280, 400, 100, 250, 450,
+        SoundExpressionEffect.None, InterpolationCurve.Logarithmic);
+    extendFlexFX("LAUGH", WaveShape.Square, 400, 280, 100, 250, 0,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+
+    // somewhat cat-like
+    createFlexFX("MIAOW", WaveShape.Sawtooth, 630, 900, 127.5, 255, 300,
+        SoundExpressionEffect.None, InterpolationCurve.Curve);
+    extendFlexFX("MIAOW", WaveShape.Sawtooth, 900, 810, 127.5, 255, 0,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+
+    // somewhat cow-like
+    createFlexFX("MOO", WaveShape.Sawtooth, 98, 140, 160, 200, 600,
+        SoundExpressionEffect.None, InterpolationCurve.Curve);
+    extendFlexFX("MOO", WaveShape.Sawtooth, 140, 98, 160, 200, 0,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+
+    // engine-noise (kind-of)
+    createFlexFX("MOTOR", WaveShape.Sawtooth, 105, 150, 240, 200, 450,
+        SoundExpressionEffect.Tremolo, InterpolationCurve.Logarithmic);
+    extendFlexFX("MOTOR", WaveShape.Sawtooth, 150, 120, 240, 200, 0,
+        SoundExpressionEffect.Tremolo, InterpolationCurve.Linear);
+
+    // questioning...
+    createFlexFX("QUERY", WaveShape.Square, 330, 300, 50, 250, 180,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+    extendFlexFX("QUERY", WaveShape.Square, 300, 450, 50, 250, 0,
+        SoundExpressionEffect.None, InterpolationCurve.Curve);
+
+    // Approximation to a snore!
+    createFlexFX("SNORE", WaveShape.Noise, 3500, 700, 22, 222, 500,
+        SoundExpressionEffect.Vibrato, InterpolationCurve.Linear);
+    extendFlexFX("SNORE", WaveShape.Noise, 700, 4999.5, 22, 222, 0,
+        SoundExpressionEffect.Vibrato, InterpolationCurve.Linear);
+
+    // wailing sound
+    createFlexFX("CRY", WaveShape.Square, 200, 800, 125, 250, 264,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+    extendFlexFX("CRY", WaveShape.Square, 800, 400, 125, 250, 264,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+    extendFlexFX("CRY", WaveShape.Square, 400, 600, 250, 125, 272,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+
+    // sad whimpering moan
+    createFlexFX("MOAN", WaveShape.Triangle, 540, 450, 90, 150, 420,
+        SoundExpressionEffect.None, InterpolationCurve.Curve);
+    extendFlexFX("MOAN", WaveShape.Triangle, 450, 427.5, 90, 150, 210,
+        SoundExpressionEffect.None, InterpolationCurve.Curve);
+    extendFlexFX("MOAN", WaveShape.Triangle, 427.5, 517.5, 150, 82.5, 70,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+
+    // angry shout
+    createFlexFX("SHOUT", WaveShape.Sawtooth, 120, 400, 125, 200, 300,
+        SoundExpressionEffect.None, InterpolationCurve.Logarithmic);
+    extendFlexFX("SHOUT", WaveShape.Sawtooth, 400, 360, 125, 200, 75,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+    extendFlexFX("SHOUT", WaveShape.Sawtooth, 360, 120, 200, 187.5, 125,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+
+    // Violin-like
+    createFlexFX("VIOLIN", WaveShape.Sawtooth, 4.4, 440, 200, 150, 50,
+        SoundExpressionEffect.None, InterpolationCurve.Logarithmic);
+    extendFlexFX("VIOLIN", WaveShape.Sawtooth, 440, 440, 200, 150, 425,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+    extendFlexFX("VIOLIN", WaveShape.Sawtooth, 440, 44, 150, 200, 25,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+
+    // whale-song
+    createFlexFX("WHALE", WaveShape.Square, 540, 405, 22, 222, 200,
+        SoundExpressionEffect.None, InterpolationCurve.Curve);
+    extendFlexFX("WHALE", WaveShape.Square, 405, 450, 22, 222, 800,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+    extendFlexFX("WHALE", WaveShape.Square, 450, 360, 222, 11.1, 1000,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+
+    // strange breed of dog
+    createFlexFX("WOOF", WaveShape.Square, 300, 100, 250, 225, 30,
+        SoundExpressionEffect.None, InterpolationCurve.Curve);
+    extendFlexFX("WOOF", WaveShape.Sawtooth, 100, 225, 250, 225, 90,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+    extendFlexFX("WOOF", WaveShape.Sawtooth, 225, 300, 225, 125, 180,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+
+    // breathy flute
+    createFlexFX("FLUTE", WaveShape.Noise, 25, 262.5, 250, 250, 75,
+        SoundExpressionEffect.Vibrato, InterpolationCurve.Logarithmic);
+    extendFlexFX("FLUTE", WaveShape.Triangle, 262.5, 250, 250, 250, 1200,
+        SoundExpressionEffect.None, InterpolationCurve.Logarithmic);
+    extendFlexFX("FLUTE", WaveShape.Triangle, 250, 200, 250, 0, 225,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+
+    // Police siren (nee-naw) (middle part is silent)
+    createFlexFX("SIREN", WaveShape.Sawtooth, 760, 800, 160, 200, 450,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+    extendFlexFX("SIREN", WaveShape.Sine, 1, 1, 0, 0, 100,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+    extendFlexFX("SIREN", WaveShape.Sawtooth, 1, 600, 0, 160, 450,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+
+    // trouble ahead!
+    createFlexFX("UHOH", WaveShape.Sawtooth, 165, 180, 80, 200, 200,
+        SoundExpressionEffect.None, InterpolationCurve.Logarithmic);
+    extendFlexFX("UHOH", WaveShape.Sine, 1, 1, 0, 0, 200,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+    extendFlexFX("UHOH", WaveShape.Square, 1, 127.5, 0, 150, 600,
+        SoundExpressionEffect.None, InterpolationCurve.Linear);
+
+/**** Old definitions...
     // chime effect
     flexFX.create2PartFlexFX("", 105, 100,
         Wave.SINE, Attack.FAST, Effect.NONE, 100, 50,
@@ -781,4 +964,5 @@ namespace flexFX {
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 100,
         Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 120, 50,
         10, 30, 250, 250, 300, BuiltInFlexFX.WOOF);
+******/
 }

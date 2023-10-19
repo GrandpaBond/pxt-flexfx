@@ -66,7 +66,7 @@ namespace flexFX {
     }
 
     // list of built-in FlexFXs
-    // **** must precicely match the array BuiltInId below ****
+    // **** must precicely match the ID array BuiltInId below ****
     enum BuiltInFlexFX {
         //% block="chime"
         CHIME,
@@ -121,41 +121,30 @@ namespace flexFX {
         "query", "shout", "siren", "snore","ting",     // [10...14]
         "tweet", "uh-oh", "violin", "whale", "woof" ]; // [15...19]
       
-    // Each performance will comprise an array of the "compiled" sound-strings for its several parts.
-    class Play {
-        parts: string[];
+    
+    class Play {   // for now, just a wrapper for the performance...
+        parts: SoundExpression[]; // the "compiled" sound-strings for its several parts
         constructor() {
             this.parts = [];
         }
     }
 
-
-
-
-
-
-
-    // Performances get queued on the play-list to ensure proper asynchronous sequencing
-    let playList: SoundExpression[] = []; 
+    // Performances get queued onto the play-list to ensure proper asynchronous sequencing
+    let playList: Play[] = [];
     
     // control flags:
     let playerPlaying = false; // a performance is being played
-
-
     export function isPlaying(): boolean { return playerPlaying; } // accessor
 
-
     let playerActive = false;
-
     export function isActive(): boolean { return playerActive; } // accessor
 
     let playerStopped = false; // activation of player inhibited for now
-    
     export function isStopped(): boolean { return playerStopped; } // accessor
 
 
     // activity events (for other components to synchronise with)
-    const FLEXFX_ACTIVITY_ID = 1234 // TODO: Check this is a permissable value!
+    const FLEXFX_ACTIVITY_ID = 9050 // TODO: Check (somehow?) that this is a permissable value!
     enum PLAYER {
         STARTING = 1,
         FINISHED = 2,
@@ -164,77 +153,31 @@ namespace flexFX {
   
     //  array of all defined FlexFX objects (built-in and user-defined)
     let flexFXList: FlexFX[] = [];
-/*********************
+
+
     // A FlexFX contains the recipe to compile a composite sound.
-    // It can specify up to three component soundExpressions, PartA, PartB & PartC
-    // Each part has a start and an end [frequency,volume], but endA=startB and endB=startC,
-    // so an n-part FlexFX moves through (n+1)) [frequency,volume,time] points
+    // It can specify several component soundExpressions called "parts" that get played consecutively.
+    // Each part has a [frequency,volume] start-point and end-point.
+    // Apart from the first part, the start-point is inherited from the previous end-point,
+    // so an n-part FlexFX moves through (n+1)) [frequency,volume] points
+
     class FlexFX {
         // properties
         id: string; // identifier
-        // Points are defined to be fixed ratios of the "performance" [frequency,volume,duration] arguments
-        playPartA: boolean;
-        waveA: number;
-        attackA: number;
-        effectA: number;
-        timeRatioA: number;
+        nParts: number;
+        pitchProfile: number[];  // contains [nParts + 1] scalable frequencies
+        volumeProfile: number[];  // contains [nParts + 1] scalable volumes
+        durationProfile: number[]; // contains [nParts] scalable durations
+        prototype: SoundExpression[]; // contains [nParts] sound strings
 
-        skipPartB: boolean;     // marks a special "double" FlexFX, which has a silent gap in the middle
-        playPartB: boolean;
-        waveB: number;
-        attackB: number;
-        effectB: number;
-        timeRatioB: number;
-
-        playPartC: boolean;
-        waveC: number;
-        attackC: number;
-        effectC: number;
-        timeRatioC: number;  // (always set to 1.0 - timeRatioA - timeRatioB)
-
-        // Point 0
-        freqRatio0: number;
-        volRatio0: number;
-        // Point 1
-        freqRatio1: number;
-        volRatio1: number;
-        // Point 2
-        usesPoint2: boolean;
-        freqRatio2: number;
-        volRatio2: number;
-        // Point 3
-        usesPoint3: boolean;
-        freqRatio3: number;
-        volRatio3: number;
-
-        // Performance defaults
-        defaultFreq: number;
-        defaultVol: number;
-        defaultMs: number;
-
-        constructor(id: string) {
-            this.id = id;
-            // until otherwise instructed...
-            this.playPartA = false;
-            this.playPartB = false;
-            this.playPartC = false;
-            this.usesPoint2 = false;
-            this.usesPoint3 = false;
-        }
-
-        ********************/
-    class FlexFX {
-        // properties
-        id: string; // identifier
-        prototype: SoundExpression;
-        nParts: number; 
-        pitchProfile: Number[];
-        volumeProfile: Number[];
-        durationProfile: Number[];
 
         constructor(id: string) {
             this.id = id;
             this.nParts = 0;
+            this.pitchProfile = [];
+            this.volumeProfile = [];
+            this.durationProfile = [];
+            this.prototype = [];
         }
 
         // internal tools...
@@ -247,7 +190,59 @@ namespace flexFX {
         protected goodTimeRatio(time: number, timeLeft: number): number {
             return Math.min(Math.max(time, 0), timeLeft);
         }
+
+        /* possible benefit/efficiencies in flattening parts[] into a single comma-separated string?
+        protected extend(base: SoundExpression, extension: SoundExpression): SoundExpression {
+            let sound = new soundExpression.Sound();
+            sound.src = base.getNotes() + "," + extension.getNotes();
+            return new SoundExpression(sound.src);
+        }
+        */
+
         // methods...  
+
+        // Create a scaled performance (called a Play) for this FlexFX
+        createPlay(pitchRatio: number, volumeRatio: number, durationRatio: number): Play {
+            let play = new Play;
+            let sound = new soundExpression.Sound;
+            for (let i = 0; i < this.nParts; i++) {
+                sound.src = this.prototype[i].getNotes();
+                sound.frequency = this.pitchProfile[i] * pitchRatio;
+                sound.endFrequency = this.pitchProfile[i + 1] * pitchRatio;
+                sound.volume = this.volumeProfile[i] * volumeRatio;
+                sound.endVolume = this.volumeProfile[i + 1] * volumeRatio;
+                sound.duration = this.durationProfile[i] * durationRatio;
+                play.parts[i] = new SoundExpression(sound.src);
+            }
+            return (play);
+        }
+        
+        // Play it as defined
+        playFlexFX(
+            id: string, // unique identifier
+            wait: boolean = false) // play synchronously if true
+            {
+                playList.push(this.prototype);  // unscaled veraion
+            }
+
+        // play a scaled version
+        scaleFlexFX(
+            id: string, // unique identifier
+            pitchSteps: number, // scaling of all pitches in signed semitone steps (may be fractional)
+            volumeMax: number, // maximum volume (0...255) 
+            ms: number, // new overall duration in ms
+            wait: boolean = false) // play synchronously if true
+            {
+/*  for each sound
+        newF0 = getFrequency * Math.power(1.069 ^ pitchSteps)
+
+
+*/
+                
+
+            }
+
+
         // Sets up Part A:  (Point0)--PartA--(Point1)...
         // This implicitly sets the start values for any Part B that might follow
         addPart(freq0: number, vol0: number, wave: Wave, attack: number, effect: number, freq1: number, vol1: number, ms1: number) {
@@ -299,82 +294,41 @@ namespace flexFX {
             this.usesPoint2 = true;
             this.usesPoint3 = true;
         }
+
         /******************
-    To generate a modified "Play" we can tweak a temporary instance of a soundExpression.Sound sub-class
-            // use the Sound class to modify the SoundExpression "notes" string
-            // https://github.com/microsoft/pxt-microbit/blob/master/libs/core/soundexpressions.ts#L136
 
-    function extend(base: SoundExpression, extension: SoundExpression): SoundExpression {
-        let sound = new soundExpression.Sound();
-        sound.src = base.getNotes() + "," + extension.getNotes();
-        return new SoundExpression(sound.src);
-    }
-    let violin = music.createSoundExpression(WaveShape.Sawtooth, 1, 440, 200, 150, 100, SoundExpressionEffect.None, InterpolationCurve.Logarithmic)
-    let part2 = music.createSoundExpression(WaveShape.Sawtooth, 440, 440, 150, 150, 850, SoundExpressionEffect.None, InterpolationCurve.Logarithmic)
-    let part3 = music.createSoundExpression(WaveShape.Sawtooth, 440, 44, 150, 200, 50, SoundExpressionEffect.None, InterpolationCurve.Logarithmic)
+The defineFlexFX() function sets up the initial base-point of the sonic path, together with the path; 
+the [wave, attack, effect] timbre-definition; and the duration for the first segment.
+
+The extendFlexFX() function can then be called (repeatedly) to add another way-point along the path, 
+together with the [wave, attack, effect] timbre-definition and the duration for the next segment, 
+continuing seamlessly from where the previous one left off.
+
+One side-benefit of this approach would be to raise the current limit of three segments, allowing even 
+more interesting sound effects (though a practical limit would have to be set, say of 5 or so segments).  
+I could also ditch my rather arcane "DoubleFlexFX": using instead two successive way-points with zero 
+volume to introduce the silent segment needed in a complex sound like "Uh-oh".
+
+For playing a flexFX, rather than using a single expandable block, we would have two distinct functions:
+
+// play it as defined
+playFlexFX(
+id: string, // unique identifier
+wait: boolean = false); // play synchronously if true
+
+// play a scaled version
+scaleFlexFX(
+id: string, // unique identifier
+pitch: number, // new base-pitch in Hz
+volume: number, // new base-volume [0..255]
+ms: number, // new overall duration in ms
+wait: boolean = false); // play synchronously if true
 
 
-    music.play(extend(extend(violin,part2),part3), music.PlaybackMode.UntilDone);
-    
+
+
         *******************/
-        // Compiles a performance (called a Play) for this FlexFX and adds it to the Play-list
-        compilePlay(freq: number, vol: number, ms: number) {
-            // pick up performance defaults?
-            if (freq == 0) { freq = this.defaultFreq; }
-            if (vol == 0) { vol = this.defaultVol; }
-            if (ms == 0) { ms = this.defaultMs; }
-        
-            // Point 0
-            let f0 = freq * this.freqRatio0;
-            let v0 = vol * this.volRatio0;
-            // Point 1
-            let f1 = freq * this.freqRatio1;
-            let v1 = vol * this.volRatio1;
-            let ms1 = ms * this.timeRatioA;
-            // declarations required, even if unused...
-            let f2 = 0;
-            let v2 = 0;
-            let ms2 = 0;
-            let f3 = 0;
-            let v3 = 0;
-            let ms3 = 0;
-            // Point 2
-            if (this.usesPoint2) {
-                f2 = freq * this.freqRatio2;
-                v2 = vol * this.volRatio2;
-                ms2 = ms * this.timeRatioB;
-            }
-            // Point 3
-            if (this.usesPoint3) {
-                f3 = freq * this.freqRatio3;
-                v3 = vol * this.volRatio3;
-                ms3 = ms * this.timeRatioC;
-            }
 
-            // now create the actual performance Play...
-            let play = new Play;
-            if (this.playPartA) {
-                play.parts.push(music.createSoundEffect(this.waveA,f0,f1,v0,v1,ms1,this.effectA, this.attackA));
-            }
-            if (this.playPartB) {
-                play.parts.push(music.createSoundEffect(this.waveB,f1,f2,v1,v2,ms2,this.effectB, this.attackB));
-            } else {
-                if (this.skipPartB) {   //   ...instruct a silent gap in the middle...
-                play.parts.push("_"+ convertToText(Math.floor(ms * this.timeRatioB)));
-                }
-            }
-            if (this.playPartC) {
-                play.parts.push(music.createSoundEffect(this.waveC,f2,f3,v2,v3,ms3,this.effectC, this.attackC));
-            }     
-            //append new Play onto the end of the playList
-            playList.push(play);
-        }
-        setDefaults(freq: number, vol: number, ms: number) {
-            this.defaultFreq = freq;
-            this.defaultVol = vol;
-            this.defaultMs = ms;
-
-        }
     }
 
 
@@ -403,27 +357,14 @@ namespace flexFX {
     function player() {
         let play = new Play;
         while ((playList.length > 0) && !playerStopped) { 
-            let sound = "";
             play = playList.shift();
-            if (play.parts[0].charAt(0) == 's') {
-                // this Play is just a queued pause, so doesn't count as "PLAYING"
-                sound = play.parts.shift();
-                pause(parseInt(sound.slice(1, sound.length)));
-            } else {
-                control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
-                playerPlaying = true;
-                while (play.parts.length > 0) {  // play its sounds in turn
-                    sound = play.parts.shift();
-                    if (sound.charAt(0) == '_') {
-                    // this is a gap within a sound, so DOES still count as "PLAYING"
-                        pause(parseInt(sound.slice(1, sound.length)));
-                    } else {
-                        music.playSoundEffect(sound, SoundExpressionPlayMode.UntilDone)
-                    }
-                }
-                control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
-                playerPlaying = false;
+            control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
+            playerPlaying = true;
+            while (play.parts.length > 0) {  // play its SoundExpressions in turn
+                music.playSoundEffect(play.parts.shift().getNotes(), SoundExpressionPlayMode.UntilDone)
             }
+            control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
+            playerPlaying = false;
         }
         if (playList.length == 0) {
              control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);

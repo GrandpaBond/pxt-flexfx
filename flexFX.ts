@@ -120,7 +120,8 @@ namespace flexFX {
         "laugh", "miaow", "moan", "moo", "motor",      // [5...9]
         "query", "shout", "siren", "snore","ting",     // [10...14]
         "tweet", "uh-oh", "violin", "whale", "woof" ]; // [15...19]
-      
+    
+    const SEMITONE = 1.0594630943593; // = 12th root of 2 (as 12 semitones make an octave, which doubles the frequency)
     
     class Play {   // for now, just a wrapper for the performance...
         parts: SoundExpression[]; // the "compiled" sound-strings for its several parts
@@ -168,7 +169,7 @@ namespace flexFX {
         pitchProfile: number[];  // contains [nParts + 1] scalable frequencies
         volumeProfile: number[];  // contains [nParts + 1] scalable volumes
         durationProfile: number[]; // contains [nParts] scalable durations
-        prototype: SoundExpression[]; // contains [nParts] sound strings
+        prototype: Play; // contains the [nParts] SoundExpressions forming this flexFX
 
 
         constructor(id: string) {
@@ -177,7 +178,7 @@ namespace flexFX {
             this.pitchProfile = [];
             this.volumeProfile = [];
             this.durationProfile = [];
-            this.prototype = [];
+            this.prototype = new Play;
         }
 
         // internal tools...
@@ -202,11 +203,12 @@ namespace flexFX {
         // methods...  
 
         // Create a scaled performance (called a Play) for this FlexFX
-        createPlay(pitchRatio: number, volumeRatio: number, durationRatio: number): Play {
+        createPlay(pitchSteps: number, volumeRatio: number, durationRatio: number): Play {
             let play = new Play;
             let sound = new soundExpression.Sound;
+            let pitchRatio = Math.pow(SEMITONE, pitchSteps); // semitone steps up or down
             for (let i = 0; i < this.nParts; i++) {
-                sound.src = this.prototype[i].getNotes();
+                sound.src = this.prototype.parts[i].getNotes();
                 sound.frequency = this.pitchProfile[i] * pitchRatio;
                 sound.endFrequency = this.pitchProfile[i + 1] * pitchRatio;
                 sound.volume = this.volumeProfile[i] * volumeRatio;
@@ -219,7 +221,7 @@ namespace flexFX {
         
         // Play it as defined
         playFlexFX(
-            id: string, // unique identifier
+             // id: string,unique identifier
             wait: boolean = false) // play synchronously if true
             {
                 playList.push(this.prototype);  // unscaled veraion
@@ -227,73 +229,14 @@ namespace flexFX {
 
         // play a scaled version
         scaleFlexFX(
-            id: string, // unique identifier
+           // id: string,  unique identifier
             pitchSteps: number, // scaling of all pitches in signed semitone steps (may be fractional)
             volumeMax: number, // maximum volume (0...255) 
-            ms: number, // new overall duration in ms
+            duration: number, // new overall duration in ms
             wait: boolean = false) // play synchronously if true
-            {
-/*  for each sound
-        newF0 = getFrequency * Math.power(1.069 ^ pitchSteps)
-
-
-*/
-                
-
+            {   
+                playList.push(createPlay(pitchSteps,volumeMax,duration);  // unscaled veraion
             }
-
-
-        // Sets up Part A:  (Point0)--PartA--(Point1)...
-        // This implicitly sets the start values for any Part B that might follow
-        addPart(freq0: number, vol0: number, wave: Wave, attack: number, effect: number, freq1: number, vol1: number, ms1: number) {
-            this.freqRatio0 = this.goodFreqRatio(freq0);
-            this.volRatio0 = this.goodVolRatio(vol0);
-            this.freqRatio1 = this.goodFreqRatio(freq1);
-            this.volRatio1 = this.goodVolRatio(vol1);
-            this.timeRatioA = this.goodTimeRatio(ms1,1.0);
-            this.waveA = wave;
-            this.attackA = attack;
-            this.effectA = effect;    
-            this.playPartA = true;
-        // clear other flags for parts B & C that might have previously been set...
-            this.playPartB = false;
-            this.playPartC = false;
-            this.usesPoint2 = false;
-            this.usesPoint3 = false;
-        }
-        // Adds a  Part B:  (Point0)--PartA--(Point1)--PartB--(Point2)...
-        // This also implicitly sets the start values for any Part C that might follow
-        setPartB(wave: number, attack: number, effect: number, freq2: number, vol2: number, ms2: number) {
-            this.freqRatio2 = this.goodFreqRatio(freq2);
-            this.volRatio2 = this.goodVolRatio(vol2);
-            this.timeRatioB = this.goodTimeRatio(ms2, 1.0 - this.timeRatioA);
-            this.waveB = wave;
-            this.attackB = attack;
-            this.effectB = effect;
-            this.playPartB = true;
-            this.usesPoint2 = true;
-        }
-        // Adds a silent Part B:  (Point0)--PartA--(Point1)--silence--(Point2)...
-        // This implicitly sets start values for the Part C that follows
-        silentPartB(freq2: number, vol2: number, ms2: number) {
-            this.freqRatio2 = this.goodFreqRatio(freq2);
-            this.volRatio2 = this.goodVolRatio(vol2);
-            this.timeRatioB = this.goodTimeRatio(ms2, 1.0 - this.timeRatioA);
-            this.skipPartB = true;
-        }
-
-        // Adds an optional part C: (Point0)--PartA--(Point1)--PartB--(Point2)--PartC--(Point3)
-        setPartC(wave: number, attack: number, effect: number, freq3: number, vol3: number, ms3: number) {
-            this.freqRatio3 = this.goodFreqRatio(freq3);
-            this.volRatio3 = this.goodVolRatio(vol3);
-            this.timeRatioC = this.goodTimeRatio(ms3, 1.0 - this.timeRatioA - this.timeRatioB);
-            this.waveC = wave;
-            this.attackC = attack;
-            this.effectC = effect;
-            this.playPartC = true;
-            this.usesPoint2 = true;
-            this.usesPoint3 = true;
-        }
 
         /******************
 
@@ -304,30 +247,7 @@ The extendFlexFX() function can then be called (repeatedly) to add another way-p
 together with the [wave, attack, effect] timbre-definition and the duration for the next segment, 
 continuing seamlessly from where the previous one left off.
 
-One side-benefit of this approach would be to raise the current limit of three segments, allowing even 
-more interesting sound effects (though a practical limit would have to be set, say of 5 or so segments).  
-I could also ditch my rather arcane "DoubleFlexFX": using instead two successive way-points with zero 
-volume to introduce the silent segment needed in a complex sound like "Uh-oh".
-
-For playing a flexFX, rather than using a single expandable block, we would have two distinct functions:
-
-// play it as defined
-playFlexFX(
-id: string, // unique identifier
-wait: boolean = false); // play synchronously if true
-
-// play a scaled version
-scaleFlexFX(
-id: string, // unique identifier
-pitch: number, // new base-pitch in Hz
-volume: number, // new base-volume [0..255]
-ms: number, // new overall duration in ms
-wait: boolean = false); // play synchronously if true
-
-
-
-
-        *******************/
+*/
 
     }
 

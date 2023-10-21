@@ -171,6 +171,8 @@ namespace flexFX {
         // properties
         id: string; // identifier
         nParts: number;
+        peakVolume: number; // remembers the highest volume in the prototype
+        fullDuration: number; // overall cumulative duration of prototype
         pitchProfile: number[];  // contains [nParts + 1] scalable frequencies
         volumeProfile: number[];  // contains [nParts + 1] scalable volumes
         topVolume: number; // remembers the highest volume in the prototype
@@ -180,19 +182,21 @@ namespace flexFX {
 
         constructor(id: string) {
             this.id = id;
+            this.initialise();
+        }
+
+        initialise() {
             this.nParts = 0;
             this.pitchProfile = [];
             this.volumeProfile = [];
-            this.topVolume = 0;
+            this.peakVolume = 0;
             this.durationProfile = [];
+            this.fullDuration = 0;
             this.prototype = new Play;
-        }
-
+        }        
+        
         // internal tools...
-        /*
 
-
-        */
         protected goodFrequency(frequency: number): number {
             return Math.min(Math.max(frequency, 1), 9999);
         }
@@ -203,13 +207,45 @@ namespace flexFX {
             return Math.min(Math.max(duration, 10), 9999);
         }
 
-        // methods...  
+        // methods...
+
+        // add a new part (ensuring all parameters are sensible)
+        addPart(startPitch: number, startVolume: number, wave: Wave, attack: Attack, effect: Effect,
+                endPitch: number, endVolume: number, duration: number) {
+            this.nParts++;
+            this.pitchProfile.push(this.goodPitch(startPitch));
+            this.pitchProfile.push(this.goodPitch(endPitch));
+            
+            let v = this.goodVolume(startVolume);
+            this.volumeProfile.push(v);
+            this.peakVolume = Math.max(this.peakVolume, v);
+
+            v = this.goodVolume(endVolume);
+            this.volumeProfile.push(v);
+            this.peakVolume = Math.max(this.peakVolume, v);
+
+            let d = this.goodDuration(duration);
+            this.durationProfile.push(d);
+            this.fullDuration += d;
+
+            // turn our enums into simple numbers & create the sound string for this part
+            let waveNumber: number = wave;
+            let effectNumber: number = effect;
+            let attackNumber: number = attack;
+            let sound = music.createSoundExpression(waveNumber, startPitch, endPitch,
+                startVolume, endVolume, duration, effectNumber, attackNumber);
+
+            // add it into the prototype
+            this.prototype.parts.push(sound);
+        }
 
         // Create a scaled performance (called a Play) for this FlexFX
-        createPlay(pitchSteps: number, volumeLimit: number, durationRatio: number): Play {
+        createPlay(pitchSteps: number, volumeLimit: number, newDuration: number): Play {
             let play = new Play;
             let sound = new soundExpression.Sound;
             let pitchRatio = Math.pow(SEMITONE, pitchSteps); // semitone steps up or down
+            let volumeRatio = volumeLimit / this.peakVolume;
+            let durationRatio = newDuration / this.fullDuration;
             for (let i = 0; i < this.nParts; i++) {
                 sound.src = this.prototype.parts[i].getNotes();
                 sound.frequency = this.goodFrequency(this.pitchProfile[i] * pitchRatio);
@@ -463,22 +499,14 @@ continuing seamlessly from where the previous one left off.
         id: string, startPitch: number, startVolume: number,
         wave: Wave, attack: Attack, effect: Effect, endPitch: number, endVolume: number,
         duration: number, builtIn: number = 1000) {
-
-        let target = new FlexFX(id);
-        this.nParts ++;
-        target.pitchProfile.push(startPitch);
-        target.pitchProfile.push(endPitch);
-        target.volumeProfile.push(startVolume);
-        target.volumeProfile.push(endVolume);
-        target.durationProfile.push(duration);
-        // create the first part of the prototype (forcing our enums into numbers)
-        let waveNumber:number = wave;
-        let effectNumber: number = effect;
-        let attackNumber: number = attack;
-        let sound = music.createSoundExpression(waveNumber, startPitch, endPitch, 
-                            startVolume, endVolume, duration, effectNumber, attackNumber);
-        target.prototype.parts.push(sound);
-
+        // are we re-defining an existing flexFX?
+        let target: FlexFX = flexFXList.find(i => i.id === id);
+        if (target != null) {
+            target.initialise(); // yes, so clear it down
+        } else {
+            target = new FlexFX(id);    // no, so get a new one
+        }
+        target.addPart(startPitch, startVolume, wave, attack, effect, endPitch, endVolume, duration)
         storeFlexFX(builtIn, target);
     }
 
@@ -503,24 +531,30 @@ continuing seamlessly from where the previous one left off.
         // startPitch: number, startVolume: number,
         wave: Wave, attack: Attack, effect: Effect, endPitch: number, endVolume: number,
         duration: number, builtIn: number = 1000) {
+
+
+        target.addPart(startPitch, startVolume, wave, attack, effect, endPitch, endVolume, duration)
+
+
+
+
         // force our enums into numbers
         let waveNumber: number = wave;
         let effectNumber: number = effect;
         let attackNumber: number = attack;
         let target: FlexFX = flexFXList.find(i => i.id === id);
-        if (target != null) {
+        if (target == null) {
+            // OOPS! trying to extend a non-existent flexFX: 
+            // rather than fail, just create a new one, but with flat profiles
+            defineFlexFX(id,waveNumber,endPitch,endPitch,endVolume,endVolume,duration,effectNumber,attackNumber);
+        } else {
             target.pitchProfile.push(endPitch);
             target.volumeProfile.push(endVolume);
             target.durationProfile.push(duration);
-            // create the next part of the prototype 
+            // create the sound string for the next part of the prototype 
             let sound = music.createSoundExpression(waveNumber, this.pitchProfile[this.nParts], endPitch, 
                                 this.volumeProfile[this.nParts], endVolume, duration, effectNumber, attackNumber);
             target.prototype.parts.push(sound);
-        } else {
-            // OOPS! trying to extend a non-existent flexFX: 
-            // rather than fail, just create it, but with flat profiles
-            defineFlexFX(id,waveNumber,endPitch,endPitch,endVolume,endVolume,duration,effectNumber,attackNumber);
-
         }
         storeFlexFX(builtIn, target);
     }

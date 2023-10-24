@@ -5,15 +5,18 @@ they are insufficiently flexible for some contexts (such as to properly express 
 This extension allows the creation of more complex sounds, that have inflections in both pitch 
 and volume. In the context of mood-sounds, this might include a laugh, a moan or an "Uh-oh" that indicates a problem.
 
-To achieve this we have defined a flexible sound-effect class called a "FlexFX", which contains the recipe 
-to compile a composite sound string involving up to three separate sound parts that will then be played
-consecutively to give a smoothly varying result when spliced together.
+To achieve this we have defined a flexible sound-effect class called a "FlexFX", which embodies one or more sound parts 
+that play consecutively to give a smoothly varying result. A FlexFX can either be played as defined, 
+or its pitch, volume and duration can be independently scaled to suit requirements.
 
-The core function to playSoundEffect() offers a playInBackground option. Unfortunately, this 
-does not allow a subsequent playSoundEffect() to queue sounds up. The FlexFX class therefore
-implements its own play-list to achieve this.
+The core microbit function music.playSoundEffect() offers a playInBackground option. Unfortunately, a subsequent 
+playSoundEffect() interrupts this, rather than queuing sounds up. 
 
+The FlexFX class therefore implements its own play-list to achieve the queueing of consecutive background sounds.
+
+For the novice, a selection of interesting built-in FlexFX samples (musical or otherwise) are provided.
 */
+
 /* NOTE:    The built-in enums for sound effect parameters are hardly beginner-friendly!
             By renaming them we can expose somewhat simpler concepts, but this only works 
             if we pass them over a function-call as arguments of type: number.
@@ -22,7 +25,7 @@ implements its own play-list to achieve this.
 
 /**
  * Tools for creating composite sound-effects of class FlexFX that can be performed 
- * (either directly or queued-up) with dynamically-specified pitch, volume and duration.
+ * (either directly or queued-up) as defined; or with scaled pitch, volume or duration.
  */
 
 //% color=#70e030
@@ -161,12 +164,12 @@ namespace flexFX {
 
 
 /* 
-    A FlexFX contains the recipe to compile a composite sound.
+    A FlexFX is a potentially composite sound-effect.
     It can specify several component soundExpressions called "parts" that get played consecutively.
     Each part has a [frequency,volume] start-point and end-point.
-    Apart from the first part, the start-point is inherited from the previous end-point,
+    Apart from the first part, the start-point gets inherited from the previous end-point,
     so an n-part FlexFX moves through (n+1)) [frequency,volume] points.
-    It is built one part at a time using defineFlexFX() and extendFlexFX() functions
+    It is built, one part at a time, using defineFlexFX() followed by zero or more extendFlexFX() calls.
 */
 
     class FlexFX {
@@ -211,18 +214,20 @@ namespace flexFX {
 
         // methods...
 
-        // add a new part (ensuring all parameters are sensible)
-        addPart(startPitch: number, startVolume: number, wave: Wave, attack: Attack, effect: Effect,
-                endPitch: number, endVolume: number, duration: number) {
-            this.nParts++;
-            this.pitchProfile.push(this.goodPitch(startPitch));
+        // begin setting up the very first part of a new FlexFX
+        startWith(startPitch:number, startVolume: number){
+            this.pitchProfile.push(this.goodPitch(startPitch)); // pitchProfile[0]
+            let v = this.goodVolume(startVolume);
+            this.volumeProfile.push(v);                         // volumeProfile[0]
+            this.peakVolume = v; // ...until proven otherwise
+        }
+
+        // add the details of the next part (ensuring all parameters are sensible)
+        addPart(wave: Wave, attack: Attack, effect: Effect, endPitch: number, endVolume: number, duration: number) {
+
             this.pitchProfile.push(this.goodPitch(endPitch));
             
-            let v = this.goodVolume(startVolume);
-            this.volumeProfile.push(v);
-            this.peakVolume = Math.max(this.peakVolume, v);
-
-            v = this.goodVolume(endVolume);
+            let v = this.goodVolume(endVolume);
             this.volumeProfile.push(v);
             this.peakVolume = Math.max(this.peakVolume, v);
 
@@ -234,15 +239,27 @@ namespace flexFX {
             let waveNumber: number = wave;
             let effectNumber: number = effect;
             let attackNumber: number = attack;
+            let startPitch = this.pitchProfile[this.nParts];
+            let startVolume = this.volumeProfile[this.nParts]
+    
+            if (wave = Wave.Silence) {
+                // ensure this part plays silently, while preserving the end-point of the previous part 
+                // and the start-point of any following part
+                startVolume = 0;
+                endVolume = 0;
+                waveNumber = WaveShape.Sine; // irrelevant, as silent!
+            }
+
             let sound = music.createSoundExpression(waveNumber, startPitch, endPitch,
                 startVolume, endVolume, duration, effectNumber, attackNumber);
 
             // add it into the prototype
             this.prototype.parts.push(sound);
+            this.nParts++;
         }
 
         // Create a scaled performance (called a Play) for this FlexFX
-        createPlay(pitchSteps: number, volumeLimit: number, newDuration: number): Play {
+        scalePlay(pitchSteps: number, volumeLimit: number, newDuration: number): Play {
             let play = new Play;
             let sound = new soundExpression.Sound;
             let pitchRatio = Math.pow(SEMITONE, pitchSteps); // semitone steps up or down
@@ -261,22 +278,27 @@ namespace flexFX {
         }
         
         // Play it as defined
-        playFlexFX(
-             // id: string,unique identifier
-            wait: boolean = false) // play synchronously if true
-            {
-                playList.push(this.prototype);  // unscaled version
+        playFlexFX( wait: boolean = false)
+        {
+            playList.push(this.prototype);  // unscaled version
+            if (wait) { 
+                awaitAllFinished() 
             }
+        }
 
-        // play a scaled version
+        /** scaleFlexFX()  - play a scaled version of this FlexFX
+         * @param pitchSteps  - scaling of all pitches in signed semitone steps (may be fractional)
+         * @param volumeMax  - maximum volume (0...255) 
+         * @param duration  - required overall duration in ms
+         * @param wait  - play synchronously if true
+        */
         scaleFlexFX(
-           // id: string,  unique identifier
-            pitchSteps: number, // scaling of all pitches in signed semitone steps (may be fractional)
-            volumeMax: number, // maximum volume (0...255) 
-            duration: number, // new overall duration in ms
-            wait: boolean = false) // play synchronously if true
+            pitchSteps: number, 
+            volumeMax: number, 
+            duration: number,
+            wait: boolean = false)
             {   
-                playList.push(this.createPlay(pitchSteps,volumeMax,duration));  // scaled version
+                playList.push(this.scalePlay(pitchSteps, volumeMax, duration));  // scaled version
             }
 
         /******************
@@ -345,6 +367,8 @@ continuing seamlessly from where the previous one left off.
 
     /**
      * Perform a FlexFX (built-in)
+     * @param choice  - the chosen built-in sound
+     * @param 
      */
     //% block="play FlexFX $choice || at pitch $pitch with strength $volume lasting (ms) $duration queued: $background"
     //% group="Playing"
@@ -357,6 +381,7 @@ continuing seamlessly from where the previous one left off.
     //% ms.min=0 ms.max=10000 ms.defl=800
     //% background.defl=false
     export function playBuiltInFlexFX(choice: BuiltInFlexFX, pitch: number = 0, volume: number = 0, duration: number = 0, background: boolean = false) {
+        
         playFlexFX(builtInId[choice], pitch, volume, duration, background);
     }
 
@@ -374,14 +399,19 @@ continuing seamlessly from where the previous one left off.
     //% ms.min=0 ms.max=10000 ms.defl=800
     //% background.defl=false
     export function playFlexFX(id: string, pitch: number = 0, volume: number = 0, duration: number = 0, background: boolean = false) {
+
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
             // first compile and add our Play onto the playList
-            target.createPlay(pitch, volume, duration);
-            activatePlayer();  // make sure it will get played
+            target.scalePlay(pitch, volume, duration);  
+            // make sure it will get played
+            awaitAllFinished();
+            /***
+            activatePlayer();
             if (!background) { // ours was the lastest Play, so simply await completion of player.
                 control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
             }
+            ***/
         }
     }
 
@@ -519,7 +549,8 @@ continuing seamlessly from where the previous one left off.
         } else {
             target = new FlexFX(id);    // no, so get a new one
         }
-        target.addPart(startPitch, startVolume, wave, attack, effect, endPitch, endVolume, duration)
+        target.startWith(startPitch, startVolume);
+        target.addPart(wave, attack, effect, endPitch, endVolume, duration)
         storeFlexFX(builtIn, target);
     }
 

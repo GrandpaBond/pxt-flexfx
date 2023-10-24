@@ -482,7 +482,18 @@ continuing seamlessly from where the previous one left off.
 
 
     /**
-     * Start making a new FlexFX 
+     * Specify the first (or only) part of a new FlexFX.
+     * Any existing FlexFX with the same "id" is first deleted.
+. 
+     * @param id  - the identifier of the flexFX to be created or changed
+     * @param startPitch  - the initial frequency of the sound (in Hz)
+     * @param startVolume  - the initial volume of the sound (0 to 255)
+     * @param wave  - chooses the wave-form that characterises this sound
+     * @param attack  - chooses how fast the sound moves from its initial to final pitch
+     * @param effect  - chooses a possible modification to the sound, such as vibrato
+     * @param endPitch  - the final frequency of the sound (in Hz)
+     * @param endVolume  - the final volume of the sound (0 to 255)
+     * @param duration  - the duration of the sound (in ms) 
      */
 
     //% block="define FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch profile goes from $startPitch|                       to $endPitch|volume profile goes from $startVolume|                       to $endVolume|default    pitch=$pitch|default   volume=$volume|default duration=$duration"
@@ -513,17 +524,23 @@ continuing seamlessly from where the previous one left off.
     }
 
     /**
-     * Add another part to a FlexFX 
+     * Add another part to an existing FlexFX, continuing from its current final frequency and volume.
+     * 
+     * @param id  - the identifier of the flexFX to be extended
+     * @param wave  - chooses the wave-form that characterises this next part
+     * @param attack  - chooses how fast this part moves from its initial to final pitch
+     * @param effect  - chooses a possible modification to this part, such as vibrato
+     * @param endPitch  - the new final frequency of the FlexFX (in Hz)
+     * @param endVolume  - the new final volume of the FlexFX (0 to 255)
+     * @param duration  - the additional duration of this new part (in ms)
      */
 
-    //% block="continue FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch profile goes to $endPitch|volume profile goes to $endVolume|default    pitch=$pitch|default   volume=$volume|default duration=$duration"
+    //% block="continue FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch profile goes to $endPitch|volume profile goes to $endVolume| duration extended by (ms) $duration"
     //% group="Creating"
     //% inlineInputMode=external
     //% advanced=true
     //% weight=130
     //% id.defl="new"
-    // startPitch.min=25 startPitch.max=400 startPitch.defl=100
-    // startVolume.min=0 startVolume.max=100 startVolume.defl=100
     //% endPitch.min=10 endPitch.max=400 endPitch.defl=100
     //% endVolume.min=0 endVolume.max=100 endVolume.defl=100
     //% duration.min=0 duration.max=10000 duration.defl=800
@@ -532,11 +549,6 @@ continuing seamlessly from where the previous one left off.
         id: string,
         wave: Wave, attack: Attack, effect: Effect, endPitch: number, endVolume: number,
         duration: number, builtIn: number = 1000) {
-
-        target.addPart(startPitch, startVolume, wave, attack, effect, endPitch, endVolume, duration)
-
-
-
 
         // force our enums into numbers
         let waveNumber: number = wave;

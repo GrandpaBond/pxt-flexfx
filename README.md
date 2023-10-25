@@ -5,18 +5,20 @@ pxt-flexfx=github:grandpabond/pxt-flexfx
 Many microbit projects can be brought to life by adding sound-effects to indicate their state.
 
 The ``||music:Music||`` category has a ``||music:micro:bit(V2)||`` section with blocks for **sound-expressions**. 
-These let you build some amazing sounds, but sometimes you need something more complex.
+These let you build some amazing sounds, but sometimes you need something a bit more complex.
 
-``||flexFX:flexFX||`` sounds are *re-usable recipes* for sound-effects that can stitch together up to three 
-sound-expressions, to be played one after the other. 
+A ``||flexFX:flexFX||`` provides a "sound journey", following a sonic path through time that 
+flows smoothly between fixed [pitch, volume] points, simultaneously tracking the pitch-profile 
+and the volume-profile. They stitch together multiple sound-expressions to be played one after the 
+other, giving a smoothly varying result. 
 
-As its name suggests, a ``||flexFX:flexFX||`` recipe is re-used flexibly, creating different performances 
-simply by changing the parameters for pitch, volume or duration.
+As its name suggests, a ``||flexFX:flexFX||`` recipe can be re-used flexibly, with different performances
+(or **plays**) independently scaling these profiles and stretching or shrinking the duration.
 
-You can choose which FlexFX to play from a drop-down list of built-in sounds.
-You can hear them straightaway, or you can queue-up performances to happen in the background.
+You can choose a ``||flexFX:flexFX||`` to play from a drop-down list of built-in sounds, and you can hear them 
+straightaway, or you can queue-up performances to happen in the background.
 
-You can interact with the Play-list to synchronise the sound-track with your other codes 
+You can interact with this Play-list to synchronise the sound-track with your other codes 
 (see ``||flexFX:Background Play-list||`` below).
 
 If you need a sound that is not built-in, you can even create your own (see ``||flexFX:Building a FlexFX||`` below).
@@ -203,14 +205,18 @@ The wave-shape sets the basic tonal quality: the spikier the wave, the harsher t
 
 ``||flexFX:Noisy||`` selects a randomised wave-shape that takes harshness to the extreme: it doesn't have any real pitch left at all!
 
-### Style: Attack
-The attack chooses how fast the pitch and volume move from the start-point to the end-point of the FlexFX part.
+``||flexFX:Silence||`` is an option that allows you to put silent gaps into your sound.
 
-``||flexFX:Slow||`` selects a simple straight-line path, changing evenly over time.
+### Style: Attack
+The attack chooses how fast the pitch moves from the start-point to the end-point of the FlexFX part.
+
+``||flexFX:Fast||`` gives an extreme percussive attack, moving very rapidly away from the start-point towards the end-point. 
 
 ``||flexFX:Medium||`` follows a curved path, changing more quickly to start with, then gradually slowing down.
 
-``||flexFX:Fast||`` gives the most extreme attack, moving very rapidly away from the start-point towards the end-point. 
+``||flexFX:Slow||`` selects a simple straight-line path, changing evenly over time.
+
+``||flexFX:Delayed||`` moves slowly away from the start-point, accelerating with time.
 
 ### Style: Effect
 There are three special-effects that can optionally be added.
@@ -223,7 +229,7 @@ There are three special-effects that can optionally be added.
 
 ``||flexFX:None||`` skips any of these effects.
 
-There is currently no control of how rapidly or deeply these effects are applied. This functionality would be a welcome upgrade.
+There is currently no control of how rapidly or deeply these effects are applied. (This functionality would be a welcome upgrade).
 
 ### Profiles
 A FlexFX stitches its parts together, so that the end-point of one part forms the start-point of the next part.
@@ -302,7 +308,9 @@ The basic rule is that if it exists, it gets changed; otherwise it is created fr
 -----------------------------------------------------------------------
 # Acknowledgements 
 Credit must go to Bill Siever (on the Micro:bit Developer Slack Forum) for his experienced insights into the workings 
-of the Micro:bit run-time, and his unstinting assistance in navigating the complex process of publishing this Extension.
+of the Micro:bit run-time, and his unstinting assistance in navigating the complex process of publishing an Extension.
+Credit must also go to Martin Williams (of the Micro:bit Educational Foundation) for his meticulous appraisals 
+and generous inputs that have been invaluable in developoing and evolving the FlexFX design.
 
 
 > Open this page at [https://grandpabond.github.io/pxt-flexfx/](https://grandpabond.github.io/pxt-flexfx/)

@@ -4,9 +4,9 @@
 flexFX.playBuiltInFlexFX(BuiltInFlexFX.WHALE)
 
 // perform the simple built-in chime flexFX
-flexFX.playFlexFX("ting", Note.G5, 250, 400, false);
-flexFX.playFlexFX("ting", Note.E5, 250, 400, false);
-flexFX.playFlexFX("ting", Note.C5, 250, 1600, false);
+flexFX.playFlexFX("ting", 7, 180, 400, false); // up a fifth
+flexFX.playFlexFX("ting", 4, 180, 400, false); // up a major 3rd
+flexFX.playFlexFX("ting", 0, 250, 1600, false);
 
 pause(1000);
 
@@ -22,24 +22,24 @@ pause(1000);
 
 
 // perform "New World" theme on the 2-part horn flexFX
-flexFX.playFlexFX("horn", Note.E3, 255, 900, false);
-flexFX.playFlexFX("horn", Note.G3, 255, 300, false);
-flexFX.playFlexFX("horn", Note.G3, 255, 1200, false);
-flexFX.playFlexFX("horn", Note.E3, 255, 900, false);
-flexFX.playFlexFX("horn", Note.D3, 255, 300, false);
-flexFX.playFlexFX("horn", Note.C3, 255, 1200, false);
-flexFX.playFlexFX("horn", Note.D3, 255, 600, false);
-flexFX.playFlexFX("horn", Note.E3, 255, 600, false);
-flexFX.playFlexFX("horn", Note.G3, 255, 600, false);
-flexFX.playFlexFX("horn", Note.E3, 255, 600, false);
-flexFX.playFlexFX("horn", Note.D3, 255, 2400, false);
+flexFX.playFlexFX("horn", Note.E3 - Note.C3, 255, 900, false);
+flexFX.playFlexFX("horn", Note.G3 - Note.C3, 255, 300, false);
+flexFX.playFlexFX("horn", Note.G3 - Note.C3, 255, 1200, false);
+flexFX.playFlexFX("horn", Note.E3 - Note.C3, 255, 900, false);
+flexFX.playFlexFX("horn", Note.D3 - Note.C3, 255, 300, false);
+flexFX.playFlexFX("horn", Note.C3 - Note.C3, 255, 1200, false);
+flexFX.playFlexFX("horn", Note.D3 - Note.C3, 255, 600, false);
+flexFX.playFlexFX("horn", Note.E3 - Note.C3, 255, 600, false);
+flexFX.playFlexFX("horn", Note.G3 - Note.C3, 255, 600, false);
+flexFX.playFlexFX("horn", Note.E3 - Note.C3, 255, 600, false);
+flexFX.playFlexFX("horn", Note.D3 - Note.C3, 255, 2400, false);
 
 pause(1000);
 
 // create a double flexFX
-flexFX.createDoubleFlexFX("siren", 
-        95, 80, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 100,
-        70, 100, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 80, 45, 10,
+flexFX.defineFlexFX("siren", 
+    95, 80, flexFX.Wave.SAWTOOTH, flexFX.Attack.SLOW, flexFX.Effect.NONE, 100, 100,
+    70, 100, flexFX.Wave.SAWTOOTH, flexFX.Attack.SLOW, flexFX.Effect.NONE, 75, 80, 45, 10,
         800, 200, 1000);
 
 // queue-up a sequence of Plays on the Play-list (complete with Doppler-shift)
@@ -63,21 +63,21 @@ while(flexFX.isActive()) {
 pause(1000);
 
 // queue-up a sequence of Plays on the Play-list (J.S.Bach)
-flexFX.playFlexFX("violin", Note.E5, 250, 300, true);
-flexFX.playFlexFX("violin", Note.A5, 250, 900, true);
-flexFX.playFlexFX("violin", Note.E5, 250, 300, true);
-flexFX.playFlexFX("violin", Note.F5, 250, 900, true);
-flexFX.playFlexFX("violin", Note.D5, 250, 300, true);
-flexFX.playFlexFX("violin", Note.E5, 250, 150, true);
-flexFX.playFlexFX("violin", Note.D5, 250, 150, true);
-flexFX.playFlexFX("violin", Note.C5, 250, 150, true);
-flexFX.playFlexFX("violin", Note.E5, 250, 150, true);
-flexFX.playFlexFX("violin", Note.D5, 250, 150, true);
-flexFX.playFlexFX("violin", Note.C5, 250, 150, true);
-flexFX.playFlexFX("violin", Note.B4, 250, 150, true);
-flexFX.playFlexFX("violin", Note.D5, 250, 150, true);
-flexFX.playFlexFX("violin", Note.C5, 250, 300, true);
-flexFX.playFlexFX("violin", Note.A4, 250, 900, true);
+flexFX.playFlexFX("violin", Note.E5 - Note.C3, 250, 300, true);
+flexFX.playFlexFX("violin", Note.A5 - Note.C3, 250, 900, true);
+flexFX.playFlexFX("violin", Note.E5 - Note.C3, 250, 300, true);
+flexFX.playFlexFX("violin", Note.F5 - Note.C3, 250, 900, true);
+flexFX.playFlexFX("violin", Note.D5 - Note.C3, 250, 300, true);
+flexFX.playFlexFX("violin", Note.E5 - Note.C3, 250, 150, true);
+flexFX.playFlexFX("violin", Note.D5 - Note.C3, 250, 150, true);
+flexFX.playFlexFX("violin", Note.C5 - Note.C3, 250, 150, true);
+flexFX.playFlexFX("violin", Note.E5 - Note.C3, 250, 150, true);
+flexFX.playFlexFX("violin", Note.D5 - Note.C3, 250, 150, true);
+flexFX.playFlexFX("violin", Note.C5 - Note.C3, 250, 150, true);
+flexFX.playFlexFX("violin", Note.B4 - Note.C3, 250, 150, true);
+flexFX.playFlexFX("violin", Note.D5 - Note.C3, 250, 150, true);
+flexFX.playFlexFX("violin", Note.C5 - Note.C3, 250, 300, true);
+flexFX.playFlexFX("violin", Note.A4 - Note.C3, 250, 900, true);
 
  // while the Play-list is playing, jiggle a note around
 while (flexFX.isActive()) { 

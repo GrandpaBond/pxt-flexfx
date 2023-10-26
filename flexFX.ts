@@ -259,47 +259,35 @@ namespace flexFX {
         }
 
         // Create a scaled performance (called a Play) for this FlexFX
-        scalePlay(pitchSteps: number, volumeLimit: number, newDuration: number): Play {
+        makeScaledPlay(pitchSteps: number, volumeLimit: number, newDuration: number): Play {
             let play = new Play;
             let sound = new soundExpression.Sound;
-            let pitchRatio = 1;
-            if(pitchSteps != 0) { // semitone steps up or down
-                pitchRatio = Math.pow(SEMITONE, pitchSteps);
-            }
-            let volumeRatio = volumeLimit / this.peakVolume;
-            if (volumeLimit == 0) volumeRatio = 1;
-            let durationRatio = newDuration / this.fullDuration;
-            if (newDuration == 0) durationRatio = 1;
+            let pitchRatio = 1.0;
+            let volumeRatio = 1.0;
+            let durationRatio = 1.0; 
+            if (pitchSteps != 0) pitchRatio = Math.pow(SEMITONE, pitchSteps);
+            if (volumeLimit != 0) volumeRatio = volumeLimit / this.peakVolume;
+            if (newDuration != 0) durationRatio = newDuration / this.fullDuration;
+            // apply ratios (where noticed 1.0) to relevant fields of each part in turn
             for (let i = 0; i < this.nParts; i++) {
-                sound.src = this.prototype.parts[i].getNotes();
-                sound.frequency = this.goodPitch(this.pitchProfile[i] * pitchRatio);
-                sound.endFrequency = this.goodPitch(this.pitchProfile[i + 1] * pitchRatio);
-                sound.volume = this.goodVolume(this.volumeProfile[i] * volumeLimit);
-                sound.endVolume = this.goodVolume(this.volumeProfile[i + 1] * volumeLimit);
-                sound.duration = this.goodDuration(this.durationProfile[i] * durationRatio);
-                play.parts[i] = new SoundExpression(sound.src);
+                sound.src = this.prototype.parts[i].getNotes(); // current string
+                if (pitchRatio != 1.0) {
+                    sound.frequency = this.goodPitch(this.pitchProfile[i] * pitchRatio);
+                    sound.endFrequency = this.goodPitch(this.pitchProfile[i + 1] * pitchRatio);
+                }
+                if (volumeRatio != 1.0) {
+                    sound.volume = this.goodVolume(this.volumeProfile[i] * volumeLimit);
+                    sound.endVolume = this.goodVolume(this.volumeProfile[i + 1] * volumeLimit);
+                }
+                if (volumeRatio != 1.0) {
+                    sound.duration = this.goodDuration(this.durationProfile[i] * durationRatio);
+                }
+                play.parts[i] = new SoundExpression(sound.src); // modified string
             }
             return (play);
         }
         
-        // Play it as defined
-        playFlexFX( wait: boolean = false)
-        {
-            playList.push(this.prototype);  // unscaled version
-            if (wait) { 
-                awaitAllFinished() 
-            }
-        }
-
-        // play a scaled version of this FlexFX
-        scaleFlexFX(
-            pitchSteps: number, 
-            volumeMax: number, 
-            duration: number,
-            wait: boolean = false)
-            {   
-                playList.push(this.scalePlay(pitchSteps, volumeMax, duration));  // scaled version
-            }
+  
 
         /******************
 
@@ -338,28 +326,36 @@ continuing seamlessly from where the previous one left off.
     // in turn, play everything currently on the playList
     function player() {
         let play = new Play;
+        let soundString = "";
         while ((playList.length > 0) && !playerStopped) { 
             play = playList.shift();
+            let sound = play.parts[0].getNotes();
+            // look out for silences that have just one sound-string of "snnn..."
+            if (sound.charAt(0) == "s") {
+                let time = parseInt("0" + sound.slice(1).trim());
+                basic.pause(time); // wait around 
+            } else {
             // flatten the parts[] of sound-strings into a single comma-separated string
-            let soundString = "";
-            while (play.parts.length > 0) { 
-                soundString += play.parts.shift().getNotes();
-                if (play.parts.length > 0) {
-                    soundString += ",";
+                while (play.parts.length > 0) { 
+                    soundString += play.parts.shift().getNotes();
+                    if (play.parts.length > 0) {
+                        soundString += ",";
+                    }
+                }
+                // now play it synchronously (from the player fiber's perspective!)
+                if (soundString.length > 0) { 
+                    control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
+                    playerPlaying = true;
+                    music.playSoundEffect(soundString, SoundExpressionPlayMode.UntilDone);
+                    control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
+                    playerPlaying = false;
                 }
             }
-            // now play it synchronously (from the player fiber's perspective!)
-            if (soundString.length > 0) { 
-                control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
-                playerPlaying = true;
-                music.playSoundEffect(soundString, SoundExpressionPlayMode.UntilDone);
-                control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
-                playerPlaying = false;
-            }
+            basic.pause(10); // always cede control briefly to scheduler 
         }
         if (playList.length == 0) {
              control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
-        } // else we were prematurely stopped
+        } // else we were prematurely stopped by the playerStopped global flag
         playerActive = false;
     }
 
@@ -392,7 +388,7 @@ continuing seamlessly from where the previous one left off.
     /**
      * Perform a FlexFX (user-created)
      */
-    //% block="play FlexFX $id waiting till finished: $wait || with pitch adjusted by (semitones) $pitchSteps with maximum $volume lasting (ms) $duration"
+    //% block="play FlexFX $id waiting till finished: $wait || with pitch adjusted by (semitones) $pitchSteps with maximum $volumeLimit lasting (ms) $newDuration"
     //% group="Playing"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
@@ -402,20 +398,15 @@ continuing seamlessly from where the previous one left off.
     //% vol.min=0 vol.max=255 vol.defl=200
     //% ms.min=0 ms.max=10000 ms.defl=800
     //% wait.defl=true
-    export function playFlexFX(id: string, pitchSteps: number = 0, volumeLimit: number = 0, newDuration: number = 0, background: boolean = false) {
-
+    export function playFlexFX(id: string, pitchSteps: number = 0, 
+       volumeLimit: number = 0, newDuration: number = 0, wait: boolean = true) {
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
-            // first compile and add our Play onto the playList
-            target.scalePlay(pitchSteps, volumeLimit, newDuration);  
-            // make sure it will get played
-            awaitAllFinished();
-            /***
-            activatePlayer();
-            if (!background) { // ours was the lastest Play, so simply await completion of player.
-                control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+            // first compile and add our Play onto the playList 
+            playList.push(target.makeScaledPlay(pitchSteps, volumeLimit, newDuration));  // scaled version
+            if (wait) {
+                awaitAllFinished(); // make sure it has been played
             }
-            ***/
         }
     }
 
@@ -466,8 +457,10 @@ continuing seamlessly from where the previous one left off.
     //% group="Play-list"
     //% weight=240
     export function playSilence(ms: number) {
+        // special-case sound-string of format "snnn.." 
+        // so "s2500" adds a silence of 2.5 sec
         let play = new Play;
-        play.parts.push("s" + convertToText(Math.floor(ms)));
+        play.parts.push(new SoundExpression("s" + convertToText(Math.floor(ms))));
         playList.push(play);
         activatePlayer();  // make sure it gets played
     }

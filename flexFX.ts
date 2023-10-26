@@ -286,12 +286,7 @@ namespace flexFX {
             }
         }
 
-        /** scaleFlexFX()  - play a scaled version of this FlexFX
-         * @param pitchSteps  - scaling of all pitches in signed semitone steps (may be fractional)
-         * @param volumeMax  - maximum volume (0...255) 
-         * @param duration  - required overall duration in ms
-         * @param wait  - play synchronously if true
-        */
+        // play a scaled version of this FlexFX
         scaleFlexFX(
             pitchSteps: number, 
             volumeMax: number, 
@@ -368,7 +363,11 @@ continuing seamlessly from where the previous one left off.
     /**
      * Perform a FlexFX (built-in)
      * @param choice  - the chosen built-in sound
-     * @param 
+     * optional scaling parameters:
+     * @param pitchSteps  - raise or lower pitch (in signed semitone steps, maybe fractional)
+     * @param volumeLimit  - how loud it should get (in range 0 .. 255)
+     * @param newDuration  - how long it should last (in ms)
+     * @param wait  - if true, wait for sound to finish before returning (otherwise queue it up)
      */
     //% block="play FlexFX $choice || at pitch $pitch with strength $volume lasting (ms) $duration queued: $background"
     //% group="Playing"

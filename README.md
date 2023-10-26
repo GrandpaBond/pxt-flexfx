@@ -9,14 +9,16 @@ These let you build some amazing sounds, but sometimes you need something a bit 
 
 A ``||flexFX:flexFX||`` provides a "sound journey", following a sonic path through time that 
 flows smoothly between fixed [pitch, volume] points, simultaneously tracking the pitch-profile 
-and the volume-profile. They stitch together multiple sound-expressions to be played one after the 
+and the volume-profile. It stitches together multiple sound-expressions to be played one after the 
 other, giving a smoothly varying result. 
 
 As its name suggests, a ``||flexFX:flexFX||`` recipe can be re-used flexibly, with different performances
-(or **plays**) independently scaling these profiles and stretching or shrinking the duration.
+(or **Plays**) independently scaling these profiles and stretching or shrinking the duration.
 
-You can choose a ``||flexFX:flexFX||`` to play from a drop-down list of built-in sounds, and you can hear them 
-straightaway, or you can queue-up performances to happen in the background.
+You can choose a ``||flexFX:flexFX||`` to play from a drop-down list of built-in sounds, and you can either wait for it 
+to finish, or you can let it play in the background while executing other code. If it hasn't finished when you 
+play another one, the new Play will be added to a **Play-list**, so you can queue-up several performances to happen 
+in the background.
 
 You can interact with this Play-list to synchronise the sound-track with your other codes 
 (see ``||flexFX:Background Play-list||`` below).
@@ -27,31 +29,41 @@ If you need a sound that is not built-in, you can even create your own (see ``||
 ```sig
 flexFX.playBuiltInFlexFX()
 ```
-Use the drop-down list on ``||FlexFX:playBuiltInFlexFX||`` to choose which built-in FlexFX to hear. 
+Use the drop-down list on ``||FlexFX:playBuiltInFlexFX||`` to choose which built-in ``||flexFX:flexFX||`` to hear. 
+By repeatedly clicking on the "+" you can access three additional parameters to change the pitch, 
+volume or duration of this Play. These extra parameters are described in detail for the ``||FlexFX:playFlexFX||`` 
+block below...
 
 # Playing a named FlexFX #flexFX-playFlexFX            
 ```sig
 flexFX.playFlexFX()
 ```
-Each FlexFX has a unique name, assigned when it is first created. ``||FlexFX:playFlexFX||`` lets you 
-choose a FlexFX by name.
+This function lets you play a ``||flexFX:flexFX||`` chosen by name (or identifier)
 
-This may either be a built-in one, or one that you have created for yourself.
+``||flexFX:id||`` is the unique identifier assigned when created (whether built-in or created by you)
 
-For either ``||FlexFX:play...||`` block, if you click on the "+" extender, you can specify a different pitch 
-from the default one.
+``||flexFX:wait||`` is a switch. If **"True"**, the sound is played to completion. If **"False"**, 
+it is added to the Play-list to be played in the background.
 
-``||flexFX:pitch||`` sets the pitch as a numeric frequency.
+As with the ``||FlexFX:playBuiltInFlexFX||`` block (above), if you click on the "+" extender, 
+you can expose an extra performance parameter:
+
+``||flexFX:pitchSteps||``  lets you change the pitch up or down. It is specified in musical semitone 
+steps.
 
 By clicking on the "+" extender repeatedly, you can also specify two more performance parameters:
 
-``||flexFX:volume||`` sets the volume as a number in the range 0-255.
+``||flexFX:volumeLimit||`` sets the peak volume as a number in the range 0-255.
 
-``||flexFX:duration||`` sets how long the overall performance will last in milliseconds.
+``||flexFX:newDuration||`` sets how long the overall performance will last in milliseconds.
 
 ### ~reminder
-#### Note-names
-You can use the built-in note-name enumerations (e.g. ``||music:Note.G5||``) to specify the pitch frequency more conveniently.
+#### Pitch Steps
+If you double all the frequencies used in a ``||flexFX:flexFX||``, it will sound an octave higher.
+On a piano, moving up by an octave requires 12 semitone steps (counting both black and white keys).
+So you might set ``||flexFX:pitchSteps||`` to +12 to raise its pitch by an octave, or to -12 to lower it
+by an octave. (Using +60 would make it 5 octaves higher!) For finer adjustments, you can even use 
+a fractional number.
 ### ~
 
 The following example would play the built-in FlexFX called **"chime"** three times over, 
@@ -59,9 +71,9 @@ with descending pitch, and increasing volume. The first two performances last ju
 while the final performance takes 1.6 seconds to complete.
 
 ```block
-flexFX.playFlexFX("chime", Note.G5, 100, 400);
-flexFX.playFlexFX("chime", Note.E5, 175, 400);
-flexFX.playFlexFX("chime", Note.C5, 250, 1600);
+flexFX.playFlexFX("chime", 7, 100, 400);
+flexFX.playFlexFX("chime", 5, 175, 400);
+flexFX.playFlexFX("chime", 0, 250, 1600);
 ```
 
 # Background Play-list

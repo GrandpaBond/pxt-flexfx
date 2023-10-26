@@ -262,9 +262,14 @@ namespace flexFX {
         scalePlay(pitchSteps: number, volumeLimit: number, newDuration: number): Play {
             let play = new Play;
             let sound = new soundExpression.Sound;
-            let pitchRatio = Math.pow(SEMITONE, pitchSteps); // semitone steps up or down
+            let pitchRatio = 1;
+            if(pitchSteps != 0) { // semitone steps up or down
+                pitchRatio = Math.pow(SEMITONE, pitchSteps);
+            }
             let volumeRatio = volumeLimit / this.peakVolume;
+            if (volumeLimit == 0) volumeRatio = 1;
             let durationRatio = newDuration / this.fullDuration;
+            if (newDuration == 0) durationRatio = 1;
             for (let i = 0; i < this.nParts; i++) {
                 sound.src = this.prototype.parts[i].getNotes();
                 sound.frequency = this.goodPitch(this.pitchProfile[i] * pitchRatio);
@@ -360,16 +365,16 @@ continuing seamlessly from where the previous one left off.
 
     // ---- UI BLOCKS ----
 
-    /**
+    /** playBuiltInFlexFX()
      * Perform a FlexFX (built-in)
      * @param choice  - the chosen built-in sound
+     * @param wait  - if true, wait for sound to finish before returning (otherwise queue it up)
      * optional scaling parameters:
      * @param pitchSteps  - raise or lower pitch (in signed semitone steps, maybe fractional)
-     * @param volumeLimit  - how loud it should get (in range 0 .. 255)
-     * @param newDuration  - how long it should last (in ms)
-     * @param wait  - if true, wait for sound to finish before returning (otherwise queue it up)
+     * @param volumeLimit  - how loud it should get (in range 0 .. 255) (0 uses original volume)
+     * @param newDuration  - how long it should last (in ms) (0 uses original duration)
      */
-    //% block="play FlexFX $choice || at pitch $pitch with strength $volume lasting (ms) $duration queued: $background"
+    //% block="play FlexFX $choice waiting till finished: $wait || with pitch adjusted by (semitones) $pitchSteps with maximum $volume lasting (ms) $duration"
     //% group="Playing"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
@@ -378,31 +383,31 @@ continuing seamlessly from where the previous one left off.
     //% pitch.min=50 pitch.max=2000 pitch.defl=800
     //% vol.min=0 vol.max=255 vol.defl=200
     //% ms.min=0 ms.max=10000 ms.defl=800
-    //% background.defl=false
-    export function playBuiltInFlexFX(choice: BuiltInFlexFX, pitch: number = 0, volume: number = 0, duration: number = 0, background: boolean = false) {
-        
+    //% wait.defl=true
+    export function playBuiltInFlexFX(choice: BuiltInFlexFX, pitch: number = 0, 
+        volume: number = 0, duration: number = 0, background: boolean = false) {     
         playFlexFX(builtInId[choice], pitch, volume, duration, background);
     }
 
     /**
      * Perform a FlexFX (user-created)
      */
-    //% block="play FlexFX $id || at pitch $pitch with strength $volume lasting (ms) $duration queued: $background"
+    //% block="play FlexFX $id waiting till finished: $wait || with pitch adjusted by (semitones) $pitchSteps with maximum $volume lasting (ms) $duration"
     //% group="Playing"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
     //% weight=310
     //% id.defl="ting"
-    //% pitch.min=50 pitch.max=2000 pitch.defl=800
+    //% pitch.min=50 pitch.max=2000 pitch.defl=0
     //% vol.min=0 vol.max=255 vol.defl=200
     //% ms.min=0 ms.max=10000 ms.defl=800
-    //% background.defl=false
-    export function playFlexFX(id: string, pitch: number = 0, volume: number = 0, duration: number = 0, background: boolean = false) {
+    //% wait.defl=true
+    export function playFlexFX(id: string, pitchSteps: number = 0, volumeLimit: number = 0, newDuration: number = 0, background: boolean = false) {
 
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
             // first compile and add our Play onto the playList
-            target.scalePlay(pitch, volume, duration);  
+            target.scalePlay(pitchSteps, volumeLimit, newDuration);  
             // make sure it will get played
             awaitAllFinished();
             /***

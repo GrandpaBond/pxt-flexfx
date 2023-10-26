@@ -35,9 +35,9 @@ For the novice, a selection of interesting built-in FlexFX samples (musical or o
 namespace flexFX {  
 
     // Simplify the selection of wave-shape...
-    enum Wave {
+    export enum Wave {
         //%block="Silence"
-        Silence = -1,    // (special case for adding silent gaps) 
+        Silence = -1,    // (special case for queueing silent gaps onto the Play-list) 
         //%block="Pure"
         Sine = WaveShape.Sine,
         //%block="Buzzy"
@@ -50,7 +50,7 @@ namespace flexFX {
         Noise = WaveShape.Noise
     }
     // Simplify the selection of frequency interpolation trajectory...
-    enum Attack {
+    export enum Attack {
         //% block="Fast"
         Fast = InterpolationCurve.Logarithmic,
         //% block="Medium"
@@ -61,7 +61,7 @@ namespace flexFX {
         Delayed = 99 // mapped to Sine or Cosine, depending on slope of profile
     }
     // Simplify (slightly) the selection of modulation-style...
-    enum Effect {
+    export enum Effect {
         //% block="None"
         None = SoundExpressionEffect.None,
         //% block="Vibrato"
@@ -74,50 +74,50 @@ namespace flexFX {
 
     // list of built-in FlexFXs
     // **** must precicely match the ID array BuiltInId below ****
-    enum BuiltInFlexFX {
+    export enum BuiltInFlexFX {
         //% block="chime"
-        CHIME,
+        Chime,
         //% block="cry"
-        CRY,
+        Cry,
         //% block="flute"
-        FLUTE,
+        Flute,
         //% block="horn"
-        HORN,
+        Horn,
         //% block="hum"
-        HUM,
+        Hum,
 
         //% block="laugh"
-        LAUGH,
+        Laugh,
         //% block="miaow"
-        MIAOW,
+        Miaow,
         //% block="moan"
-        MOAN,
+        Moan,
         //% block="moo"
-        MOO,
+        Moo,
         //% block="motor"
-        MOTOR,
+        Motor,
 
         //% block="query"
-        QUERY,
+        Query,
         //% block="shout"
-        SHOUT,
+        Shout,
         //% block="siren"
-        SIREN,
+        Siren,
         //% block="snore"
-        SNORE,
+        Snore,
         //% block="ting"
-        TING,
+        Ting,
 
         //% block="tweet"
-        TWEET,
+        Tweet,
         //% block="uh-oh"
-        UHOH,
+        Uhoh,
         //% block="violin"
-        VIOLIN,
+        Violin,
         //% block="whale"
-        WHALE,
+        Whale,
         //% block="woof"
-        WOOF
+        Woof
     }
 
     // array of built-in FlexFX ids 
@@ -380,9 +380,9 @@ continuing seamlessly from where the previous one left off.
     //% vol.min=0 vol.max=255 vol.defl=200
     //% ms.min=0 ms.max=10000 ms.defl=800
     //% wait.defl=true
-    export function playBuiltInFlexFX(choice: BuiltInFlexFX, pitch: number = 0, 
-        volume: number = 0, duration: number = 0, background: boolean = false) {     
-        playFlexFX(builtInId[choice], pitch, volume, duration, background);
+    export function playBuiltInFlexFX(choice: BuiltInFlexFX, wait: boolean = false, 
+        pitch: number = 0, volume: number = 0, duration: number = 0) {     
+        playFlexFX(builtInId[choice], wait, pitch, volume, duration);
     }
 
     /**
@@ -398,8 +398,8 @@ continuing seamlessly from where the previous one left off.
     //% vol.min=0 vol.max=255 vol.defl=200
     //% ms.min=0 ms.max=10000 ms.defl=800
     //% wait.defl=true
-    export function playFlexFX(id: string, pitchSteps: number = 0, 
-       volumeLimit: number = 0, newDuration: number = 0, wait: boolean = true) {
+    export function playFlexFX(id: string, wait: boolean = true,
+        pitchSteps: number = 0, volumeLimit: number = 0, newDuration: number = 0) {
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
             // first compile and add our Play onto the playList 

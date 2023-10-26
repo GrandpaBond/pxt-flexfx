@@ -1,58 +1,61 @@
 // *********** test codes **********
 
 // perform a built-in FlexFX with all the defaults
-flexFX.playBuiltInFlexFX(BuiltInFlexFX.WHALE)
+flexFX.playBuiltInFlexFX(flexFX.BuiltInFlexFX.Whale, true);
 
 // perform the simple built-in chime flexFX
-flexFX.playFlexFX("ting", 7, 180, 400, false); // up a fifth
-flexFX.playFlexFX("ting", 4, 180, 400, false); // up a major 3rd
-flexFX.playFlexFX("ting", 0, 250, 1600, false);
+flexFX.playFlexFX("ting", 7, 180, 400, true); // up a fifth
+flexFX.playFlexFX("ting", 4, 180, 400, true); // up a major 3rd
+flexFX.playFlexFX("ting", 0, 250, 1600, true);
 
 pause(1000);
 
 
 // perform like a cat
-flexFX.playFlexFX("miaow", 900, 255, 1000, false);
+flexFX.playFlexFX("miaow", 900, 255, 1000, true);
 pause(300);
-flexFX.playFlexFX("miaow", 1100, 255, 500, false);
+flexFX.playFlexFX("miaow", 1100, 255, 500, true);
 pause(300);
-flexFX.playFlexFX("miaow", 800, 255, 1500, false);
+flexFX.playFlexFX("miaow", 800, 255, 1500, true);
 
 pause(1000);
 
 
 // perform "New World" theme on the 2-part horn flexFX
-flexFX.playFlexFX("horn", Note.E3 - Note.C3, 255, 900, false);
-flexFX.playFlexFX("horn", Note.G3 - Note.C3, 255, 300, false);
-flexFX.playFlexFX("horn", Note.G3 - Note.C3, 255, 1200, false);
-flexFX.playFlexFX("horn", Note.E3 - Note.C3, 255, 900, false);
-flexFX.playFlexFX("horn", Note.D3 - Note.C3, 255, 300, false);
-flexFX.playFlexFX("horn", Note.C3 - Note.C3, 255, 1200, false);
-flexFX.playFlexFX("horn", Note.D3 - Note.C3, 255, 600, false);
-flexFX.playFlexFX("horn", Note.E3 - Note.C3, 255, 600, false);
-flexFX.playFlexFX("horn", Note.G3 - Note.C3, 255, 600, false);
-flexFX.playFlexFX("horn", Note.E3 - Note.C3, 255, 600, false);
-flexFX.playFlexFX("horn", Note.D3 - Note.C3, 255, 2400, false);
+flexFX.playFlexFX("horn", Note.E3 - Note.C3, 255, 900, true);
+flexFX.playFlexFX("horn", Note.G3 - Note.C3, 255, 300, true);
+flexFX.playFlexFX("horn", Note.G3 - Note.C3, 255, 1200, true);
+flexFX.playFlexFX("horn", Note.E3 - Note.C3, 255, 900, true);
+flexFX.playFlexFX("horn", Note.D3 - Note.C3, 255, 300, true);
+flexFX.playFlexFX("horn", Note.C3 - Note.C3, 255, 1200, true);
+flexFX.playFlexFX("horn", Note.D3 - Note.C3, 255, 600, true);
+flexFX.playFlexFX("horn", Note.E3 - Note.C3, 255, 600, true);
+flexFX.playFlexFX("horn", Note.G3 - Note.C3, 255, 600, true);
+flexFX.playFlexFX("horn", Note.E3 - Note.C3, 255, 600, true);
+flexFX.playFlexFX("horn", Note.D3 - Note.C3, 255, 2400, true);
 
 pause(1000);
 
-// create a double flexFX
-flexFX.defineFlexFX("siren", 
-    95, 80, flexFX.Wave.SAWTOOTH, flexFX.Attack.SLOW, flexFX.Effect.NONE, 100, 100,
-    70, 100, flexFX.Wave.SAWTOOTH, flexFX.Attack.SLOW, flexFX.Effect.NONE, 75, 80, 45, 10,
-        800, 200, 1000);
+// create a flexFX for a two-tone police-siren (middle part is silent)
+flexFX.defineFlexFX("police", flexFX.Wave.Sawtooth, 760, 800, 160, 200, 450,
+    flexFX.Effect.None, flexFX.Attack.Even);
+// (add a silent gap in the middle)
+flexFX.extendFlexFX("police", flexFX.Wave.Silence, 0, 0, 100,
+    flexFX.Effect.None, flexFX.Attack.Even);
+flexFX.extendFlexFX("police", flexFX.Wave.Sawtooth, 600, 160, 450,
+    flexFX.Effect.None, flexFX.Attack.Even);
 
 // queue-up a sequence of Plays on the Play-list (complete with Doppler-shift)
-flexFX.playFlexFX("siren", 800, 16, 1000, true);
-flexFX.playFlexFX("siren", 800, 32, 1000, true);
-flexFX.playFlexFX("siren", 800, 64, 1000, true);
-flexFX.playFlexFX("siren", 800, 128, 1000, true);
-flexFX.playFlexFX("siren", 800, 255, 1000, true);
-flexFX.playFlexFX("siren", 775, 255, 1000, true);
-flexFX.playFlexFX("siren", 750, 128, 1000, true);
-flexFX.playFlexFX("siren", 750, 64, 1000, true);
-flexFX.playFlexFX("siren", 750, 32, 1000, true);
-flexFX.playFlexFX("siren", 750, 16, 1000, true);
+flexFX.playFlexFX("police", 800, 16, 1000, false);
+flexFX.playFlexFX("police", 800, 32, 1000, false);
+flexFX.playFlexFX("police", 800, 64, 1000, false);
+flexFX.playFlexFX("police", 800, 128, 1000, false);
+flexFX.playFlexFX("police", 800, 255, 1000, false);
+flexFX.playFlexFX("police", 775, 255, 1000, false);
+flexFX.playFlexFX("police", 750, 128, 1000, false);
+flexFX.playFlexFX("police", 750, 64, 1000, false);
+flexFX.playFlexFX("police", 750, 32, 1000, false);
+flexFX.playFlexFX("police", 750, 16, 1000, false);
 
 // while the Play-list is playing, flash the blue light (sort of)
 while(flexFX.isActive()) {

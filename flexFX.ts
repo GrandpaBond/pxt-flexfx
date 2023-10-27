@@ -182,6 +182,8 @@ namespace flexFX {
         volumeProfile: number[];  // contains [nParts + 1] scalable volumes
         topVolume: number; // remembers the highest volume in the prototype
         durationProfile: number[]; // contains [nParts] scalable durations
+        pitchAverage: number; // approximate average pitch
+        pitchMidi: number; // midi note-number of average pitch (in semitones)
         prototype: Play; // contains the [nParts] SoundExpressions forming this flexFX
 
 
@@ -248,6 +250,21 @@ namespace flexFX {
                 startVolume = 0;
                 endVolume = 0;
                 waveNumber = WaveShape.Sine; // irrelevant, as silent!
+            } else {
+                // compute pitch-average for this part and update the overall one
+                let blend = 0;
+                switch (attack) {
+                    case Attack.Fast: blend = 0.1; // nearly all End pitch
+                        break;
+                    case Attack.Medium: blend = 0.2; // mostly End pitch
+                        break;
+                    case Attack.Even: blend = 0.5; // fifty-fifty
+                        break;
+                    case Attack.Delayed: blend = 0.8; // mostly Start pitch
+                        break;
+                }
+                this.pitchAverage = (blend * startPitch) + ((1-blend) * endPitch);
+                this.pitchMidi = this.pitchToMidi(this.pitchAverage);
             }
 
             let sound = music.createSoundExpression(waveNumber, startPitch, endPitch,
@@ -256,6 +273,18 @@ namespace flexFX {
             // add it into the prototype
             this.prototype.parts.push(sound);
             this.nParts++;
+        }
+
+        // convert a frequency in Hz to its Midi note-number
+        // m = 12 * log2(fm / 440 Hz) + 69     and    fm = 2(m−69) / 12(440 Hz).
+        pitchToMidi(pitch: number): number {
+            return (69 + 12 * Math.log(pitch / 440) / Math.log(2) );
+        }
+
+        // convert a Midi note-number to its frequency in Hz
+        // f = 2(m−69) / 12(440 Hz). TODO check maths
+        midiToPitch(midi: number): number {
+            return(2*(midi-69) / 12*440);
         }
 
         // Create a scaled performance (called a Play) for this FlexFX

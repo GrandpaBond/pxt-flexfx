@@ -166,6 +166,42 @@ namespace flexFX {
     //  array of all defined FlexFX objects (built-in and user-defined)
     let flexFXList: FlexFX[] = [];
 
+    // Hz - MIDI - Note-string conversion routines
+
+/* convert a note-string (e.g. "F#5") to its MIDI note-number
+    export function noteToMidi(noteString: string): number {
+        let keyBase = ["C","D","E","F","G","A","B"];
+        let keyPlace = [0,2,4,5,7,9,11];
+        let result = 0; // noteString uninterpretable
+        let char = noteString[0];
+        
+        switch){
+            case 2:
+            break;
+            case 3:
+            break
+        }
+        let octave = parseInt(noteString. )
+        return (0);
+    }
+ */
+
+
+    /* convert a frequency in Hz to its Midi note-number
+    pitchToMidi(pitch: number): number {
+       return (Math.log(pitch / 440) * (12 / Math.log(2)) + 69);
+    }
+    */
+
+    // convert a frequency in Hz to its Midi note-number 
+    export function pitchToMidi(pitch: number): number {
+        return ((Math.log(pitch) / SEMILOG) - DELTA);
+    }
+
+    // convert a Midi note-number to its frequency in Hz
+    export function midiToPitch(midi: number): number {
+        return (440 * 2 ^ ((midi - 69) / 12));
+    }
 
 /* 
     A FlexFX is a potentially composite sound-effect.
@@ -186,8 +222,8 @@ namespace flexFX {
         volumeProfile: number[];  // contains [nParts + 1] scalable volumes
         topVolume: number; // remembers the highest volume in the prototype
         durationProfile: number[]; // contains [nParts] scalable durations
-        pitchAverage: number; // approximate average pitch
-        pitchMidi: number; // midi note-number of average pitch (in semitones)
+        pitchAverage: number; // approximate average pitch (in Hz)
+        pitchMidi: number; // midi note-number of average pitch (counts semitones)
         prototype: Play; // contains the [nParts] SoundExpressions forming this flexFX
 
 
@@ -268,7 +304,7 @@ namespace flexFX {
                         break;
                 }
                 this.pitchAverage = (blend * startPitch) + ((1-blend) * endPitch);
-                this.pitchMidi = this.pitchToMidi(this.pitchAverage);
+                this.pitchMidi = pitchToMidi(this.pitchAverage);
             }
 
             let sound = music.createSoundExpression(waveNumber, startPitch, endPitch,
@@ -277,23 +313,6 @@ namespace flexFX {
             // add it into the prototype
             this.prototype.parts.push(sound);
             this.nParts++;
-        }
-
-        /* convert a frequency in Hz to its Midi note-number
-        pitchToMidi(pitch: number): number {
-           return (Math.log(pitch / 440) * (12 / Math.log(2)) + 69);
-        }
-        */
-
-        // convert a frequency in Hz to its Midi note-number 
-        // (faster? --test this)
-        pitchToMidi(pitch: number): number {
-            return ((Math.log(pitch) / SEMILOG) - DELTA);
-        }
-
-        // convert a Midi note-number to its frequency in Hz
-        midiToPitch(midi: number): number {
-            return (440 * 2 ^ ((midi - 69) / 12));
         }
 
         // Create a scaled performance (called a Play) of this FlexFX
@@ -330,7 +349,7 @@ namespace flexFX {
         makeTunedPlay(midi: number, volumeLimit: number, newDuration: number): Play {
             let play = new Play;
             let sound = new soundExpression.Sound;
-            let pitchRatio = this.midiToPitch(midi)/this.pitchAverage;
+            let pitchRatio = midiToPitch(midi)/this.pitchAverage;
             let volumeRatio = 1.0;
             let durationRatio = 1.0;
             if (volumeLimit != 0) volumeRatio = volumeLimit / this.peakVolume;

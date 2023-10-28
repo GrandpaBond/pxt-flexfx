@@ -276,15 +276,21 @@ namespace flexFX {
         }
 
         // convert a frequency in Hz to its Midi note-number
-        // m = 12 * log2(fm / 440 Hz) + 69     and    fm = 2(m−69) / 12(440 Hz).
-        pitchToMidi(pitch: number): number {
-            return (69 + 12 * Math.log(pitch / 440) / Math.log(2) );
+       pitchToMidi(pitch: number): number {
+           return (Math.log(pitch / 440) * (12 / Math.log(2)) + 69);
+        }
+
+        // convert a frequency in Hz to its Midi note-number 
+        // (faster? --test this)
+        pitchToMidi2(pitch: number): number {
+            const SEMILOG = Math.log(2) / 12;
+            const DELTA = (Math.log(440) / SEMILOG) - 69;
+            return ((Math.log(pitch) / SEMILOG) - DELTA);
         }
 
         // convert a Midi note-number to its frequency in Hz
-        // f = 2(m−69) / 12(440 Hz). TODO check maths
         midiToPitch(midi: number): number {
-            return(2*(midi-69) / 12*440);
+            return (440 * 2 ^ ((midi - 69) / 12));
         }
 
         // Create a scaled performance (called a Play) for this FlexFX
@@ -297,7 +303,7 @@ namespace flexFX {
             if (pitchSteps != 0) pitchRatio = Math.pow(SEMITONE, pitchSteps);
             if (volumeLimit != 0) volumeRatio = volumeLimit / this.peakVolume;
             if (newDuration != 0) durationRatio = newDuration / this.fullDuration;
-            // apply ratios (where noticed 1.0) to relevant fields of each part in turn
+            // apply ratios (where changed from 1.0) to relevant fields of each part in turn
             for (let i = 0; i < this.nParts; i++) {
                 sound.src = this.prototype.parts[i].getNotes(); // current string
                 if (pitchRatio != 1.0) {
@@ -316,7 +322,35 @@ namespace flexFX {
             return (play);
         }
         
-  
+
+        // Create a specifically pitched performance  for this FlexFX
+        makePitchedPlay(pitch: number, volumeLimit: number, newDuration: number): Play {
+            let play = new Play;
+            let sound = new soundExpression.Sound;
+            let pitchRatio = pitch/this.pitchAverage;
+            let volumeRatio = 1.0;
+            let durationRatio = 1.0;
+           // if (pitch != 0) pitchRatio = Math.pow(SEMITONE, pitchSteps);
+            if (volumeLimit != 0) volumeRatio = volumeLimit / this.peakVolume;
+            if (newDuration != 0) durationRatio = newDuration / this.fullDuration;
+            // apply ratios (where changed from 1.0) to relevant fields of each part in turn
+            for (let i = 0; i < this.nParts; i++) {
+                sound.src = this.prototype.parts[i].getNotes(); // current string
+                if (pitchRatio != 1.0) {
+                    sound.frequency = this.goodPitch(this.pitchProfile[i] * pitchRatio);
+                    sound.endFrequency = this.goodPitch(this.pitchProfile[i + 1] * pitchRatio);
+                }
+                if (volumeRatio != 1.0) {
+                    sound.volume = this.goodVolume(this.volumeProfile[i] * volumeLimit);
+                    sound.endVolume = this.goodVolume(this.volumeProfile[i + 1] * volumeLimit);
+                }
+                if (volumeRatio != 1.0) {
+                    sound.duration = this.goodDuration(this.durationProfile[i] * durationRatio);
+                }
+                play.parts[i] = new SoundExpression(sound.src); // modified string
+            }
+            return (play);
+        }
 
         /******************
 

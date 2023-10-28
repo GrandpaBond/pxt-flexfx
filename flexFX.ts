@@ -128,7 +128,11 @@ namespace flexFX {
         "query", "shout", "siren", "snore","ting",     // [10...14]
         "tweet", "uh-oh", "violin", "whale", "woof" ]; // [15...19]
     
-    const SEMITONE = 1.0594630943593; // = 12th root of 2 (as 12 semitones make an octave, which doubles the frequency)
+    // constants used in conversions between frequency & MIDI note-number:
+    // a SEMITONE ratio = 12th root of 2 (as 12 semitones make an octave, which doubles the frequency)
+    const SEMILOG = 0.057762265047;    // =  Math.log(2) / 12;
+    const SEMITONE = 1.0594630943593; // = Math.exp(SEMILOG) 
+    const DELTA = 36.3763165623;       // = (Math.log(440) / SEMILOG) - 69;
     
     class Play {   // for now, just a wrapper for the performance...
         parts: SoundExpression[]; // the sound-strings for its several parts
@@ -275,16 +279,15 @@ namespace flexFX {
             this.nParts++;
         }
 
-        // convert a frequency in Hz to its Midi note-number
-       pitchToMidi(pitch: number): number {
+        /* convert a frequency in Hz to its Midi note-number
+        pitchToMidi(pitch: number): number {
            return (Math.log(pitch / 440) * (12 / Math.log(2)) + 69);
         }
+        */
 
         // convert a frequency in Hz to its Midi note-number 
         // (faster? --test this)
-        pitchToMidi2(pitch: number): number {
-            const SEMILOG = Math.log(2) / 12;
-            const DELTA = (Math.log(440) / SEMILOG) - 69;
+        pitchToMidi(pitch: number): number {
             return ((Math.log(pitch) / SEMILOG) - DELTA);
         }
 
@@ -293,7 +296,7 @@ namespace flexFX {
             return (440 * 2 ^ ((midi - 69) / 12));
         }
 
-        // Create a scaled performance (called a Play) for this FlexFX
+        // Create a scaled performance (called a Play) of this FlexFX
         makeScaledPlay(pitchSteps: number, volumeLimit: number, newDuration: number): Play {
             let play = new Play;
             let sound = new soundExpression.Sound;
@@ -323,23 +326,21 @@ namespace flexFX {
         }
         
 
-        // Create a specifically pitched performance  for this FlexFX
-        makePitchedPlay(pitch: number, volumeLimit: number, newDuration: number): Play {
+        // Create a specifically tuned performance of this FlexFX
+        makeTunedPlay(midi: number, volumeLimit: number, newDuration: number): Play {
             let play = new Play;
             let sound = new soundExpression.Sound;
-            let pitchRatio = pitch/this.pitchAverage;
+            let pitchRatio = this.midiToPitch(midi)/this.pitchAverage;
             let volumeRatio = 1.0;
             let durationRatio = 1.0;
-           // if (pitch != 0) pitchRatio = Math.pow(SEMITONE, pitchSteps);
             if (volumeLimit != 0) volumeRatio = volumeLimit / this.peakVolume;
             if (newDuration != 0) durationRatio = newDuration / this.fullDuration;
             // apply ratios (where changed from 1.0) to relevant fields of each part in turn
             for (let i = 0; i < this.nParts; i++) {
                 sound.src = this.prototype.parts[i].getNotes(); // current string
-                if (pitchRatio != 1.0) {
-                    sound.frequency = this.goodPitch(this.pitchProfile[i] * pitchRatio);
-                    sound.endFrequency = this.goodPitch(this.pitchProfile[i + 1] * pitchRatio);
-                }
+                sound.frequency = this.goodPitch(this.pitchProfile[i] * pitchRatio);
+                sound.endFrequency = this.goodPitch(this.pitchProfile[i + 1] * pitchRatio);
+                
                 if (volumeRatio != 1.0) {
                     sound.volume = this.goodVolume(this.volumeProfile[i] * volumeLimit);
                     sound.endVolume = this.goodVolume(this.volumeProfile[i + 1] * volumeLimit);
@@ -610,7 +611,7 @@ continuing seamlessly from where the previous one left off.
             target = new FlexFX(id);    // no, so get a new one
         }
         target.startWith(startPitch, startVolume);
-        target.addPart(wave, attack, effect, endPitch, endVolume, duration)
+        target.addPart(wave, attack, effect, endPitch, endVolume, duration);
         storeFlexFX(builtIn, target);
     }
 
@@ -651,13 +652,8 @@ continuing seamlessly from where the previous one left off.
             // rather than fail, just create a new one, but with flat profiles
             defineFlexFX(id,waveNumber,endPitch,endPitch,endVolume,endVolume,duration,effectNumber,attackNumber);
         } else {
-            target.pitchProfile.push(endPitch);
-            target.volumeProfile.push(endVolume);
-            target.durationProfile.push(duration);
-            // create the sound string for the next part of the prototype 
-            let sound = music.createSoundExpression(waveNumber, this.pitchProfile[this.nParts], endPitch, 
-                                this.volumeProfile[this.nParts], endVolume, duration, effectNumber, attackNumber);
-            target.prototype.parts.push(sound);
+            // TODO: need waveNumber etc. ???
+            target.addPart(wave, attack, effect, endPitch, endVolume, duration);
         }
         storeFlexFX(builtIn, target);
     }

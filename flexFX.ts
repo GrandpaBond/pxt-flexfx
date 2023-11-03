@@ -131,19 +131,128 @@ namespace flexFX {
     // constants used in conversions between frequency & MIDI note-number:
     // a SEMITONE ratio = 12th root of 2 (as 12 semitones make an octave, which doubles the frequency)
     const SEMILOG = 0.057762265047;    // =  Math.log(2) / 12;
-    const SEMITONE = 1.0594630943593; // = Math.exp(SEMILOG) 
+    const SEMITONE = 1.0594630943593;  // = Math.exp(SEMILOG) 
     const DELTA = 36.3763165623;       // = (Math.log(440) / SEMILOG) - 69;
-    
+ 
+    // convert a frequency in Hz to its Midi note-number 
+    export function pitchToMidi(pitch: number): number {
+        return ((Math.log(pitch) / SEMILOG) - DELTA);
+    }
+
+    // convert a Midi note-number to its frequency in Hz
+    // (based on A4 = 440 Hz = MIDI 69)
+    export function midiToPitch(midi: number): number {
+        return (440 * 2 ^ ((midi - 69) / 12));
+    }
+
+ 
+    // note-lengths in ticks (quarter-beats)
+    const QUAVER_TICKS = 2;  
+    const CROTCHET_TICKS = 4;
+    const MINIM_TICKS = 8;
+    const SEMIBREVE_TICKS = 16;
+
+    let tickMs = 200; // default speed = 75 BPM
+    // Basically, a TuneStep is a musical Note 
+    // (but renamed to avoid confusion with the native "Note")
+    class TuneStep {
+        name: String;
+        ticks: number; // note-length, measured in quarter-beat "ticks"
+        midi: number; // standard MIDI note-number
+        pitch: number; // frequency in Hz
+        volume: number;  // how specified? range? TODO!
+
+        // create using a 3-part specifier: {ticks}{key}{octave}
+        constructor(spec: string) {
+            let chars = spec;
+            // parse ticks [0-9]*
+            this.ticks = 0;
+            let code = chars.charCodeAt(0);
+            while ((code > 47) && (code < 58)) {
+                this.ticks = this.ticks * 10 + code - 48
+                chars = chars.slice(1);
+                code = chars.charCodeAt(0);
+            }
+
+            this.name = chars; // save the note-name
+
+            // parse key as [A-G]
+            let key = 2 * ((code - 60) % 7);
+            if (key > 4) key--;
+            chars = chars.slice(1);
+
+            // adjust for accidentals [# or b]
+            if (chars[0] == "#") {
+                key++;
+                chars = chars.slice(1);
+            }
+            if (chars[0] == "b") {
+                key--;
+                chars = chars.slice(1);
+            }
+            // parse octave as [0-9]*
+            let octave = 0;
+            code = chars.charCodeAt(0);
+            while ((code > 47) && (code < 58)) {
+                octave = octave * 10 + code - 48
+                chars = chars.slice(1);
+                code = chars.charCodeAt(0);
+            }
+            // get MIDI from key & octave 
+            // (careful: MIDI for C0 is 12)
+            this.midi = 12 * (octave + 1) + key;
+            this.pitch = midiToPitch(this.midi);
+        }
+
+    }
+
+    class Tune {
+        id: string; // identifier
+        nNotes: number; // number of notes (steps) in Tune
+        nTicks: number; // overall duration of Tune in ticks
+        notes: TuneStep[]; // array of notes
+        // TODO: performance per-note volumes array...
+        // dynamic: number[]; // ?how to specify?
+
+        // deconstruct a source-string of note-specifiers
+        constructor(source: string) {
+            this.notes = [];
+            this.nTicks = 0;
+            let specs = source.split(" ");
+            this.nNotes = specs.length;
+            for (let i = 0; i < this.nNotes; i++) {
+                let nextNote = new TuneStep(specs[i]);
+                this.nTicks += nextNote.ticks;
+                this.notes.push(nextNote);
+            }
+        }
+    }
+
+
     class Play {   // for now, just a wrapper for the performance...
         parts: SoundExpression[]; // the sound-strings for its several parts
         constructor() {
             this.parts = [];
         }
     }
+   
 
+    // activity events (for other components to synchronise with)
+    const FLEXFX_ACTIVITY_ID = 9050 // TODO: Check (somehow?) that this is a permissable value!
+    enum PLAYER {
+        STARTING = 1,
+        FINISHED = 2,
+        ALLPLAYED = 3,
+    }
+// lists...
+    // Array of all defined FlexFX objects (built-in and user-defined)
+    let flexFXList: FlexFX[] = [];
+    // Tunes can be registered separately from FlexFXs
+    // You can then combine them using playTune(id,song)
+    let tuneList: Tune[] = [];
     // Performances get queued onto the play-list to ensure proper asynchronous sequencing
     let playList: Play[] = [];
-    
+
     // control flags:
     let playerPlaying = false; // a performance is being played
     export function isPlaying(): boolean { return playerPlaying; } // accessor
@@ -154,54 +263,6 @@ namespace flexFX {
     let playerStopped = false; // activation of player inhibited for now
     export function isStopped(): boolean { return playerStopped; } // accessor
 
-
-    // activity events (for other components to synchronise with)
-    const FLEXFX_ACTIVITY_ID = 9050 // TODO: Check (somehow?) that this is a permissable value!
-    enum PLAYER {
-        STARTING = 1,
-        FINISHED = 2,
-        ALLPLAYED = 3,
-    }
-  
-    //  array of all defined FlexFX objects (built-in and user-defined)
-    let flexFXList: FlexFX[] = [];
-
-    // Hz - MIDI - Note-string conversion routines
-
-/* convert a note-string (e.g. "F#5") to its MIDI note-number
-    export function noteToMidi(noteString: string): number {
-        let keyBase = ["C","D","E","F","G","A","B"];
-        let keyPlace = [0,2,4,5,7,9,11];
-        let result = 0; // noteString uninterpretable
-        let char = noteString[0];
-        
-        switch){
-            case 2:
-            break;
-            case 3:
-            break
-        }
-        let octave = parseInt(noteString. )
-        return (0);
-    }
- */
-
-
-    /* convert a frequency in Hz to its Midi note-number
-    pitchToMidi(pitch: number): number {
-       return (Math.log(pitch / 440) * (12 / Math.log(2)) + 69);
-    }
-    */
-
-    // convert a frequency in Hz to its Midi note-number 
-    export function pitchToMidi(pitch: number): number {
-        return ((Math.log(pitch) / SEMILOG) - DELTA);
-    }
-
-    // convert a Midi note-number to its frequency in Hz
-    export function midiToPitch(midi: number): number {
-        return (440 * 2 ^ ((midi - 69) / 12));
-    }
 
 /* 
     A FlexFX is a potentially composite sound-effect.
@@ -443,7 +504,7 @@ continuing seamlessly from where the previous one left off.
     }
 
     // ---- UI BLOCKS ----
-
+/*****************
     /** playBuiltInFlexFX()
      * Perform a FlexFX (built-in)
      * @param choice  - the chosen built-in sound
@@ -452,7 +513,6 @@ continuing seamlessly from where the previous one left off.
      * @param pitchSteps  - raise or lower pitch (in signed semitone steps, maybe fractional)
      * @param volumeLimit  - how loud it should get (in range 0 .. 255) (0 uses original volume)
      * @param newDuration  - how long it should last (in ms) (0 uses original duration)
-     */
     //% block="play FlexFX $choice waiting till finished: $wait || with pitch adjusted by (semitones) $pitchSteps with maximum $volume lasting (ms) $duration"
     //% group="Playing"
     //% inlineInputMode=inline
@@ -467,11 +527,46 @@ continuing seamlessly from where the previous one left off.
         pitch: number = 0, volume: number = 0, duration: number = 0) {     
         playFlexFX(builtInId[choice], wait, pitch, volume, duration);
     }
+    **************/
+
+
+
+    /**
+     * Selector to choose a built-in FlexFx by name
+      */
+    //% blockId="builtin_name" block="$fx"
+    //% group="Playing"
+    //% weight=305
+    export function builtInFlexFX(fx: BuiltInFlexFX): string {
+        switch (fx) {
+            case BuiltInFlexFX.Chime: return "chime";
+            case BuiltInFlexFX.Cry: return "cry";
+            case BuiltInFlexFX.Flute: return "flute";
+            case BuiltInFlexFX.Horn: return "horn";
+            case BuiltInFlexFX.Hum: return "hum";
+            case BuiltInFlexFX.Laugh: return "laugh";
+            case BuiltInFlexFX.Miaow: return "miaow";
+            case BuiltInFlexFX.Moan: return "moan";
+            case BuiltInFlexFX.Moo: return "moo";
+            case BuiltInFlexFX.Motor: return "motor";
+            case BuiltInFlexFX.Query: return "query";
+            case BuiltInFlexFX.Shout: return "shout";
+            case BuiltInFlexFX.Siren: return "siren";
+            case BuiltInFlexFX.Snore: return "snore";
+            case BuiltInFlexFX.Ting: return "ting";
+            case BuiltInFlexFX.Tweet: return "tweet";
+            case BuiltInFlexFX.Uhoh: return "uh-oh";
+            case BuiltInFlexFX.Violin: return "violin";
+            case BuiltInFlexFX.Whale: return "whale";
+            case BuiltInFlexFX.Woof: return "woof";
+        }
+        return "ting"
+    }
 
     /**
      * Perform a FlexFX (user-created)
      */
-    //% block="play FlexFX $id waiting till finished: $wait || with pitch adjusted by (semitones) $pitchSteps with maximum $volumeLimit lasting (ms) $newDuration"
+    //% block="play FlexFX $id waiting till finished: $wait || with pitch changed by (semitones) $pitchSteps with maximum $volumeLimit lasting (ms) $newDuration"
     //% group="Playing"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
@@ -489,6 +584,33 @@ continuing seamlessly from where the previous one left off.
             playList.push(target.makeScaledPlay(pitchSteps, volumeLimit, newDuration));  // scaled version
             if (wait) {
                 awaitAllFinished(); // make sure it has been played
+            }
+        }
+    }
+
+
+    /*
+     * Use a FlexFX to play a tune  
+     */
+    //% block="play tune $tuneId using FlexFX $flexId waiting till finished: $wait"
+    //% group="Playing"
+    //% inlineInputMode=inline
+    //% expandableArgumentMode="enabled"
+    //% weight=310
+    //% flexId.defl="woof"
+    //% tuneId.defl="happy birthday"
+    //% wait.defl=true
+    export function playTune(tuneId: string, flexId: string, wait: boolean = true) {
+        let tune: Tune = tuneList.find(i => i.id === tuneId);
+        let flex: FlexFX = flexFXList.find(i => i.id === flexId);
+        if ((flex != null) && (flex != null)) {
+            while (tune.notes.length > 0)
+            {
+                // compile and add our Play onto the playList 
+                playList.push(flex.makeScaledPlay(pitchSteps, volumeLimit, newDuration));  // scaled version
+                if (wait) {
+                    awaitAllFinished(); // make sure it has been played
+                }
             }
         }
     }

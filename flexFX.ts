@@ -9,12 +9,16 @@ To achieve this we have defined a flexible sound-effect class called a "FlexFX",
 that play consecutively to give a smoothly varying result. A FlexFX can either be played as defined, 
 or its pitch, volume and duration can be independently scaled to suit requirements.
 
-The core microbit function music.playSoundEffect() offers a playInBackground option. Unfortunately, a subsequent 
-playSoundEffect() interrupts this, rather than queuing sounds up. 
-
-The FlexFX class therefore implements its own play-list to achieve the queueing of consecutive background sounds.
-
 For the novice, a selection of interesting built-in FlexFX samples (musical or otherwise) are provided.
+
+The core microbit function music.playSoundEffect() offers a playInBackground option. Unfortunately, a subsequent 
+playSoundEffect() interrupts this, rather than queuing sounds up, so the FlexFX class therefore 
+implements its own play-list to achieve the queueing of consecutive background sounds.
+
+A sequence of pitched instrument sounds is a Tune. A flexFX.Tune can be composed using a "score" string to specify
+the length; note-name; and octave for a series of notes. Subsequently, any FlexFX can be used to play this tune.
+
+For the novice, a (small) selection of built-in tunes is provided.
 */
 
 /* NOTE:    The built-in enums for sound effect parameters are hardly beginner-friendly!
@@ -120,14 +124,26 @@ namespace flexFX {
         Woof
     }
 
-    // array of built-in FlexFX ids 
-    // **** must precicely match the enum BuiltInFlexFX above ****
+    // array of built-in FlexFX ids (no longer needed)
+    /**** must precicely match the enum BuiltInFlexFX above
     let builtInId: string[] = [
         "chime", "cry", "flute", "horn", "hum",        // [0...4]
         "laugh", "miaow", "moan", "moo", "motor",      // [5...9]
         "query", "shout", "siren", "snore","ting",     // [10...14]
         "tweet", "uh-oh", "violin", "whale", "woof" ]; // [15...19]
-    
+     ****/
+
+    // list of built-in Tunes
+    export enum BuiltInTune {
+        //% block="happy birthday"
+        Birthday,
+        //% block="new world"
+        NewWorld,
+        //% block="bach"
+        Bach,
+        //% block="beethoven"
+        Beethoven
+    }
     // constants used in conversions between frequency & MIDI note-number:
     // a SEMITONE ratio = 12th root of 2 (as 12 semitones make an octave, which doubles the frequency)
     const SEMILOG = 0.057762265047;    // =  Math.log(2) / 12;
@@ -153,8 +169,7 @@ namespace flexFX {
     const SEMIBREVE_TICKS = 16;
 
     let tickMs = 200; // default speed = 75 BPM
-    // Basically, a TuneStep is a musical Note 
-    // (but renamed to avoid confusion with the native "Note")
+    // (Basically, a TuneStep is a musical Note but renamed to avoid confusion with the native "Note")
     class TuneStep {
         name: String;
         ticks: number; // note-length, measured in quarter-beat "ticks"
@@ -211,11 +226,12 @@ namespace flexFX {
         nNotes: number; // number of notes (steps) in Tune
         nTicks: number; // overall duration of Tune in ticks
         notes: TuneStep[]; // array of notes
-        // TODO: performance per-note volumes array...
-        // dynamic: number[]; // ?how to specify?
+        // TODO:For a more nuanced performance, add this per-note volumes array...
+        // dynamic: number[]; // ? but how to specify dynamics ?
 
-        // deconstruct a source-string of note-specifiers
-        constructor(source: string) {
+        // deconstruct the source-string of note-specifiers
+        constructor(tuneId: string, source: string) {
+            this.id = tuneId;
             this.notes = [];
             this.nTicks = 0;
             let specs = source.split(" ");
@@ -247,11 +263,11 @@ namespace flexFX {
 // lists...
     // Array of all defined FlexFX objects (built-in and user-defined)
     let flexFXList: FlexFX[] = [];
-    // Tunes can be registered separately from FlexFXs
-    // You can then combine them using playTune(id,song)
-    let tuneList: Tune[] = [];
     // Performances get queued onto the play-list to ensure proper asynchronous sequencing
     let playList: Play[] = [];
+    // Tunes can be registered separately from FlexFXs
+    // You can then mix & match them using playTune(flexId,tuneId)
+    let tuneList: Tune[] = [];
 
     // control flags:
     let playerPlaying = false; // a performance is being played
@@ -269,7 +285,7 @@ namespace flexFX {
     It can specify several component soundExpressions called "parts" that get played consecutively.
     Each part has a [frequency,volume] start-point and end-point.
     Apart from the first part, the start-point gets inherited from the previous end-point,
-    so an n-part FlexFX moves through (n+1)) [frequency,volume] points.
+    so an n-part FlexFX moves through (n+1) [frequency,volume] points.
     It is built, one part at a time, using defineFlexFX() followed by zero or more extendFlexFX() calls.
 */
 
@@ -433,28 +449,19 @@ namespace flexFX {
             return (play);
         }
 
-        /******************
-
-
-
-The extendFlexFX() function can then be called (repeatedly) to add another way-point along the path, 
-together with the [wave, attack, effect] timbre-definition and the duration for the next segment, 
-continuing seamlessly from where the previous one left off.
-
-*/
-
     }
-
 
     // Store a flexFX (overwriting any previous instance)
     // (When inititalising a built-in FlexFX, <builtIn> must be the BuiltInFlexFX's enum value
     // that indexes its <id> in the BuiltInId[] array. Otherwise, it must be 1000)
-        function storeFlexFX(builtIn: number, target: FlexFX) {
+    function storeFlexFX(builtIn: number, target: FlexFX) {
         // first delete any existing definition having this id (works even when missing!)
         flexFXList.splice(flexFXList.indexOf(flexFXList.find(i => i.id === target.id), 1), 1); 
+        /*******
         if (builtIn < 1000) {
             target.id = builtInId[builtIn]; // pick up its id
         }
+        *****/
         // add this new definition
         flexFXList.push(target); 
     }
@@ -503,16 +510,25 @@ continuing seamlessly from where the previous one left off.
         playerActive = false;
     }
 
+    function compose(tuneId: string, score: string) {
+        // first delete any existing definition having this id (works even when missing!)
+        tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === tuneId), 1), 1);
+        // add this new definition
+        tuneList.push(new Tune(tuneId,score));
+    }
+
+
+
     // ---- UI BLOCKS ----
-/*****************
+    /***************** superceded with the provision of the flexFX Selector below
     /** playBuiltInFlexFX()
      * Perform a FlexFX (built-in)
-     * @param choice  - the chosen built-in sound
-     * @param wait  - if true, wait for sound to finish before returning (otherwise queue it up)
+     * @param choice  the chosen built-in sound
+     * @param wait  if true, wait for sound to finish before returning (otherwise queue it up)
      * optional scaling parameters:
-     * @param pitchSteps  - raise or lower pitch (in signed semitone steps, maybe fractional)
-     * @param volumeLimit  - how loud it should get (in range 0 .. 255) (0 uses original volume)
-     * @param newDuration  - how long it should last (in ms) (0 uses original duration)
+     * @param pitchSteps  raise or lower pitch (in signed semitone steps, maybe fractional)
+     * @param volumeLimit  how loud it should get (in range 0 .. 255) (0 uses original volume)
+     * @param newDuration  how long it should last (in ms) (0 uses original duration)
     //% block="play FlexFX $choice waiting till finished: $wait || with pitch adjusted by (semitones) $pitchSteps with maximum $volume lasting (ms) $duration"
     //% group="Playing"
     //% inlineInputMode=inline
@@ -544,16 +560,19 @@ continuing seamlessly from where the previous one left off.
             case BuiltInFlexFX.Flute: return "flute";
             case BuiltInFlexFX.Horn: return "horn";
             case BuiltInFlexFX.Hum: return "hum";
+
             case BuiltInFlexFX.Laugh: return "laugh";
             case BuiltInFlexFX.Miaow: return "miaow";
             case BuiltInFlexFX.Moan: return "moan";
             case BuiltInFlexFX.Moo: return "moo";
             case BuiltInFlexFX.Motor: return "motor";
+
             case BuiltInFlexFX.Query: return "query";
             case BuiltInFlexFX.Shout: return "shout";
             case BuiltInFlexFX.Siren: return "siren";
             case BuiltInFlexFX.Snore: return "snore";
             case BuiltInFlexFX.Ting: return "ting";
+            
             case BuiltInFlexFX.Tweet: return "tweet";
             case BuiltInFlexFX.Uhoh: return "uh-oh";
             case BuiltInFlexFX.Violin: return "violin";
@@ -613,6 +632,22 @@ continuing seamlessly from where the previous one left off.
                 }
             }
         }
+    }
+
+    /**
+     * Selector to choose a built-in Tune by name
+      */
+    //% blockId="builtin_tune" block="$tune"
+    //% group="Playing"
+    //% weight=305
+    export function builtInTune(tune: BuiltInTune): string {
+        switch (tune) {
+            case BuiltInTune.Birthday: return "birthday";
+            case BuiltInTune.NewWorld: return "newWorld";
+            case BuiltInTune.Bach: return "bach";
+            case BuiltInTune.Beethoven: return "beethoven";
+        }
+        return "beethoven";
     }
 
     /**
@@ -717,15 +752,15 @@ continuing seamlessly from where the previous one left off.
      * Specify the first (or only) part of a new FlexFX.
      * Any existing FlexFX with the same "id" is first deleted.
 . 
-     * @param id  - the identifier of the flexFX to be created or changed
-     * @param startPitch  - the initial frequency of the sound (in Hz)
-     * @param startVolume  - the initial volume of the sound (0 to 255)
-     * @param wave  - chooses the wave-form that characterises this sound
-     * @param attack  - chooses how fast the sound moves from its initial to final pitch
-     * @param effect  - chooses a possible modification to the sound, such as vibrato
-     * @param endPitch  - the final frequency of the sound (in Hz)
-     * @param endVolume  - the final volume of the sound (0 to 255)
-     * @param duration  - the duration of the sound (in ms) 
+     * @param id  the identifier of the flexFX to be created or changed
+     * @param startPitch  the initial frequency of the sound (in Hz)
+     * @param startVolume  the initial volume of the sound (0 to 255)
+     * @param wave  chooses the wave-form that characterises this sound
+     * @param attack  chooses how fast the sound moves from its initial to final pitch
+     * @param effect  chooses a possible modification to the sound, such as vibrato
+     * @param endPitch  the final frequency of the sound (in Hz)
+     * @param endVolume  the final volume of the sound (0 to 255)
+     * @param duration  the duration of the sound (in ms) 
      */
 
     //% block="define FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch profile goes from $startPitch|                       to $endPitch|volume profile goes from $startVolume|                       to $endVolume|default    pitch=$pitch|default   volume=$volume|default duration=$duration"
@@ -800,7 +835,7 @@ continuing seamlessly from where the previous one left off.
     }
 
     // Populate the FlexFX array with the selection of built-in sounds
-    function populateBuiltIns() {
+    function populateBuiltInFlexFxs() {
         // simple "ting"
         defineFlexFX("TING", Wave.Triangle, 2000, 2000, 255, 25, 200,
             Effect.None, Attack.Fast);
@@ -942,7 +977,7 @@ continuing seamlessly from where the previous one left off.
         extendFlexFX("UHOH", Wave.Square, 127, 150, 600,
             Effect.None, Attack.Even);
 
-    /**** Old definitions...
+    /**** Old definitions (keep for reference until new ones proven)...
         // chime effect
         flexFX.create2PartFlexFX("", 105, 100,
             Wave.SINE, Attack.FAST, Effect.NONE, 100, 50,
@@ -1069,6 +1104,13 @@ continuing seamlessly from where the previous one left off.
             10, 30, 250, 250, 300, BuiltInFlexFX.WOOF);
     ******/
     }
+    function populateBuiltInTunes() {
+        compose("birthday", "");
+        compose("newWorld", "");
+        compose("bach", "");
+        compose("beethoven", "");
+    }
 
-    populateBuiltIns();
+    populateBuiltInFlexFXs();
+    populateBuiltInTunes();
 }

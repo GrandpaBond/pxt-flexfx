@@ -161,27 +161,26 @@ namespace flexFX {
         return (440 * 2 ^ ((midi - 69) / 12));
     }
 
- 
+
     // note-lengths in ticks (quarter-beats)
     const QUAVER_TICKS = 2;  
     const CROTCHET_TICKS = 4;
     const MINIM_TICKS = 8;
     const SEMIBREVE_TICKS = 16;
 
-    let tickMs = 200; // default speed = 75 BPM
     // (Basically, a TuneStep is a musical Note but renamed to avoid confusion with the native "Note")
     class TuneStep {
-        name: String;
-        ticks: number; // note-length, measured in quarter-beat "ticks"
-        midi: number; // standard MIDI note-number
-        pitch: number; // frequency in Hz
-        volume: number;  // how specified? range? TODO!
+        name: String = "";
+        ticks: number = 0; // note-length, measured in quarter-beat "ticks"
+        midi: number = 0; // standard MIDI note-number
+        pitch: number = 0; // frequency in Hz
+        volume: number = 0;  // how specified? range? TODO!
 
         // create using a 3-part specifier: {ticks}{key}{octave}
         constructor(spec: string) {
             let chars = spec;
             // parse ticks [0-9]*
-            this.ticks = 0;
+ 
             let code = chars.charCodeAt(0);
             while ((code > 47) && (code < 58)) {
                 this.ticks = this.ticks * 10 + code - 48
@@ -191,32 +190,35 @@ namespace flexFX {
 
             this.name = chars; // save the note-name
 
-            // parse key as [A-G]
-            let key = 2 * ((code - 60) % 7);
-            if (key > 4) key--;
-            chars = chars.slice(1);
+            if (chars[0] != "R") {
+                this.volume = 100; // remains at 0 for special-case musical Rests
+                // parse key as [A-G]
+                let key = 2 * ((code - 60) % 7);
+                if (key > 4) key--;
+                chars = chars.slice(1);
 
-            // adjust for accidentals [# or b]
-            if (chars[0] == "#") {
-                key++;
-                chars = chars.slice(1);
-            }
-            if (chars[0] == "b") {
-                key--;
-                chars = chars.slice(1);
-            }
-            // parse octave as [0-9]*
-            let octave = 0;
-            code = chars.charCodeAt(0);
-            while ((code > 47) && (code < 58)) {
-                octave = octave * 10 + code - 48
-                chars = chars.slice(1);
+                // adjust for accidentals [# or b]
+                if (chars[0] == "#") {
+                    key++;
+                    chars = chars.slice(1);
+                }
+                if (chars[0] == "b") {
+                    key--;
+                    chars = chars.slice(1);
+                }
+                // parse octave as [0-9]*
+                let octave = 0;
                 code = chars.charCodeAt(0);
+                while ((code > 47) && (code < 58)) {
+                    octave = octave * 10 + code - 48
+                    chars = chars.slice(1);
+                    code = chars.charCodeAt(0);
+                }
+                // get MIDI from key & octave 
+                // (careful: MIDI for C0 is 12)
+                this.midi = 12 * (octave + 1) + key;
+                this.pitch = midiToPitch(this.midi);
             }
-            // get MIDI from key & octave 
-            // (careful: MIDI for C0 is 12)
-            this.midi = 12 * (octave + 1) + key;
-            this.pitch = midiToPitch(this.midi);
         }
 
     }
@@ -260,25 +262,6 @@ namespace flexFX {
         FINISHED = 2,
         ALLPLAYED = 3,
     }
-// lists...
-    // Array of all defined FlexFX objects (built-in and user-defined)
-    let flexFXList: FlexFX[] = [];
-    // Performances get queued onto the play-list to ensure proper asynchronous sequencing
-    let playList: Play[] = [];
-    // Tunes can be registered separately from FlexFXs
-    // You can then mix & match them using playTune(flexId,tuneId)
-    let tuneList: Tune[] = [];
-
-    // control flags:
-    let playerPlaying = false; // a performance is being played
-    export function isPlaying(): boolean { return playerPlaying; } // accessor
-
-    let playerActive = false;
-    export function isActive(): boolean { return playerActive; } // accessor
-
-    let playerStopped = false; // activation of player inhibited for now
-    export function isStopped(): boolean { return playerStopped; } // accessor
-
 
 /* 
     A FlexFX is a potentially composite sound-effect.
@@ -452,16 +435,9 @@ namespace flexFX {
     }
 
     // Store a flexFX (overwriting any previous instance)
-    // (When inititalising a built-in FlexFX, <builtIn> must be the BuiltInFlexFX's enum value
-    // that indexes its <id> in the BuiltInId[] array. Otherwise, it must be 1000)
-    function storeFlexFX(builtIn: number, target: FlexFX) {
+    function storeFlexFX(target: FlexFX) {
         // first delete any existing definition having this id (works even when missing!)
         flexFXList.splice(flexFXList.indexOf(flexFXList.find(i => i.id === target.id), 1), 1); 
-        /*******
-        if (builtIn < 1000) {
-            target.id = builtInId[builtIn]; // pick up its id
-        }
-        *****/
         // add this new definition
         flexFXList.push(target); 
     }
@@ -511,7 +487,7 @@ namespace flexFX {
     }
 
     function compose(tuneId: string, score: string) {
-        // first delete any existing definition having this id (works even when missing!)
+        // first delete any existing composition having this id (works even when missing!)
         tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === tuneId), 1), 1);
         // add this new definition
         tuneList.push(new Tune(tuneId,score));
@@ -520,7 +496,7 @@ namespace flexFX {
 
 
     // ---- UI BLOCKS ----
-    /***************** superceded with the provision of the flexFX Selector below
+    /***************** superceded by provision of the flexFX Selector, below
     /** playBuiltInFlexFX()
      * Perform a FlexFX (built-in)
      * @param choice  the chosen built-in sound
@@ -596,7 +572,7 @@ namespace flexFX {
     //% ms.min=0 ms.max=10000 ms.defl=800
     //% wait.defl=true
     export function playFlexFX(id: string, wait: boolean = true,
-        pitchSteps: number = 0, volumeLimit: number = 0, newDuration: number = 0) {
+                pitchSteps: number = 0, volumeLimit: number = 0, newDuration: number = 0) {
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
             // first compile and add our Play onto the playList 
@@ -611,7 +587,7 @@ namespace flexFX {
     /*
      * Use a FlexFX to play a tune  
      */
-    //% block="play tune $tuneId using FlexFX $flexId waiting till finished: $wait"
+    //% block="play tune $tuneId using FlexFX $flexId waiting till finished: $wait || with maximum $volumeLimit lasting (ms) $tuneDuration"
     //% group="Playing"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
@@ -619,14 +595,22 @@ namespace flexFX {
     //% flexId.defl="woof"
     //% tuneId.defl="happy birthday"
     //% wait.defl=true
-    export function playTune(tuneId: string, flexId: string, wait: boolean = true) {
+    export function playTune(tuneId: string, flexId: string, wait: boolean = true, 
+        volumeLimit: number = 0, tuneDuration: number = 0) {
         let tune: Tune = tuneList.find(i => i.id === tuneId);
         let flex: FlexFX = flexFXList.find(i => i.id === flexId);
         if ((flex != null) && (flex != null)) {
+            tickMs = tuneDuration / tune.nTicks; // set tick-rate (i.e speed) to achieve tuneDuration
             while (tune.notes.length > 0)
-            {
+            {   let note = tune.notes[0];
+                let steps = note.midi - flex.pitchMidi;
+                let ms = note.ticks * tickMs;
+                if (note.volume == 0) { // if this note is a Rest, play silence
+                    playSilence(ms);
+                } else {}
                 // compile and add our Play onto the playList 
-                playList.push(flex.makeScaledPlay(pitchSteps, volumeLimit, newDuration));  // scaled version
+                    playList.push(flex.makeScaledPlay(steps, volumeLimit, ms));  // scaled version
+                }
                 if (wait) {
                     awaitAllFinished(); // make sure it has been played
                 }
@@ -775,10 +759,9 @@ namespace flexFX {
     //% endVolume.min=0 endVolume.max=100 endVolume.defl=100
     //% duration.min=0 duration.max=10000 duration.defl=800
 
-    export function defineFlexFX(
-        id: string, startPitch: number, startVolume: number,
-        wave: Wave, attack: Attack, effect: Effect, endPitch: number, endVolume: number,
-        duration: number, builtIn: number = 1000) {
+    export function defineFlexFX(id: string, startPitch: number, startVolume: number,
+                wave: Wave, attack: Attack, effect: Effect, 
+                endPitch: number, endVolume: number, duration: number) {
         // are we re-defining an existing flexFX?
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
@@ -788,7 +771,7 @@ namespace flexFX {
         }
         target.startWith(startPitch, startVolume);
         target.addPart(wave, attack, effect, endPitch, endVolume, duration);
-        storeFlexFX(builtIn, target);
+        storeFlexFX(target);
     }
 
     /**
@@ -813,10 +796,8 @@ namespace flexFX {
     //% endVolume.min=0 endVolume.max=100 endVolume.defl=100
     //% duration.min=0 duration.max=10000 duration.defl=800
 
-    export function extendFlexFX(
-        id: string,
-        wave: Wave, attack: Attack, effect: Effect, endPitch: number, endVolume: number,
-        duration: number, builtIn: number = 1000) {
+    export function extendFlexFX(id: string, wave: Wave, attack: Attack, effect: Effect,
+                endPitch: number, endVolume: number, duration: number) {
 
         // force our enums into numbers
         let waveNumber: number = wave;
@@ -831,11 +812,36 @@ namespace flexFX {
             // TODO: need waveNumber etc. ???
             target.addPart(wave, attack, effect, endPitch, endVolume, duration);
         }
-        storeFlexFX(builtIn, target);
+        storeFlexFX(target);
     }
 
+
+
+// general initialisation...
+    // lists...
+    // Array of all defined FlexFX objects (built-in and user-defined)
+    let flexFXList: FlexFX[] = [];
+    // Performances get queued onto the play-list to ensure proper asynchronous sequencing
+    let playList: Play[] = [];
+    // Tunes can be registered separately from FlexFXs
+    // You can then mix & match them using playTune(flexId,tuneId)
+    let tuneList: Tune[] = [];
+
+    let tickMs = 200; // default tune speed = 75 BPM
+
+    // control flags:
+    let playerPlaying = false; // a performance is being played
+    export function isPlaying(): boolean { return playerPlaying; } // accessor
+
+    let playerActive = false;
+    export function isActive(): boolean { return playerActive; } // accessor
+
+    let playerStopped = false; // activation of player inhibited for now
+    export function isStopped(): boolean { return playerStopped; } // accessor
+
+
     // Populate the FlexFX array with the selection of built-in sounds
-    function populateBuiltInFlexFxs() {
+    function populateBuiltInFlexFXs() {
         // simple "ting"
         defineFlexFX("TING", Wave.Triangle, 2000, 2000, 255, 25, 200,
             Effect.None, Attack.Fast);
@@ -1104,11 +1110,26 @@ namespace flexFX {
             10, 30, 250, 250, 300, BuiltInFlexFX.WOOF);
     ******/
     }
+
     function populateBuiltInTunes() {
-        compose("birthday", "");
-        compose("newWorld", "");
-        compose("bach", "");
-        compose("beethoven", "");
+        composeTune("birthday", "2G4 1G4 3A4 3G4 3C5 6B4");    // line 1
+        extendTune("birthday", "2G4 1G4 3A4 3G4 3D5 6C5");     // line 2
+        extendTune("birthday", "2G4 1G4 3G5 3E5 3C5 3B4 6A4"); // line 3
+        extendTune("birthday", "2F5 1F5 3E5 3C5 3D5 6C5");     // line 4
+        composeTune("newWorld", "6E3 2G3 8G3 6E3 2D3 8C3"); // line 1
+        extendTune("newWorld", "4D3 4E3 4G3 4E3 8D3 8R");   // line 2
+        extendTune("newWorld", "6E3 2G3 8G3 6E3 2D3 8C3");  // line 2
+        extendTune("newWorld", "4D3 4E3 6D3 2C3 8C3 8R");   // line 2
+        composeTune("bach", ""); // line 1
+        composeTune("bach", "");  // line 2
+        composeTune("odeToJoy", "");// line 1
+        extendTune("odeToJoy", ""); // line 2
+        extendTune("odeToJoy", ""); // line 3
+        extendTune("odeToJoy", ""); // line 4
+        extendTune("odeToJoy", ""); // line 5
+        extendTune("odeToJoy", ""); // line 6
+        extendTune("odeToJoy", ""); // line 7
+        extendTune("odeToJoy", ""); // line 8
     }
 
     populateBuiltInFlexFXs();

@@ -161,14 +161,13 @@ namespace flexFX {
         return (440 * 2 ^ ((midi - 69) / 12));
     }
 
-
     // note-lengths in ticks (quarter-beats)
     const QUAVER_TICKS = 2;  
     const CROTCHET_TICKS = 4;
     const MINIM_TICKS = 8;
     const SEMIBREVE_TICKS = 16;
 
-    // (Basically, a TuneStep is a musical Note but renamed to avoid confusion with the native "Note")
+    // (Basically, a TuneStep is a musical Note, but renamed to avoid confusion with the native "Note")
     class TuneStep {
         name: String = ""; // e.g. "C4" for middle-C
         ticks: number = 0; // note-length, measured in quarter-beat "ticks"
@@ -190,6 +189,7 @@ namespace flexFX {
 
             this.name = chars; // save the note-name
 
+        // for a silent musical rest, {key} = "R" and {octave} is absent
             if (chars[0] != "R") {
                 this.volume = 255; // remains at 0 for special-case musical Rests
                 // parse key as [A-G]
@@ -244,7 +244,7 @@ namespace flexFX {
                 this.notes.push(nextNote);
             }
         }
-
+        // method to add some more notes...
         extend(source: string) {
             let specs = source.split(" ");
             let count = specs.length;
@@ -257,9 +257,9 @@ namespace flexFX {
         }
     }
 
-
-    class Play {   // for now, just a wrapper for the performance...
-        parts: SoundExpression[]; // the sound-strings for its several parts
+   // just a wrapper for the performance...
+    class Play {
+        parts: SoundExpression[]; // the sound-strings for each of its parts
         constructor() {
             this.parts = [];
         }
@@ -383,11 +383,13 @@ namespace flexFX {
                 this.pitchMidi = pitchToMidi(this.pitchAverage);
             }
 
-            let sound = music.createSoundExpression(waveNumber, startPitch, endPitch,
+            let soundExpr = music.createSoundExpression(waveNumber, startPitch, endPitch,
                 startVolume, endVolume, duration, effectNumber, attackNumber);
 
             // fix the "shape" parameter for Delayed effects
             if (attack == Attack.Delayed) {
+                let sound = new soundExpression.Sound;
+                sound.src = soundExpr;
                 if (endPitch > startPitch) {
                     sound.shape = soundExpression.InterpolationEffect.ExponentialRising; // (faked with Sin)
                 } else {
@@ -511,44 +513,7 @@ namespace flexFX {
         playerActive = false;
     }
 
-    export function composeTune(tuneId: string, score: string) {
-        // first delete any existing composition having this id (works even when missing!)
-        tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === tuneId), 1), 1);
-        // add this new definition (score holds the sequence of notes)
-        tuneList.push(new Tune(tuneId, score));
-    }
-
-    export function extendTune() { tuneId: string, score: string}
-
-
     // ---- UI BLOCKS ----
-    /***************** superceded by provision of the flexFX Selector, below
-    /** playBuiltInFlexFX()
-     * Perform a FlexFX (built-in)
-     * @param choice  the chosen built-in sound
-     * @param wait  if true, wait for sound to finish before returning (otherwise queue it up)
-     * optional scaling parameters:
-     * @param pitchSteps  raise or lower pitch (in signed semitone steps, maybe fractional)
-     * @param volumeLimit  how loud it should get (in range 0 .. 255) (0 uses original volume)
-     * @param newDuration  how long it should last (in ms) (0 uses original duration)
-    //% block="play FlexFX $choice waiting till finished: $wait || with pitch adjusted by (semitones) $pitchSteps with maximum $volume lasting (ms) $duration"
-    //% group="Playing"
-    //% inlineInputMode=inline
-    //% expandableArgumentMode="enabled"
-    //% weight=300
-    //% choice.defl=BuiltInFlexFX.TING
-    //% pitch.min=50 pitch.max=2000 pitch.defl=800
-    //% vol.min=0 vol.max=255 vol.defl=200
-    //% ms.min=0 ms.max=10000 ms.defl=800
-    //% wait.defl=true
-    export function playBuiltInFlexFX(choice: BuiltInFlexFX, wait: boolean = false, 
-        pitch: number = 0, volume: number = 0, duration: number = 0) {     
-        playFlexFX(builtInId[choice], wait, pitch, volume, duration);
-    }
-    **************/
-
-
-
     /**
      * Selector to choose a built-in FlexFx by name
       */
@@ -585,9 +550,9 @@ namespace flexFX {
     }
 
     /**
-     * Perform a FlexFX (user-created)
+     * Perform a FlexFX
      */
-    //% block="play FlexFX $id waiting till finished: $wait || with pitch changed by (semitones) $pitchSteps with maximum $volumeLimit lasting (ms) $newDuration"
+    //% block="play FlexFX $id waiting till finished: $wait || with pitch changed by (semitones) $pitchSteps with maximum volume: $volumeLimit lasting (ms) $newDuration"
     //% group="Playing"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
@@ -601,7 +566,7 @@ namespace flexFX {
                 pitchSteps: number = 0, volumeLimit: number = 0, newDuration: number = 0) {
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
-            // first compile and add our Play onto the playList 
+            // compile and add our Play onto the playList 
             playList.push(target.makeScaledPlay(pitchSteps, volumeLimit, newDuration));  // scaled version
             if (wait) {
                 awaitAllFinished(); // make sure it has been played
@@ -613,7 +578,7 @@ namespace flexFX {
     /*
      * Use a FlexFX to play a tune  
      */
-    //% block="play tune $tuneId using FlexFX $flexId waiting till finished: $wait || with maximum $volumeLimit lasting (ms) $tuneDuration"
+    //% block="play tune $tuneId using FlexFX $flexId waiting till finished: $wait || with maximum volume: $volumeLimit lasting (ms) $tuneDuration"
     //% group="Playing"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
@@ -626,14 +591,14 @@ namespace flexFX {
         let tune: Tune = tuneList.find(i => i.id === tuneId);
         let flex: FlexFX = flexFXList.find(i => i.id === flexId);
         if ((flex != null) && (flex != null)) {
-            tickMs = tuneDuration / tune.nTicks; // set tick-rate (i.e speed) to achieve tuneDuration
+            tickMs = tuneDuration / tune.nTicks; // set global tick-rate (i.e speed) to achieve tuneDuration
             while (tune.notes.length > 0)
             {   let note = tune.notes[0];
                 let steps = note.midi - flex.pitchMidi;
                 let ms = note.ticks * tickMs;
                 if (note.volume == 0) { // if this note is a Rest, play silence
                     playSilence(ms);
-                } else {}
+                } else {
                 // compile and add our Play onto the playList 
                     playList.push(flex.makeScaledPlay(steps, volumeLimit, ms));  // scaled version
                 }
@@ -661,7 +626,7 @@ namespace flexFX {
     }
 
     /**
-     * Await start of next FLexFX on the play-list
+     * Await start of next FlexFX on the play-list
      */
     //% block="wait until next FlexFX starts"
     //% group="Play-list"
@@ -695,7 +660,7 @@ namespace flexFX {
     export function awaitAllFinished() {
         if (playList.length >= 0) {
             playerStopped = false; // in case it was
-            activatePlayer(); // it case it wasn't
+            activatePlayer(); // in case it wasn't
             control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
         } // else nothing to wait for
     }
@@ -761,7 +726,6 @@ namespace flexFX {
     /**
      * Specify the first (or only) part of a new FlexFX.
      * Any existing FlexFX with the same "id" is first deleted.
-. 
      * @param id  the identifier of the flexFX to be created or changed
      * @param startPitch  the initial frequency of the sound (in Hz)
      * @param startVolume  the initial volume of the sound (0 to 255)
@@ -841,28 +805,28 @@ namespace flexFX {
         storeFlexFX(target);
     }
 
-
+    // TODO add UI details
     export function composeTune(tuneId: string, score: string) {
-        target = new Tune(tuneId, score);
         // first delete any existing definition having this id (works even when missing!)
-        tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === target.id), 1), 1);
+        tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === tuneId.id), 1), 1);
         // add this new definition
-        tuneList.push(target);
+        tuneList.push(new Tune(tuneId, score));
     }
 
+    // TODO add UI details
     export function extendTune(tuneId: string, score: string) {
         let target: Tune = tuneList.find(i => i.id === id);
         if (target == null) {
             // OOPS! trying to extend a non-existent Tune: 
             // rather than fail, just create a new one
-            composeTune(tuneId, score);
+            tuneList.push(new Tune(tuneId, score));
         } else {
             target.extend(score);
         }
     }
 
 
-// general initialisation...
+ // general initialisation...
     // lists...
     // Array of all defined FlexFX objects (built-in and user-defined)
     let flexFXList: FlexFX[] = [];
@@ -958,10 +922,6 @@ namespace flexFX {
             Effect.None, Attack.Even);
 
 
-
-
-
-
         // sad whimpering moan
         defineFlexFX("MOAN", Wave.Triangle, 540, 450, 90, 150, 420,
             Effect.None, Attack.Even);
@@ -1027,133 +987,6 @@ namespace flexFX {
             Effect.None, Attack.Even);
         extendFlexFX("UHOH", Wave.Square, 127, 150, 600,
             Effect.None, Attack.Even);
-
-    /**** Old definitions (keep for reference until new ones proven)...
-        // chime effect
-        flexFX.create2PartFlexFX("", 105, 100,
-            Wave.SINE, Attack.FAST, Effect.NONE, 100, 50,
-            Wave.SINE, Attack.SLOW, Effect.NONE, 100, 10, 20,
-            300, 200, 2000,BuiltInFlexFX.CHIME)
-
-        // create a wailing 3-part flexFX
-        flexFX.create3PartFlexFX("", 50, 50,
-            Wave.SQUARE, Attack.SLOW, Effect.NONE, 200, 100,
-            Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 100,
-            Wave.SQUARE, Attack.SLOW, Effect.NONE, 150, 50, 33, 33,
-            400, 250, 800, BuiltInFlexFX.CRY);
-
-        // breathy flute
-        flexFX.create3PartFlexFX(
-            "", 10, 100,
-            Wave.NOISE, Attack.FAST, Effect.VIBRATO, 105, 100,
-            Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 30,
-            Wave.TRIANGLE, Attack.SLOW, Effect.NONE, 80, 0,
-            5, 80, 250, 250, 1500, BuiltInFlexFX.FLUTE);
-
-        // Horn 2-part flexFX
-        flexFX.create2PartFlexFX("", 5, 50,
-            Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 100,
-            Wave.SINE, Attack.SLOW, Effect.NONE, 100, 80, 7,
-            250, 255, 500, BuiltInFlexFX.HORN);
-
-        // a gentle hum...
-        flexFX.create2PartFlexFX("", 300, 80,
-            Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 90,
-            Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 70, 5,
-            250, 100, 600, BuiltInFlexFX.HUM);
-
-        // single laugh (repeat for giggles)
-        flexFX.create2PartFlexFX("", 70, 40,
-            Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 100,
-            Wave.SQUARE, Attack.SLOW, Effect.NONE, 70, 75, 90,
-            400, 250, 500, BuiltInFlexFX.LAUGH);
-
-        // cat-like 2-part flexFX
-        flexFX.create2PartFlexFX("", 70, 50,
-            Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 100, 100,
-            Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 80, 30,
-            900, 255, 1000, BuiltInFlexFX.MIAOW);
-
-        // sad whimpering moan
-        flexFX.create3PartFlexFX("", 120, 60,
-            Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 100, 100,
-            Wave.TRIANGLE, Attack.MEDIUM, Effect.NONE, 95, 80,
-            Wave.TRIANGLE, Attack.SLOW, Effect.NONE, 115, 55, 60, 30,
-            450, 150, 700, BuiltInFlexFX.MOAN);
-
-        // moo like a cow
-        flexFX.create2PartFlexFX("", 70 ,80,
-            Wave.SAWTOOTH, Attack.MEDIUM, Effect.NONE, 100, 100,
-            Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 70, 30, 40,
-            140, 200, 1500, BuiltInFlexFX.MOO);
-
-        // engine-noise (kind-of)
-        flexFX.create2PartFlexFX("", 70, 120,
-            Wave.SAWTOOTH, Attack.FAST, Effect.TREMOLO, 100, 100,
-            Wave.SAWTOOTH, Attack.SLOW, Effect.TREMOLO, 80, 50, 15,
-            150, 200, 3000,BuiltInFlexFX.MOTOR);
-
-        // questioning...
-        flexFX.create2PartFlexFX("", 110, 20,
-            Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 100,
-            Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 150, 30, 20,
-            300, 250, 900, BuiltInFlexFX.QUERY);
-
-        // angry shout
-        flexFX.create3PartFlexFX("", 30, 50,
-            Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 80,
-            Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 100,
-            Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 30, 75, 60, 15,
-            400, 250, 500, BuiltInFlexFX.SHOUT);
-
-        // Police siren is a double flexFX
-        flexFX.createDoubleFlexFX("",
-            95, 80, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 100,
-            70, 100, Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 75, 80, 45, 10,
-            800, 200, 1000, BuiltInFlexFX.SIREN);
-
-        // Approximation to a snore!
-        flexFX.create2PartFlexFX("", 7000, 10,
-            Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 1400, 100,
-            Wave.NOISE, Attack.SLOW, Effect.VIBRATO, 9999, 0, 50,
-            50, 222, 1000, BuiltInFlexFX.SNORE);
-
-        // simple "ting" flexFX
-        flexFX.defineFlexFX("", 100, 100, Wave.TRIANGLE, Attack.FAST, Effect.NONE, 100, 10,
-            2000, 255, 200, BuiltInFlexFX.TING);
-
-        // tweet
-        flexFX.defineFlexFX("", 80, 45,
-            Wave.SINE, Attack.FAST, Effect.NONE, 100, 100,
-            600, 250, 700, BuiltInFlexFX.TWEET);
-
-        // trouble ahead!
-        flexFX.createDoubleFlexFX("",
-            110, 40, Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 120, 100,
-            95, 100, Wave.SQUARE, Attack.SLOW, Effect.NONE, 85, 75, 20, 20,
-            150, 200, 1000, BuiltInFlexFX.UHOH);
-
-        // Violin-like 3-part flexFX
-        flexFX.create3PartFlexFX("", 1, 100,
-            Wave.SAWTOOTH, Attack.FAST, Effect.NONE, 100, 75,
-            Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 100, 75,
-            Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 10, 100, 10, 85,
-            440, 200, 500, BuiltInFlexFX.VIOLIN);
-
-        // whale-song
-        flexFX.create3PartFlexFX("", 120, 10,
-            Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 90, 100,
-            Wave.SQUARE, Attack.SLOW, Effect.NONE, 100, 60,
-            Wave.SQUARE, Attack.SLOW, Effect.NONE, 80, 5, 10, 40,
-            450, 222, 2000, BuiltInFlexFX.WHALE);
-
-        // strange breed of dog
-        flexFX.create3PartFlexFX("", 120, 100,
-            Wave.SQUARE, Attack.MEDIUM, Effect.NONE, 40, 90,
-            Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 90, 100,
-            Wave.SAWTOOTH, Attack.SLOW, Effect.NONE, 120, 50,
-            10, 30, 250, 250, 300, BuiltInFlexFX.WOOF);
-    ******/
     }
 
     function populateBuiltInTunes() {

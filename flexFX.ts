@@ -62,7 +62,7 @@ namespace flexFX {
         //% block="Even"
         Even = InterpolationCurve.Linear,
         //% block="Delayed"
-        Delayed = 99 // mapped to Sine or Cosine, depending on slope of profile
+        Delayed = 99 // later, mapped to Sine or Cosine, depending on slope of profile
     }
     // Simplify (slightly) the selection of modulation-style...
     export enum Effect {
@@ -170,11 +170,11 @@ namespace flexFX {
 
     // (Basically, a TuneStep is a musical Note but renamed to avoid confusion with the native "Note")
     class TuneStep {
-        name: String = "";
+        name: String = ""; // e.g. "C4" for middle-C
         ticks: number = 0; // note-length, measured in quarter-beat "ticks"
         midi: number = 0; // standard MIDI note-number
         pitch: number = 0; // frequency in Hz
-        volume: number = 0;  // how specified? range? TODO!
+        volume: number = 0;  // UI volume [0..255] (quadrupled internally)
 
         // create using a 3-part specifier: {ticks}{key}{octave}
         constructor(spec: string) {
@@ -191,7 +191,7 @@ namespace flexFX {
             this.name = chars; // save the note-name
 
             if (chars[0] != "R") {
-                this.volume = 100; // remains at 0 for special-case musical Rests
+                this.volume = 255; // remains at 0 for special-case musical Rests
                 // parse key as [A-G]
                 let key = 2 * ((code - 60) % 7);
                 if (key > 4) key--;
@@ -228,7 +228,7 @@ namespace flexFX {
         nNotes: number; // number of notes (steps) in Tune
         nTicks: number; // overall duration of Tune in ticks
         notes: TuneStep[]; // array of notes
-        // TODO:For a more nuanced performance, add this per-note volumes array...
+        // TODO:For a more nuanced performance, add this per-note volumes array:
         // dynamic: number[]; // ? but how to specify dynamics ?
 
         // deconstruct the source-string of note-specifiers
@@ -240,6 +240,17 @@ namespace flexFX {
             this.nNotes = specs.length;
             for (let i = 0; i < this.nNotes; i++) {
                 let nextNote = new TuneStep(specs[i]);
+                this.nTicks += nextNote.ticks;
+                this.notes.push(nextNote);
+            }
+        }
+
+        extend(source: string) {
+            let specs = source.split(" ");
+            let count = specs.length;
+            for (let i = 0; i < count; i++) {
+                let nextNote = new TuneStep(specs[i]);
+                this.nNotes ++;
                 this.nTicks += nextNote.ticks;
                 this.notes.push(nextNote);
             }
@@ -276,15 +287,14 @@ namespace flexFX {
         // properties
         id: string; // identifier
         nParts: number;
-        peakVolume: number; // remembers the highest volume in the prototype
+        prototype: Play; // contains the [nParts] SoundExpressions forming this flexFX
         fullDuration: number; // overall cumulative duration of prototype
-        pitchProfile: number[];  // contains [nParts + 1] scalable frequencies
-        volumeProfile: number[];  // contains [nParts + 1] scalable volumes
-        topVolume: number; // remembers the highest volume in the prototype
-        durationProfile: number[]; // contains [nParts] scalable durations
+        peakVolume: number; // remembers the highest volume [0-1020] in the prototype
         pitchAverage: number; // approximate average pitch (in Hz)
         pitchMidi: number; // midi note-number of average pitch (counts semitones)
-        prototype: Play; // contains the [nParts] SoundExpressions forming this flexFX
+        pitchProfile: number[];  // contains [nParts + 1] scalable frequencies
+        volumeProfile: number[];  // contains [nParts + 1] scalable volumes [0-1020]
+        durationProfile: number[]; // contains [nParts] scalable durations
 
 
         constructor(id: string) {
@@ -294,12 +304,14 @@ namespace flexFX {
 
         initialise() {
             this.nParts = 0;
+            this.prototype = new Play;
+            this.fullDuration = 0;
+            this.peakVolume = 0;
+            this.pitchAverage = 0;
+            this.pitchMidi = 0;
             this.pitchProfile = [];
             this.volumeProfile = [];
-            this.peakVolume = 0;
             this.durationProfile = [];
-            this.fullDuration = 0;
-            this.prototype = new Play;
         }        
         
         // internal tools...
@@ -308,7 +320,7 @@ namespace flexFX {
             return Math.min(Math.max(pitch, 1), 9999);
         }
         protected goodVolume(volume: number): number {
-            return Math.min(Math.max(volume, 0), 100);
+            return Math.min(Math.max(volume, 0), 1023);
         }
         protected goodDuration(duration: number): number {
             return Math.min(Math.max(duration, 10), 9999);
@@ -319,7 +331,7 @@ namespace flexFX {
         // begin setting up the very first part of a new FlexFX
         startWith(startPitch:number, startVolume: number){
             this.pitchProfile.push(this.goodPitch(startPitch)); // pitchProfile[0]
-            let v = this.goodVolume(startVolume);
+            let v = this.goodVolume(startVolume*4); // internally, volumes are [0-1020]
             this.volumeProfile.push(v);                         // volumeProfile[0]
             this.peakVolume = v; // ...until proven otherwise
         }
@@ -329,13 +341,12 @@ namespace flexFX {
 
             this.pitchProfile.push(this.goodPitch(endPitch));
             
-            let v = this.goodVolume(endVolume);
+            let v = this.goodVolume(endVolume*4);
             this.volumeProfile.push(v);
             this.peakVolume = Math.max(this.peakVolume, v);
 
             let d = this.goodDuration(duration);
             this.durationProfile.push(d);
-            this.fullDuration += d;
 
             // turn our enums into simple numbers & create the sound string for this part
             let waveNumber: number = wave;
@@ -351,7 +362,7 @@ namespace flexFX {
                 endVolume = 0;
                 waveNumber = WaveShape.Sine; // irrelevant, as silent!
             } else {
-                // compute pitch-average for this part and update the overall one
+                // compute average pitch of this part
                 let blend = 0;
                 switch (attack) {
                     case Attack.Fast: blend = 0.1; // nearly all End pitch
@@ -363,14 +374,28 @@ namespace flexFX {
                     case Attack.Delayed: blend = 0.8; // mostly Start pitch
                         break;
                 }
-                this.pitchAverage = (blend * startPitch) + ((1-blend) * endPitch);
+                let pitch = (blend * startPitch) + ((1-blend) * endPitch);
+                // update overall average pitch, weighted by duration of each part
+                let kilocycles = (this.pitchAverage*this.fullDuration + pitch*d);
+                this.fullDuration += d;
+                this.pitchAverage = kilocycles / this.fullDuration;
+                // update its MIDI equivalent
                 this.pitchMidi = pitchToMidi(this.pitchAverage);
             }
 
             let sound = music.createSoundExpression(waveNumber, startPitch, endPitch,
                 startVolume, endVolume, duration, effectNumber, attackNumber);
 
-            // add it into the prototype
+            // fix the "shape" parameter for Delayed effects
+            if (attack == Attack.Delayed) {
+                if (endPitch > startPitch) {
+                    sound.shape = soundExpression.InterpolationEffect.ExponentialRising; // (faked with Sin)
+                } else {
+                    sound.shape = soundExpression.InterpolationEffect.ExponentialFalling; // (faked with Cos)
+                }
+            }
+
+            // add new sound into the prototype
             this.prototype.parts.push(sound);
             this.nParts++;
         }
@@ -486,13 +511,14 @@ namespace flexFX {
         playerActive = false;
     }
 
-    function compose(tuneId: string, score: string) {
+    export function composeTune(tuneId: string, score: string) {
         // first delete any existing composition having this id (works even when missing!)
         tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === tuneId), 1), 1);
-        // add this new definition
-        tuneList.push(new Tune(tuneId,score));
+        // add this new definition (score holds the sequence of notes)
+        tuneList.push(new Tune(tuneId, score));
     }
 
+    export function extendTune() { tuneId: string, score: string}
 
 
     // ---- UI BLOCKS ----
@@ -809,12 +835,31 @@ namespace flexFX {
             // rather than fail, just create a new one, but with flat profiles
             defineFlexFX(id,waveNumber,endPitch,endPitch,endVolume,endVolume,duration,effectNumber,attackNumber);
         } else {
-            // TODO: need waveNumber etc. ???
+            // TODO: do we need to use waveNumber etc. ? Don't think so!
             target.addPart(wave, attack, effect, endPitch, endVolume, duration);
         }
         storeFlexFX(target);
     }
 
+
+    export function composeTune(tuneId: string, score: string) {
+        target = new Tune(tuneId, score);
+        // first delete any existing definition having this id (works even when missing!)
+        tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === target.id), 1), 1);
+        // add this new definition
+        tuneList.push(target);
+    }
+
+    export function extendTune(tuneId: string, score: string) {
+        let target: Tune = tuneList.find(i => i.id === id);
+        if (target == null) {
+            // OOPS! trying to extend a non-existent Tune: 
+            // rather than fail, just create a new one
+            composeTune(tuneId, score);
+        } else {
+            target.extend(score);
+        }
+    }
 
 
 // general initialisation...

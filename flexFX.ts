@@ -382,23 +382,25 @@ namespace flexFX {
                 // update its MIDI equivalent
                 this.pitchMidi = pitchToMidi(this.pitchAverage);
             }
-
+            // create the SoundExpression
             let soundExpr = music.createSoundExpression(waveNumber, startPitch, endPitch,
                 startVolume, endVolume, duration, effectNumber, attackNumber);
-
+                
+    
             // fix the "shape" parameter for Delayed effects
             if (attack == Attack.Delayed) {
-                let sound = new soundExpression.Sound;
-                sound.src = soundExpr;
+                let tempSound = new soundExpression.Sound;
+                tempSound.src = soundExpr.getNotes();
                 if (endPitch > startPitch) {
-                    sound.shape = soundExpression.InterpolationEffect.ExponentialRising; // (faked with Sin)
+                    tempSound.shape = soundExpression.InterpolationEffect.ExponentialRising; // (faked with Sin)
                 } else {
-                    sound.shape = soundExpression.InterpolationEffect.ExponentialFalling; // (faked with Cos)
+                    tempSound.shape = soundExpression.InterpolationEffect.ExponentialFalling; // (faked with Cos)
                 }
+                soundExpr = new SoundExpression(tempSound.src);
             }
 
             // add new sound into the prototype
-            this.prototype.parts.push(sound);
+            this.prototype.parts.push(soundExpr);
             this.nParts++;
         }
 
@@ -808,14 +810,14 @@ namespace flexFX {
     // TODO add UI details
     export function composeTune(tuneId: string, score: string) {
         // first delete any existing definition having this id (works even when missing!)
-        tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === tuneId.id), 1), 1);
+        tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === tuneId), 1), 1);
         // add this new definition
         tuneList.push(new Tune(tuneId, score));
     }
 
     // TODO add UI details
     export function extendTune(tuneId: string, score: string) {
-        let target: Tune = tuneList.find(i => i.id === id);
+        let target: Tune = tuneList.find(i => i.id === tuneId);
         if (target == null) {
             // OOPS! trying to extend a non-existent Tune: 
             // rather than fail, just create a new one

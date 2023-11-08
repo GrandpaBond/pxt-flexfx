@@ -20,8 +20,11 @@ to finish, or you can let it play in the background while executing other code. 
 play another one, the new Play will be added to a **Play-list**, so you can queue-up several performances to happen 
 in the background.
 
+A ``||flexFX:flexFX||`` can also be used to play a melody. There is a small selection of built-in tunes,
+or you can compose your own. (see ``||flexFX:Playing Tunes||`` below).
+
 You can interact with this Play-list to synchronise the sound-track with your other codes 
-(see ``||flexFX:Background Play-list||`` below).
+(see 
 
 If you need a sound that is not built-in, you can even create your own (see ``||flexFX:Building a FlexFX||`` below).
 

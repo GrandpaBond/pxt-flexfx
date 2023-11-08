@@ -144,6 +144,7 @@ namespace flexFX {
         //% block="beethoven"
         Beethoven
     }
+    
     // constants used in conversions between frequency & MIDI note-number:
     // a SEMITONE ratio = 12th root of 2 (as 12 semitones make an octave, which doubles the frequency)
     const SEMILOG = 0.057762265047;    // =  Math.log(2) / 12;
@@ -169,7 +170,7 @@ namespace flexFX {
 
     // (Basically, a TuneStep is a musical Note, but renamed to avoid confusion with the native "Note")
     class TuneStep {
-        name: String = ""; // e.g. "C4" for middle-C
+        name: string = ""; // e.g. "C4" for middle-C
         ticks: number = 0; // note-length, measured in quarter-beat "ticks"
         midi: number = 0; // standard MIDI note-number
         pitch: number = 0; // frequency in Hz
@@ -291,7 +292,7 @@ namespace flexFX {
         fullDuration: number; // overall cumulative duration of prototype
         peakVolume: number; // remembers the highest volume [0-1020] in the prototype
         pitchAverage: number; // approximate average pitch (in Hz)
-        pitchMidi: number; // midi note-number of average pitch (counts semitones)
+        pitchMidi: number; // midi note-number of average pitch (counted in semitones)
         pitchProfile: number[];  // contains [nParts + 1] scalable frequencies
         volumeProfile: number[];  // contains [nParts + 1] scalable volumes [0-1020]
         durationProfile: number[]; // contains [nParts] scalable durations
@@ -384,8 +385,7 @@ namespace flexFX {
             }
             // create the SoundExpression
             let soundExpr = music.createSoundExpression(waveNumber, startPitch, endPitch,
-                startVolume, endVolume, duration, effectNumber, attackNumber);
-                
+                startVolume, endVolume, duration, effectNumber, attackNumber);      
     
             // fix the "shape" parameter for Delayed effects
             if (attack == Attack.Delayed) {
@@ -404,7 +404,7 @@ namespace flexFX {
             this.nParts++;
         }
 
-        // Create a scaled performance (called a Play) of this FlexFX
+        /* Create a scaled performance (called a Play) of this FlexFX
         makeScaledPlay(pitchSteps: number, volumeLimit: number, newDuration: number): Play {
             let play = new Play;
             let sound = new soundExpression.Sound;
@@ -432,13 +432,13 @@ namespace flexFX {
             }
             return (play);
         }
-        
+        */
 
         // Create a specifically tuned performance of this FlexFX
-        makeTunedPlay(midi: number, volumeLimit: number, newDuration: number): Play {
+        makeTunedPlay(pitch: number, volumeLimit: number, newDuration: number): Play {
             let play = new Play;
             let sound = new soundExpression.Sound;
-            let pitchRatio = midiToPitch(midi)/this.pitchAverage;
+            let pitchRatio = pitch/this.pitchAverage;
             let volumeRatio = 1.0;
             let durationRatio = 1.0;
             if (volumeLimit != 0) volumeRatio = volumeLimit / this.peakVolume;
@@ -554,6 +554,32 @@ namespace flexFX {
     /**
      * Perform a FlexFX
      */
+    //% block="play FlexFX $id waiting till finished: $wait || at pitch $pitch with maximum volume: $volumeLimit lasting (ms) $newDuration"
+    //% group="Playing"
+    //% inlineInputMode=inline
+    //% expandableArgumentMode="enabled"
+    //% weight=310
+    //% id.defl="ting"
+    //% pitch.min=50 pitch.max=2000 pitch.defl=0
+    //% vol.min=0 vol.max=255 vol.defl=200
+    //% ms.min=0 ms.max=10000 ms.defl=800
+    //% wait.defl=true
+    export function playFlexFX(id: string, wait: boolean = true,
+        pitch: number = 0, volumeLimit: number = 0, newDuration: number = 0) {
+        let target: FlexFX = flexFXList.find(i => i.id === id);
+        if (target != null) {
+            // compile and add our Play onto the playList 
+            playList.push(target.makeTunedPlay(pitch, volumeLimit, newDuration));
+            if (wait) {
+                awaitAllFinished(); // make sure it has been played
+            }
+        }
+    }
+
+
+    /** Old version, 
+     * Perform a FlexFX
+     
     //% block="play FlexFX $id waiting till finished: $wait || with pitch changed by (semitones) $pitchSteps with maximum volume: $volumeLimit lasting (ms) $newDuration"
     //% group="Playing"
     //% inlineInputMode=inline
@@ -575,42 +601,7 @@ namespace flexFX {
             }
         }
     }
-
-
-    /*
-     * Use a FlexFX to play a tune  
-     */
-    //% block="play tune $tuneId using FlexFX $flexId waiting till finished: $wait || with maximum volume: $volumeLimit lasting (ms) $tuneDuration"
-    //% group="Playing"
-    //% inlineInputMode=inline
-    //% expandableArgumentMode="enabled"
-    //% weight=310
-    //% flexId.defl="woof"
-    //% tuneId.defl="happy birthday"
-    //% wait.defl=true
-    export function playTune(tuneId: string, flexId: string, wait: boolean = true, 
-        volumeLimit: number = 0, tuneDuration: number = 0) {
-        let tune: Tune = tuneList.find(i => i.id === tuneId);
-        let flex: FlexFX = flexFXList.find(i => i.id === flexId);
-        if ((flex != null) && (flex != null)) {
-            tickMs = tuneDuration / tune.nTicks; // set global tick-rate (i.e speed) to achieve tuneDuration
-            while (tune.notes.length > 0)
-            {   let note = tune.notes[0];
-                let steps = note.midi - flex.pitchMidi;
-                let ms = note.ticks * tickMs;
-                if (note.volume == 0) { // if this note is a Rest, play silence
-                    playSilence(ms);
-                } else {
-                // compile and add our Play onto the playList 
-                    playList.push(flex.makeScaledPlay(steps, volumeLimit, ms));  // scaled version
-                }
-                if (wait) {
-                    awaitAllFinished(); // make sure it has been played
-                }
-            }
-        }
-    }
-
+*/
     /**
      * Selector to choose a built-in Tune by name
       */
@@ -626,6 +617,45 @@ namespace flexFX {
         }
         return "beethoven";
     }
+
+
+    /*
+     * Use a FlexFX to play a tune  
+     */
+    //% block="play tune $tuneId using FlexFX $flexId waiting till finished: $wait || with maximum volume: $volumeLimit lasting (ms) $tuneDuration"
+    //% group="Playing"
+    //% inlineInputMode=inline
+    //% expandableArgumentMode="enabled"
+    //% weight=310
+    //% flexId.defl="woof"
+    //% tuneId.defl="happy birthday"
+    //% wait.defl=true
+    //% volumeLimit.defl=200
+    //% tuneDuration.defl=0
+    export function playTune(tuneId: string, flexId: string, wait: boolean = true, 
+        volumeLimit: number = 0, tuneDuration: number = 0) {
+        let tune: Tune = tuneList.find(i => i.id === tuneId);
+        let flex: FlexFX = flexFXList.find(i => i.id === flexId);
+        if ((flex != null) && (flex != null)) {
+            if (tuneDuration != 0) {
+                tickMs = tuneDuration / tune.nTicks; // set global tick-rate (i.e speed) to achieve tuneDuration
+            }
+            while (tune.notes.length > 0)
+            {   let note = tune.notes[0];
+                let ms = note.ticks * tickMs;
+                if (note.volume == 0) { // if this note is a Rest, play silence
+                    playSilence(ms);
+                } else {
+                // compile and add our Play onto the playList 
+                    playList.push(flex.makeTunedPlay(note.pitch, volumeLimit, ms));
+                }
+                if (wait) {
+                    awaitAllFinished(); // make sure it has been played
+                }
+            }
+        }
+    }
+
 
     /**
      * Await start of next FlexFX on the play-list

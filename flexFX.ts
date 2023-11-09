@@ -438,9 +438,10 @@ namespace flexFX {
         makeTunedPlay(pitch: number, volumeLimit: number, newDuration: number): Play {
             let play = new Play;
             let sound = new soundExpression.Sound;
-            let pitchRatio = pitch/this.pitchAverage;
+            let pitchRatio = 1.0;
             let volumeRatio = 1.0;
-            let durationRatio = 1.0;
+            let durationRatio = 1.0; 
+            if (pitch != 0) pitch = pitch / this.pitchAverage;
             if (volumeLimit != 0) volumeRatio = volumeLimit / this.peakVolume;
             if (newDuration != 0) durationRatio = newDuration / this.fullDuration;
             // apply ratios (where changed from 1.0) to relevant fields of each part in turn

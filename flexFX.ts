@@ -454,7 +454,7 @@ namespace flexFX {
                     sound.volume = this.goodVolume(this.volumeProfile[i] * volumeLimit);
                     sound.endVolume = this.goodVolume(this.volumeProfile[i + 1] * volumeLimit);
                 }
-                if (volumeRatio != 1.0) {
+                if (durationRatio != 1.0) {
                     sound.duration = this.goodDuration(this.durationProfile[i] * durationRatio);
                 }
                 play.parts[i] = new SoundExpression(sound.src); // modified string

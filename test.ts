@@ -2,7 +2,8 @@
 
 // perform a built-in FlexFX with all the defaults
 flexFX.playFlexFX("ting", true);
-/*********************
+pause(1000);
+
 
 // perform the simple built-in chime flexFX
 flexFX.playFlexFX("ting", true, Note.G5, 180, 400); // up a fifth
@@ -219,4 +220,3 @@ while (flexFX.isActive()) {
         `);
     basic.pause(30);
 }
-******************/

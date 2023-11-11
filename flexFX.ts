@@ -171,15 +171,15 @@ namespace flexFX {
     // (Basically, a TuneStep is a musical Note, but renamed to avoid confusion with the native "Note")
     class TuneStep {
         name: string = ""; // e.g. "C4" for middle-C
-        ticks: number = 0; // note-length, measured in quarter-beat "ticks"
+        ticks: number = 0; // note-extent, measured in quarter-beat "ticks"
         midi: number = 0; // standard MIDI note-number
         pitch: number = 0; // frequency in Hz
         volume: number = 0;  // UI volume [0..255] (quadrupled internally)
 
-        // create using a 3-part specifier: {ticks}{key}{octave}
+        // create using a 3-part EKO-notation specifier: {extent}{key}{octave}
         constructor(spec: string) {
             let chars = spec;
-            // parse ticks [0-9]*
+            // parse {extent} in ticks [0-9]*
  
             let code = chars.charCodeAt(0);
             while ((code > 47) && (code < 58)) {
@@ -188,12 +188,12 @@ namespace flexFX {
                 code = chars.charCodeAt(0);
             }
 
-            this.name = chars; // save the note-name
+            this.name = chars; // save the note-name {Key}{Octave}
 
-        // for a silent musical rest, {key} = "R" and {octave} is absent
+        // for a silent musical rest, {Key} = "R" and {Octave} is absent
             if (chars[0] != "R") {
                 this.volume = 255; // remains at 0 for special-case musical Rests
-                // parse key as [A-G]
+                // parse {key} as [A-G]
                 let key = 2 * ((code - 60) % 7);
                 if (key > 4) key--;
                 chars = chars.slice(1);
@@ -207,7 +207,7 @@ namespace flexFX {
                     key--;
                     chars = chars.slice(1);
                 }
-                // parse octave as [0-9]*
+                // parse {Octave} as [0-9]*
                 let octave = 0;
                 code = chars.charCodeAt(0);
                 while ((code > 47) && (code < 58)) {
@@ -232,7 +232,7 @@ namespace flexFX {
         // TODO:For a more nuanced performance, add this per-note volumes array:
         // dynamic: number[]; // ? but how to specify dynamics ?
 
-        // deconstruct the source-string of note-specifiers
+        // deconstruct the source-string of EKO note-specifiers
         constructor(tuneId: string, source: string) {
             this.id = tuneId;
             this.notes = [];
@@ -335,7 +335,7 @@ namespace flexFX {
             let v = this.goodVolume(startVolume*4); // internally, volumes are [0-1020]
             this.volumeProfile.push(v);                         // volumeProfile[0]
             this.peakVolume = v; // ...until proven otherwise
-            
+            this.pitchAverage = startPitch;  
         }
 
         // add the details of the next part (ensuring all parameters are sensible)
@@ -357,7 +357,7 @@ namespace flexFX {
             let startPitch = this.pitchProfile[this.nParts];
             let startVolume = this.volumeProfile[this.nParts]
     
-            if (wave = Wave.Silence) {
+            if (wave == Wave.Silence) {
                 // ensure this part plays silently, while preserving the end-point of the previous part 
                 // and the start-point of any following part
                 startVolume = 0;

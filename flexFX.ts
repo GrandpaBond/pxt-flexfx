@@ -159,7 +159,7 @@ namespace flexFX {
     // convert a Midi note-number to its frequency in Hz
     // (based on A4 = 440 Hz = MIDI 69)
     export function midiToPitch(midi: number): number {
-        return (440 * 2 ^ ((midi - 69) / 12));
+        return (440 * (2 ** ((midi - 69) / 12)));
     }
 
     // note-lengths in ticks (quarter-beats)
@@ -335,6 +335,7 @@ namespace flexFX {
             let v = this.goodVolume(startVolume*4); // internally, volumes are [0-1020]
             this.volumeProfile.push(v);                         // volumeProfile[0]
             this.peakVolume = v; // ...until proven otherwise
+            
         }
 
         // add the details of the next part (ensuring all parameters are sensible)
@@ -377,7 +378,7 @@ namespace flexFX {
                 }
                 let pitch = (blend * startPitch) + ((1-blend) * endPitch);
                 // update overall average pitch, weighted by duration of each part
-                let kilocycles = (this.pitchAverage*this.fullDuration + pitch*d);
+                let kilocycles = (this.pitchAverage*this.fullDuration + pitch*d);  // BUG HERE!
                 this.fullDuration += d;
                 this.pitchAverage = kilocycles / this.fullDuration;
                 // update its MIDI equivalent

@@ -1,13 +1,13 @@
 // *********** test codes **********
 
 // perform a built-in FlexFX with all the defaults
-flexFX.playFlexFX("TING", true);
+flexFX.playFlexFX("ting", true);
 /*********************
 
 // perform the simple built-in chime flexFX
-flexFX.playFlexFX("TING", true, Note.G5, 180, 400); // up a fifth
-flexFX.playFlexFX("TING", true, Note.E5, 180, 400); // up a major 3rd
-flexFX.playFlexFX("TING", true, Note.C5, 250, 1600);
+flexFX.playFlexFX("ting", true, Note.G5, 180, 400); // up a fifth
+flexFX.playFlexFX("ting", true, Note.E5, 180, 400); // up a major 3rd
+flexFX.playFlexFX("ting", true, Note.C5, 250, 1600);
 pause(1000);
 
 

@@ -20,13 +20,13 @@ to finish, or you can let it play in the background while executing other code. 
 play another one, the new Play will be added to a **Play-list**, so you can queue-up several performances to happen 
 in the background.
 
-A ``||flexFX:flexFX||`` can also be used to play a melody. There is a small selection of built-in tunes,
-or you can compose your own. (see ``||flexFX:Playing Tunes||`` below).
-
 You can interact with this Play-list to synchronise the sound-track with your other codes 
-(see 
+(see ``||flexFX:Background Play-list||`` below).
 
 If you need a sound that is not built-in, you can even create your own (see ``||flexFX:Building a FlexFX||`` below).
+
+A ``||flexFX:flexFX||`` can also be used to play a melody. There is a small selection of built-in Tunes,
+or you can compose your own, using a simple text notation (see ``||flexFX:Playing and Composing Tunes||`` below).
 
 # Playing a selected FlexFX #flexFX-playBuiltInFlexFX
 ```sig
@@ -159,6 +159,52 @@ This reporter block returns the current length of the (unplayed) ``||flexFX:Play
 	flexFX.deletePlaylist()  
 ```
 Deletes from the ``||flexFX:Play-list||`` everything left unplayed.
+
+
+# Playing and Composing Tunes
+As well as playing individual performances, a ``||flexFX:flexFX||`` can also be used to play a melody.
+This sequence of notes is called a ``||flexFX:Tune||``. There is a small selection of built-in Tunes, 
+or you can compose your own. 
+Each Tune is given a text-string identifier.
+FlexFX Tunes are written out as text-strings using a special code (EKO_notation).
+
+## EKO-notation
+Notes are defined by three-part EKO codes, separated by spaces.
+ Extent: The first part of the code is a number showing how long the note should last (measured in quarter-beat ticks).
+ Key: This is followed by the key-letter [CDEFGAB]. For the black keys (on a piano) you add "#" (sharp) to the key below, or "b" (flat) to the key above.
+ Octave: The last part of the code gives the octave-number [1‐8], where C4 is middle-C
+
+
+Default beats-per-minute (BPM):   120	
+Default quarter-beat tick (ms):	     125
+
+Extent	length	           ms    per-Sec  per-Min
+    1	   semi-quaver	  125	8.00	480
+    2	   quaver	                  250	4.00	240
+    4	   crotchet	          500	2.00	120
+    6	   dotted-crotchet	  750	1.33	80
+    8	   minim	                1000	1.00	60
+  12	   dotted-minim	1500	0.67	40
+  16	   semibreve	        2000	0.50	30
+
+So, the first line of "Happy Birthday" might be scored as  "2G4 1G4 3A4 3G4 3C5 6B4".
+
+
+
+###reminder
+Melodies are often written down as text using ABC-notation. Although not as compact, our EKO-notation is far more straightforward and easier for beginners to use.
+###
+
+composeTune(tuneId,score)
+
+The ##tuneId## is the song-title. 
+The ##score## is simply a list of the notes in the melody.
+
+
+
+extendTune(tuneId,score)
+
+For all but the shortest melody, the score would get unmanageably long, so by following composeTune() with one or more calls to extendTune() allows you to write it out a line at a time.
 	
 # Lip-sync Example
 So for example this code snippet would choreograph a crying face, alternating the two icons to achieve lip-sync. 

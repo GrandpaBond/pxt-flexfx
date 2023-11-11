@@ -8,7 +8,8 @@
     "files": [
         "flexFX.ts",
         "README.md",
-        "tutorial-info-cache.json"
+        "tutorial-info-cache.json",
+        "main.ts"
     ],
     "testFiles": [
         "test.ts"

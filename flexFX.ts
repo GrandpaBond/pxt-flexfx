@@ -774,7 +774,7 @@ namespace flexFX {
     //% group="Creating"
     //% inlineInputMode=external
     //% advanced=true
-    //% weight=130
+    //% weight=150
     //% id.defl="new"
     //% startPitch.min=25 startPitch.max=400 startPitch.defl=100
     //% startVolume.min=0 startVolume.max=100 startVolume.defl=100
@@ -813,7 +813,7 @@ namespace flexFX {
     //% group="Creating"
     //% inlineInputMode=external
     //% advanced=true
-    //% weight=130
+    //% weight=140
     //% id.defl="new"
     //% endPitch.min=10 endPitch.max=400 endPitch.defl=100
     //% endVolume.min=0 endVolume.max=100 endVolume.defl=100
@@ -838,7 +838,20 @@ namespace flexFX {
         storeFlexFX(target);
     }
 
-    // TODO add UI details
+    /**
+         * Compose a Tune using EKO-notation (Extent-Key-Octave).
+         *
+         * @param id  the identifier of the Tune to be created or replaced
+         * @param score  a text-string listing the notes in the Tune
+         */
+
+    //% block="compose Tune: $id with notes: $score"
+    //% group="Creating"
+    //% inlineInputMode=external
+    //% advanced=true
+    //% weight=130
+    //% id.defl="newTune"
+    //% score.defl=""
     export function composeTune(tuneId: string, score: string) {
         // first delete any existing definition having this id (works even when missing!)
         tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === tuneId), 1), 1);
@@ -846,7 +859,20 @@ namespace flexFX {
         tuneList.push(new Tune(tuneId, score));
     }
 
-    // TODO add UI details
+    /**
+          * Add notes to a Tune using EKO-notation (Extent-Key-Octave).
+          *
+          * @param id  the identifier of the Tune to be extended
+          * @param score  a text-string listing the notes to be added
+          */
+
+    //% block="extend Tune: $id with extra notes: $score"
+    //% group="Creating"
+    //% inlineInputMode=external
+    //% advanced=true
+    //% weight=120
+    //% id.defl="newTune"
+    //% score.defl=""
     export function extendTune(tuneId: string, score: string) {
         let target: Tune = tuneList.find(i => i.id === tuneId);
         if (target == null) {
@@ -926,7 +952,6 @@ namespace flexFX {
         defineFlexFX("siren", 760, 160, Wave.Sawtooth, Attack.Even, Effect.None, 800, 200, 450);
         extendFlexFX("siren", Wave.Silence, Attack.Even, Effect.None, 560, 200, 100);
         extendFlexFX("siren", Wave.Sawtooth, Attack.Even, Effect.None, 600, 160, 450);
-
         // angry shout
         defineFlexFX("shout", 120, 125, Wave.Sawtooth, Attack.Fast, Effect.None, 400, 200, 300);
         extendFlexFX("shout", Wave.Sawtooth, Attack.Even, Effect.None, 360, 200, 75);
@@ -963,16 +988,17 @@ namespace flexFX {
         extendTune("newWorld", "4D3 4E3 4G3 4E3 8D3 8R");   // line 2
         extendTune("newWorld", "6E3 2G3 8G3 6E3 2D3 8C3");  // line 2
         extendTune("newWorld", "4D3 4E3 6D3 2C3 8C3 8R");   // line 2
-        composeTune("bach", ""); // line 1
-        composeTune("bach", "");  // line 2
-        composeTune("odeToJoy", "");// line 1
-        extendTune("odeToJoy", ""); // line 2
-        extendTune("odeToJoy", ""); // line 3
-        extendTune("odeToJoy", ""); // line 4
-        extendTune("odeToJoy", ""); // line 5
-        extendTune("odeToJoy", ""); // line 6
-        extendTune("odeToJoy", ""); // line 7
-        extendTune("odeToJoy", ""); // line 8
+        composeTune("odeToJoy", "4B4 4B4 4C5 4D5 4D5 4C5 4B4 4A4");     // line 1
+        extendTune("odeToJoy", "4G4 4G4 4A4 4B4 6B4 2A4 8A4");         // line 2
+        extendTune("odeToJoy", "4B4 4B4 4C5 4D5 4D5 4C5 4B4 4A4");     // line 3
+        extendTune("odeToJoy", "4G4 4G4 4A4 4B4 6A4 2G4 8G4");         // line 4
+        extendTune("odeToJoy", "4A4 4A4 4B4 4G4 4A4 2B4 2C5 4B4");     // line 5
+        extendTune("odeToJoy", "4G4 4A4 2B4 2C5 4B4 4A4 4G4 4A4 4D4"); // line 6
+        extendTune("odeToJoy", "8B4 4B4 4C5 4D5 4D5 4C5 4B4 4A4");     // line 7
+        extendTune("odeToJoy", "4G4 4G4 4A4 4B4 6A4 2G4 8G4");         // line 8
+        composeTune("bachViolin", ""); // line 1
+        composeTune("bachViolin", "");  // line 2
+
     }
 
     populateBuiltInFlexFXs();

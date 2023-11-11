@@ -1,7 +1,7 @@
 // *********** test codes **********
-
+/************** 
 // perform a built-in FlexFX with all the defaults
-flexFX.playFlexFX("ting", true);
+flexFX.playTune("birthday","violin",true,100,5000);
 pause(1000);
 
 
@@ -36,15 +36,12 @@ flexFX.playFlexFX("horn", true, Note.E3, 255, 600);
 flexFX.playFlexFX("horn", true, Note.D3, 255, 2400);
 
 pause(1000);
-
+***********/
 // create a flexFX for a two-tone police-siren (middle part is silent)
-flexFX.defineFlexFX("police", flexFX.Wave.Sawtooth, 760, 800, 160, 200, 450,
-    flexFX.Effect.None, flexFX.Attack.Even);
+flexFX.defineFlexFX("police", 760, 160, flexFX.Wave.Sawtooth, flexFX.Attack.Even, flexFX.Effect.None, 800, 200, 450);
 // (add a silent gap in the middle)
-flexFX.extendFlexFX("police", flexFX.Wave.Silence, 0, 0, 100,
-    flexFX.Effect.None, flexFX.Attack.Even);
-flexFX.extendFlexFX("police", flexFX.Wave.Sawtooth, 600, 160, 450,
-    flexFX.Effect.None, flexFX.Attack.Even);
+flexFX.extendFlexFX("police", flexFX.Wave.Silence, flexFX.Attack.Even, flexFX.Effect.None, 560, 200, 100);
+flexFX.extendFlexFX("police", flexFX.Wave.Sawtooth, flexFX.Attack.Even, flexFX.Effect.None, 600, 160, 450);
 
 // queue-up a sequence of Plays on the Play-list (complete with Doppler-shift)
 flexFX.playFlexFX("police", false, 800, 16, 1000);
@@ -59,11 +56,12 @@ flexFX.playFlexFX("police", false, 750, 32, 1000);
 flexFX.playFlexFX("police", false, 750, 16, 1000);
 
 // while the Play-list is playing, flash the blue light (sort of)
+flexFX.startPlaying();
 while (flexFX.isActive()) {
     basic.showIcon(IconNames.SmallDiamond);
     basic.showIcon(IconNames.Diamond);
 }
-
+/***************** 
 pause(1000);
 
 // queue-up a sequence of Plays on the Play-list (J.S.Bach)
@@ -220,3 +218,4 @@ while (flexFX.isActive()) {
         `);
     basic.pause(30);
 }
+**************/

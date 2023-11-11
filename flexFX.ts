@@ -152,14 +152,15 @@ namespace flexFX {
     const DELTA = 36.3763165623;       // = (Math.log(440) / SEMILOG) - 69;
  
     // convert a frequency in Hz to its Midi note-number 
+    // (retaining microtonal fractions)
     export function pitchToMidi(pitch: number): number {
         return ((Math.log(pitch) / SEMILOG) - DELTA);
     }
 
-    // convert a Midi note-number to its frequency in Hz
+    // convert a Midi note-number to nearest integer frequency in Hz
     // (based on A4 = 440 Hz = MIDI 69)
     export function midiToPitch(midi: number): number {
-        return (440 * (2 ** ((midi - 69) / 12)));
+        return (Math.round(440 * (2 ** ((midi - 69) / 12))));
     }
 
     // note-lengths in ticks (quarter-beats)
@@ -362,7 +363,7 @@ namespace flexFX {
                 // and the start-point of any following part
                 startVolume = 0;
                 endVolume = 0;
-                waveNumber = WaveShape.Sine; // irrelevant, as silent!
+                waveNumber = WaveShape.Sine; // arbitrarily, as silent!
             } else {
                 // compute average pitch of this part
                 let blend = 0;
@@ -378,12 +379,13 @@ namespace flexFX {
                 }
                 let pitch = (blend * startPitch) + ((1-blend) * endPitch);
                 // update overall average pitch, weighted by duration of each part
-                let kilocycles = (this.pitchAverage*this.fullDuration + pitch*d);  // BUG HERE!
-                this.fullDuration += d;
-                this.pitchAverage = kilocycles / this.fullDuration;
-                // update its MIDI equivalent
+                let kilocycles = (this.pitchAverage*this.fullDuration + pitch*d);
+                this.pitchAverage = kilocycles / (this.fullDuration + d);
+                // update its MIDI equivalent (including microtonal fractions)
                 this.pitchMidi = pitchToMidi(this.pitchAverage);
             }
+            this.fullDuration += d; // always add duration, even if silent
+
             // create the SoundExpression
             let soundExpr = music.createSoundExpression(waveNumber, startPitch, endPitch,
                 startVolume, endVolume, duration, effectNumber, attackNumber);      
@@ -437,14 +439,16 @@ namespace flexFX {
 
         // Create a specifically tuned performance of this FlexFX
         makeTunedPlay(pitch: number, volumeLimit: number, newDuration: number): Play {
+            let scaledVolumeLimit = volumeLimit * 4;
             let play = new Play;
             let sound = new soundExpression.Sound;
             let pitchRatio = 1.0;
             let volumeRatio = 1.0;
-            let durationRatio = 1.0; 
-            if (pitch != 0) pitch = pitch / this.pitchAverage;
-            if (volumeLimit != 0) volumeRatio = volumeLimit / this.peakVolume;
-            if (newDuration != 0) durationRatio = newDuration / this.fullDuration;
+            let durationRatio = 1.0;  
+            // code defensively!
+            if (pitch*this.pitchAverage != 0) pitchRatio = pitch / this.pitchAverage;
+            if (scaledVolumeLimit * this.peakVolume != 0) volumeRatio = scaledVolumeLimit / this.peakVolume;
+            if (newDuration * this.fullDuration != 0) durationRatio = newDuration / this.fullDuration;
             // apply ratios (where changed from 1.0) to relevant fields of each part in turn
             for (let i = 0; i < this.nParts; i++) {
                 sound.src = this.prototype.parts[i].getNotes(); // current string
@@ -452,8 +456,8 @@ namespace flexFX {
                 sound.endFrequency = this.goodPitch(this.pitchProfile[i + 1] * pitchRatio);
                 
                 if (volumeRatio != 1.0) {
-                    sound.volume = this.goodVolume(this.volumeProfile[i] * volumeLimit);
-                    sound.endVolume = this.goodVolume(this.volumeProfile[i + 1] * volumeLimit);
+                    sound.volume = this.goodVolume(this.volumeProfile[i] * volumeRatio);
+                    sound.endVolume = this.goodVolume(this.volumeProfile[i + 1] * volumeRatio);
                 }
                 if (durationRatio != 1.0) {
                     sound.duration = this.goodDuration(this.durationProfile[i] * durationRatio);
@@ -484,14 +488,14 @@ namespace flexFX {
     // in turn, play everything currently on the playList
     function player() {
         let play = new Play;
-        let soundString = "";
-        while ((playList.length > 0) && !playerStopped) { 
+        while ((playList.length > 0) && !playerStopped) {
+            let soundString = "";
             play = playList.shift();
             let sound = play.parts[0].getNotes();
-            // look out for silences that have just one sound-string of "snnn..."
+            // look out for "silences" that have just one sound-string of "snnn..."
             if (sound.charAt(0) == "s") {
                 let time = parseInt("0" + sound.slice(1).trim());
-                basic.pause(time); // wait around 
+                basic.pause(time); // just wait around... 
             } else {
             // flatten the parts[] of sound-strings into a single comma-separated string
                 while (play.parts.length > 0) { 
@@ -643,7 +647,7 @@ namespace flexFX {
                 tickMs = tuneDuration / tune.nTicks; // set global tick-rate (i.e speed) to achieve tuneDuration
             }
             while (tune.notes.length > 0)
-            {   let note = tune.notes[0];
+            {   let note = tune.notes.shift();
                 let ms = note.ticks * tickMs;
                 if (note.volume == 0) { // if this note is a Rest, play silence
                     playSilence(ms);

@@ -1,10 +1,9 @@
 // *********** test codes **********
 /***
+ ***/
 // perform a built-in FlexFX with all the defaults
-basic.showIcon(IconNames.Target);
-//flexFX.playTune("birthday","whale");
-
-flexFX.playTune("birthday", "whale",true, 100,10000,-12);
+basic.showIcon(IconNames.Target); 
+flexFX.playFlexFX("uhoh");
 basic.showIcon(IconNames.Yes);
 pause(2000);
 
@@ -28,7 +27,7 @@ flexFX.playFlexFX("miaow", true, 800, 255, 1500);
 basic.showIcon(IconNames.Yes);
 pause(2000);
 
-// perform "New World" theme on the 2-part horn as single notes
+// perform "New World" theme as individual performances
 basic.showIcon(IconNames.Target);
 flexFX.playFlexFX("horn", true, Note.E3, 255, 900);
 flexFX.playFlexFX("horn", true, Note.G3, 255, 300);
@@ -44,10 +43,9 @@ flexFX.playFlexFX("horn", true, Note.D3, 255, 2400);
 
 basic.showIcon(IconNames.Yes);
 pause(2000);
-
 // create a flexFX for a two-tone police-siren (middle part is silent)
 basic.showIcon(IconNames.Target);
-flexFX.defineFlexFX("police", 760, 160, flexFX.Wave.Sawtooth, flexFX.Attack.Even, flexFX.Effect.None, 800, 200, 450);
+flexFX.defineFlexFX("police", 760, 160, flexFX.Wave.Sawtooth, flexFX.Attack.Delayed, flexFX.Effect.None, 800, 200, 450);
 // (add a silent gap in the middle)
 flexFX.extendFlexFX("police", flexFX.Wave.Silence, flexFX.Attack.Even, flexFX.Effect.None, 560, 200, 100);
 flexFX.extendFlexFX("police", flexFX.Wave.Sawtooth, flexFX.Attack.Even, flexFX.Effect.None, 600, 160, 450);
@@ -170,14 +168,11 @@ flexFX.playFlexFX("tweet", false, 600, 250, 1000);
 flexFX.playFlexFX("tweet", false, 800, 250, 1000);
 basic.showNumber(flexFX.waitingToPlay());
 pause(1000);
-basic.showIcon(IconNames.No);
 basic.clearScreen();
-basic.showIcon(IconNames.No);
-basic.clearScreen();
-basic.showIcon(IconNames.No);
+basic.showString("del:");
 flexFX.deletePlaylist();
-pause(1000);
 basic.showNumber(flexFX.waitingToPlay());
+pause(3000);
 
 basic.showIcon(IconNames.Yes);
 pause(2000);
@@ -188,10 +183,12 @@ flexFX.playTune("birthday", "tweet");
 
 basic.showIcon(IconNames.Yes);
 pause(2000);
-***/
+ 
 // check asynchrony of tunes
 basic.showIcon(IconNames.Target);
-flexFX.playTune("birthday", "woof", false, 200, 6000, -24);
+flexFX.playTune("birthday", "hum", false, 200, 6000, -24);
+basic.showNumber(flexFX.waitingToPlay());
+pause(1000);
 flexFX.startPlaying();
 while (flexFX.isActive()) {
     images.iconImage(IconNames.StickFigure).showImage(-1, 150);
@@ -205,12 +202,12 @@ pause(2000);
 
 // check volume/duration overrides
 basic.showIcon(IconNames.Target);
-flexFX.playTune("newWorld", "horn",true,100,20000);
+flexFX.playTune("newWorld", "horn",true,100,10000);
 
 basic.showIcon(IconNames.Yes);
 pause(2000);
 
-// compose a brand new tune
+// compose a brand new tune comprising 54 notes
 basic.showIcon(IconNames.Target);
 flexFX.composeTune("edelweiss", "4E4 2G4 6D5 4C5 2G4 6F4");
 flexFX.extendTune("edelweiss", "4E4 2E4 2E4 2F4 2G4 6A4 6G4");
@@ -221,11 +218,14 @@ flexFX.extendTune("edelweiss", "4A4 2C5 4D5 2C5 6B4 6G4");
 flexFX.extendTune("edelweiss", "4E4 2G4 6D5 4C5 2G#4 6F5");
 flexFX.extendTune("edelweiss", "4E5 2G4 2G4 2A4 2B4 6C5 6C5");
 
-// Play it transposed down by a fifth, asynchronously on the chime, lasting a full minute
-flexFX.playTune("edelweiss","chime",false, 150, 60000,-7);
-
+// Play it, on the chime, asynchronously, softly,
+//    lasting a full minute, transposed down by a fifth.
+flexFX.playTune("edelweiss", "chime", false, 150, 60000, -7);
+basic.clearScreen();
+basic.showNumber(flexFX.waitingToPlay());
+pause(1000);
 flexFX.startPlaying();
-// while the Play-list is playing, keep rotating a flower!
+// while the Play-list is playing, keep rotating a snowflake!
 while (flexFX.isActive()) {
     basic.showLeds(`
         . . # . .

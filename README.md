@@ -1,6 +1,7 @@
 ```package
 pxt-flexfx=github:grandpabond/pxt-flexfx
 ```
+
 # FlexFX - Flexible Sound-effect Recipes
 Many microbit projects can be brought to life by adding sound-effects to indicate their state.
 
@@ -17,7 +18,7 @@ As its name suggests, a ``||flexFX:flexFX||`` recipe can be re-used flexibly, wi
 
 You can choose a ``||flexFX:flexFX||`` to play from a drop-down list of built-in sounds, and you can either wait for it 
 to finish, or you can let it play in the background while executing other code. If it hasn't finished when you 
-play another one, the new Play will be added to a **Play-list**, so you can queue-up several performances to happen 
+play another one, the new Play will be added to the **Play-list**, so you can queue-up several performances to happen 
 in the background.
 
 You can interact with this Play-list to synchronise the sound-track with your other codes 
@@ -25,8 +26,9 @@ You can interact with this Play-list to synchronise the sound-track with your ot
 
 If you need a sound that is not built-in, you can even create your own (see ``||flexFX:Building a FlexFX||`` below).
 
-A ``||flexFX:flexFX||`` can also be used to play a melody. There is a small selection of built-in Tunes,
-or you can compose your own, using a simple text notation (see ``||flexFX:Playing and Composing Tunes||`` below).
+A ``||flexFX:flexFX||`` can also be used as the "instrument" on which to play a melody. 
+There is a small selection of built-in Tunes, or you can compose your own, using a simple text notation. 
+(see ``||flexFX:Working with Tunes||`` below).
 
 # Playing a selected FlexFX #flexFX-playBuiltInFlexFX
 ```sig
@@ -161,51 +163,6 @@ This reporter block returns the current length of the (unplayed) ``||flexFX:Play
 Deletes from the ``||flexFX:Play-list||`` everything left unplayed.
 
 
-# Playing and Composing Tunes
-As well as playing individual performances, a ``||flexFX:flexFX||`` can also be used to play a melody.
-This sequence of notes is called a ``||flexFX:Tune||``. There is a small selection of built-in Tunes, 
-or you can compose your own. 
-Each Tune is given a text-string identifier.
-FlexFX Tunes are written out as text-strings using a special code (EKO_notation).
-
-## EKO-notation
-Notes are defined by three-part EKO codes, separated by spaces.
- Extent: The first part of the code is a number showing how long the note should last (measured in quarter-beat ticks).
- Key: This is followed by the key-letter [CDEFGAB]. For the black keys (on a piano) you add "#" (sharp) to the key below, or "b" (flat) to the key above.
- Octave: The last part of the code gives the octave-number [1‐8], where C4 is middle-C
-
-
-Default beats-per-minute (BPM):   120	
-Default quarter-beat tick (ms):	     125
-
-Extent	length	           ms    per-Sec  per-Min
-    1	   semi-quaver	  125	8.00	480
-    2	   quaver	                  250	4.00	240
-    4	   crotchet	          500	2.00	120
-    6	   dotted-crotchet	  750	1.33	80
-    8	   minim	                1000	1.00	60
-  12	   dotted-minim	1500	0.67	40
-  16	   semibreve	        2000	0.50	30
-
-So, the first line of "Happy Birthday" might be scored as  "2G4 1G4 3A4 3G4 3C5 6B4".
-
-
-
-###reminder
-Melodies are often written down as text using ABC-notation. Although not as compact, our EKO-notation is far more straightforward and easier for beginners to use.
-###
-
-composeTune(tuneId,score)
-
-The ##tuneId## is the song-title. 
-The ##score## is simply a list of the notes in the melody.
-
-
-
-extendTune(tuneId,score)
-
-For all but the shortest melody, the score would get unmanageably long, so by following composeTune() with one or more calls to extendTune() allows you to write it out a line at a time.
-	
 # Lip-sync Example
 So for example this code snippet would choreograph a crying face, alternating the two icons to achieve lip-sync. 
 
@@ -365,6 +322,58 @@ Any FlexFX can be freely modified using any of the ``||FlexFX:create...||`` bloc
 The basic rule is that if it exists, it gets changed; otherwise it is created from scratch.
 
 
+# Working with Tunes
+As well as playing individual performances, a ``||flexFX:flexFX||`` can also be used to play a melody.
+This sequence of notes is called a ``||flexFX:Tune||``. There is a small selection of built-in Tunes, 
+or you can compose your own. Each Tune has a unique text-string **title** by which is is identified.
+
+## EKO-notation
+FlexFX Tunes are written out as text-strings using a special code (EKO_notation).
+Notes are defined by three-part EKO codes, separated by spaces.
+
+ ``||flexFX:Extent||``: The first part of the code is a number showing how long the note should last (measured in quarter-beat ticks).
+
+ ``||flexFX:Key||``: This is followed by the key-letter [CDEFGAB]. For the black keys (on a piano) you add "#" (sharp) to the key below, or "b" (flat) to the key above.
+ 
+ ``||flexFX:Octave||``: The last part of the code gives the octave-number [1‐8], where C4 is middle-C.
+
+
+So, the first line of "Happy Birthday" might be scored as  "2G4 1G4 3A4 3G4 3C5 6B4".
+
+### Tempo
+The length of a tick dcontrols how fast a ``||flexFX:Tune||`` is played. The initial default speed of 120 beats-per-minute (BPM)
+means that the default quarter-beat tick lasts 125 ms.
+At this default tempo, the following table shows how the  ``||flexFX:Extent||`` relates to the musical note-length:
+
+
+| Extent | length          |ms    |per-Sec|per-Min|
+| ---:   | :-------------- | ---: | ----: | ----: |
+|   1	 | semi-quaver	   |  125 |  8.00 |   480 |
+|   2	 | quaver          |  250 |  4.00 |   240 |
+|   4	 | crotchet        |  500 |  2.00 |   120 |
+|   6	 | dotted-crotchet |  750 |  1.33 |    80 |
+|   8	 | minim           | 1000 |  1.00 |    60 |
+|  12	 | dotted-minim    | 1500 |  0.67 |    40 |
+|  16	 | semibreve       | 2000 |  0.50 |    30 |
+
+
+
+
+###reminder
+Melodies are often written down as text using ABC-notation. Although not as compact, our EKO-notation is far more straightforward and easier for beginners to use.
+###
+
+composeTune(tuneId,score)
+
+The ##tuneId## is the song-title. 
+The ##score## is simply a list of the notes in the melody.
+
+
+
+extendTune(tuneId,score)
+
+For all but the shortest melody, the score would get unmanageably long, so by following composeTune() with one or more calls to extendTune() allows you to write it out a line at a time.
+	
 -----------------------------------------------------------------------
 -----------------------------------------------------------------------
 # Acknowledgements 

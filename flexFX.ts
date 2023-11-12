@@ -153,13 +153,13 @@ namespace flexFX {
  
     // convert a frequency in Hz to its Midi note-number 
     // (retaining microtonal fractions)
-    export function pitchToMidi(pitch: number): number {
+    export function hertzToMidi(pitch: number): number {
         return ((Math.log(pitch) / SEMILOG) - DELTA);
     }
 
     // convert a Midi note-number to nearest integer frequency in Hz
     // (based on A4 = 440 Hz = MIDI 69)
-    export function midiToPitch(midi: number): number {
+    export function midiToHertz(midi: number): number {
         return (Math.round(440 * (2 ** ((midi - 69) / 12))));
     }
 
@@ -219,7 +219,7 @@ namespace flexFX {
                 // get MIDI from key & octave 
                 // (careful: MIDI for C0 is 12)
                 this.midi = 12 * (octave + 1) + key;
-                this.pitch = midiToPitch(this.midi);
+                this.pitch = midiToHertz(this.midi);
             }
         }
 
@@ -382,7 +382,7 @@ namespace flexFX {
                 let kilocycles = (this.pitchAverage*this.fullDuration + pitch*d);
                 this.pitchAverage = kilocycles / (this.fullDuration + d);
                 // update its MIDI equivalent (including microtonal fractions)
-                this.pitchMidi = pitchToMidi(this.pitchAverage);
+                this.pitchMidi = hertzToMidi(this.pitchAverage);
             }
             this.fullDuration += d; // always add duration, even if silent
 
@@ -627,8 +627,9 @@ namespace flexFX {
 
     /*
      * Use a FlexFX to play a tune  
+     * param...
      */
-    //% block="play tune $tuneId using FlexFX $flexId waiting till finished: $wait || with maximum volume: $volumeLimit lasting (ms) $tuneDuration"
+    //% block="play tune $tuneId using FlexFX $flexId waiting till finished: $wait || with maximum volume: $volumeLimit lasting (ms) $tuneDuration transposed by (semitones): $transpose"
     //% group="Playing"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
@@ -638,8 +639,9 @@ namespace flexFX {
     //% wait.defl=true
     //% volumeLimit.defl=200
     //% tuneDuration.defl=0
+    //% transpose.defl=0
     export function playTune(tuneId: string, flexId: string, wait: boolean = true, 
-        volumeLimit: number = 0, tuneDuration: number = 0) {
+        volumeLimit: number = 0, tuneDuration: number = 0, transpose: number = 0) {
         let tune: Tune = tuneList.find(i => i.id === tuneId);
         let flex: FlexFX = flexFXList.find(i => i.id === flexId);
         if ((flex != null) && (flex != null)) {
@@ -652,8 +654,13 @@ namespace flexFX {
                 if (note.volume == 0) { // if this note is a Rest, play silence
                     playSilence(ms);
                 } else {
+                    let pitch = note.pitch;
+                    if (transpose != 0) {
+                        // apply transpose to MIDI then convert to Hz
+                        pitch = midiToHertz(flex.pitchMidi+transpose);
+                    }
                 // compile and add our Play onto the playList 
-                    playList.push(flex.makeTunedPlay(note.pitch, volumeLimit, ms));
+                    playList.push(flex.makeTunedPlay(pitch, volumeLimit, ms));
                 }
                 if (wait) {
                     awaitAllFinished(); // make sure it has been played

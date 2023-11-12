@@ -1,8 +1,10 @@
 // *********** test codes **********
+/***
 // perform a built-in FlexFX with all the defaults
 basic.showIcon(IconNames.Target);
-flexFX.playTune("birthday","whale");
+//flexFX.playTune("birthday","whale");
 
+flexFX.playTune("birthday", "whale",true, 100,10000,-12);
 basic.showIcon(IconNames.Yes);
 pause(2000);
 
@@ -104,15 +106,15 @@ pause(2000);
 basic.showIcon(IconNames.Target);
 // first queue up some Plays on the Play-list, with pauses queued in-between
 flexFX.stopPlaying();  // don't start Playing yet...
-flexFX.playFlexFX("cry", false, 200, 250, 1000);
+flexFX.playFlexFX("shout", false, 200, 250, 1000);
 flexFX.playSilence(2000);
-flexFX.playFlexFX("cry", false, 300, 250, 1000);
+flexFX.playFlexFX("shout", false, 300, 250, 1000);
 flexFX.playSilence(1500);
-flexFX.playFlexFX("cry", false, 400, 250, 1000);
+flexFX.playFlexFX("shout", false, 400, 250, 1000);
 flexFX.playSilence(1000);
-flexFX.playFlexFX("cry", false, 600, 250, 1000);
+flexFX.playFlexFX("shout", false, 600, 250, 1000);
 flexFX.playSilence(800);
-flexFX.playFlexFX("cry", false, 800, 250, 1000);
+flexFX.playFlexFX("shout", false, 800, 250, 1000);
 basic.showNumber(flexFX.waitingToPlay());
 pause(500);
 basic.showIcon(IconNames.Sad);
@@ -169,7 +171,12 @@ flexFX.playFlexFX("tweet", false, 800, 250, 1000);
 basic.showNumber(flexFX.waitingToPlay());
 pause(1000);
 basic.showIcon(IconNames.No);
+basic.clearScreen();
+basic.showIcon(IconNames.No);
+basic.clearScreen();
+basic.showIcon(IconNames.No);
 flexFX.deletePlaylist();
+pause(1000);
 basic.showNumber(flexFX.waitingToPlay());
 
 basic.showIcon(IconNames.Yes);
@@ -181,10 +188,10 @@ flexFX.playTune("birthday", "tweet");
 
 basic.showIcon(IconNames.Yes);
 pause(2000);
-
+***/
 // check asynchrony of tunes
 basic.showIcon(IconNames.Target);
-flexFX.playTune("birthday", "woof",false);
+flexFX.playTune("birthday", "woof", false, 200, 6000, -24);
 flexFX.startPlaying();
 while (flexFX.isActive()) {
     images.iconImage(IconNames.StickFigure).showImage(-1, 150);
@@ -209,15 +216,15 @@ flexFX.composeTune("edelweiss", "4E4 2G4 6D5 4C5 2G4 6F4");
 flexFX.extendTune("edelweiss", "4E4 2E4 2E4 2F4 2G4 6A4 6G4");
 flexFX.extendTune("edelweiss", "4E4 2G4 6D5 4C5 2G4 6F4");
 flexFX.extendTune("edelweiss", "4E4 2G4 2G4 2A4 2B4 6C5 6C5");
-flexFX.extendTune("edelweiss", "3B5 1G4 2G4 3B4 1A4 2G4 4E4 2G4 6C5");
+flexFX.extendTune("edelweiss", "3D5 1G4 2G4 3B4 1A4 2G4 4E4 2G4 6C5");
 flexFX.extendTune("edelweiss", "4A4 2C5 4D5 2C5 6B4 6G4");
 flexFX.extendTune("edelweiss", "4E4 2G4 6D5 4C5 2G#4 6F5");
 flexFX.extendTune("edelweiss", "4E5 2G4 2G4 2A4 2B4 6C5 6C5");
 
-// Play it asynchronously on the chime, lasting a full minute
-flexFX.startPlaying();
-flexFX.playTune("edelweiss","chime",false, 150, 60000);
+// Play it transposed down by a fifth, asynchronously on the chime, lasting a full minute
+flexFX.playTune("edelweiss","chime",false, 150, 60000,-7);
 
+flexFX.startPlaying();
 // while the Play-list is playing, keep rotating a flower!
 while (flexFX.isActive()) {
     basic.showLeds(`

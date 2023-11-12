@@ -651,13 +651,13 @@ namespace flexFX {
             while (tune.notes.length > 0)
             {   let note = tune.notes.shift();
                 let ms = note.ticks * tickMs;
+                let pitch = note.pitch;
                 if (note.volume == 0) { // if this note is a Rest, play silence
                     playSilence(ms);
                 } else {
-                    let pitch = note.pitch;
                     if (transpose != 0) {
-                        // apply transpose to MIDI then convert to Hz
-                        pitch = midiToHertz(flex.pitchMidi+transpose);
+                        // apply transpose to MIDI then convert back to Hz
+                        pitch = midiToHertz(note.midi+transpose);
                     }
                 // compile and add our Play onto the playList 
                     playList.push(flex.makeTunedPlay(pitch, volumeLimit, ms));

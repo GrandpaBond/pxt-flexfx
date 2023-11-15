@@ -15,15 +15,15 @@ The core microbit function music.playSoundEffect() offers a playInBackground opt
 playSoundEffect() interrupts this, rather than queuing sounds up, so the FlexFX class therefore 
 implements its own play-list to achieve the queueing of consecutive background sounds.
 
-A sequence of pitched instrument sounds is a Tune. A flexFX.Tune can be composed using a "score" string to specify
+A sequence of pitched instrument sounds forms a Tune. A flexFX.Tune can be composed using a "score" string to specify
 the length; note-name; and octave for a series of notes. Subsequently, any FlexFX can be used to play this tune.
 
 For the novice, a (small) selection of built-in tunes is provided.
 */
 
 /* NOTE:    The built-in enums for sound effect parameters are hardly beginner-friendly!
-            By renaming them we can expose somewhat simpler concepts, but this only works 
-            if we pass them over a function-call as arguments of type: number.
+            By renaming them we can expose somewhat simpler concepts, but this only seems 
+            to work if we pass them over a function-call as arguments of type: number.
 */
 
 
@@ -407,36 +407,6 @@ namespace flexFX {
             this.nParts++;
         }
 
-        /* Create a scaled performance (called a Play) of this FlexFX
-        makeScaledPlay(pitchSteps: number, volumeLimit: number, newDuration: number): Play {
-            let play = new Play;
-            let sound = new soundExpression.Sound;
-            let pitchRatio = 1.0;
-            let volumeRatio = 1.0;
-            let durationRatio = 1.0; 
-            if (pitchSteps != 0) pitchRatio = Math.pow(SEMITONE, pitchSteps);
-            if (volumeLimit != 0) volumeRatio = volumeLimit / this.peakVolume;
-            if (newDuration != 0) durationRatio = newDuration / this.fullDuration;
-            // apply ratios (where changed from 1.0) to relevant fields of each part in turn
-            for (let i = 0; i < this.nParts; i++) {
-                sound.src = this.prototype.parts[i].getNotes(); // current string
-                if (pitchRatio != 1.0) {
-                    sound.frequency = this.goodPitch(this.pitchProfile[i] * pitchRatio);
-                    sound.endFrequency = this.goodPitch(this.pitchProfile[i + 1] * pitchRatio);
-                }
-                if (volumeRatio != 1.0) {
-                    sound.volume = this.goodVolume(this.volumeProfile[i] * volumeLimit);
-                    sound.endVolume = this.goodVolume(this.volumeProfile[i + 1] * volumeLimit);
-                }
-                if (volumeRatio != 1.0) {
-                    sound.duration = this.goodDuration(this.durationProfile[i] * durationRatio);
-                }
-                play.parts[i] = new SoundExpression(sound.src); // modified string
-            }
-            return (play);
-        }
-        */
-
         // Create a specifically tuned performance of this FlexFX
         makeTunedPlay(pitch: number, volumeLimit: number, newDuration: number): Play {
             let scaledVolumeLimit = volumeLimit * 4;
@@ -522,9 +492,9 @@ namespace flexFX {
     }
 
     // ---- UI BLOCKS ----
-    /**
-     * Selector to choose a built-in FlexFx by name
-      */
+    /** builtInFlexFX()
+     * Selector block to choose and return a built-in FlexFx by name
+     */
     //% blockId="builtin_name" block="$fx"
     //% group="Playing"
     //% weight=305
@@ -609,7 +579,7 @@ namespace flexFX {
     }
 */
     /**
-     * Selector to choose a built-in Tune by name
+     * Selector block to choose and return a built-in Tune by name
       */
     //% blockId="builtin_tune" block="$tune"
     //% group="Playing"
@@ -626,9 +596,17 @@ namespace flexFX {
 
 
     /*
-     * Use a FlexFX to play a tune  
-     * param...
+     * Use a FlexFX to play a Tune  
+     * @title  is the name of the Tune to be played.
+     * @flexId  is the name of the FlexFX to be used to play it.
+     * @wait  If "True", the Tune is played to completion. 
+     *        If "False" it will be played in the background.
+     * optional parameters:
+     * @transpose  semitone steps by which to raise (or, if negative, lower) all notes in the @Tune||`.
+     * @volumeLimit  peak volume for every note, as a number in the range 0-255.
+     * @tuneDuration  how long (in milliseconds) the overall performance will last.
      */
+
     //% block="play tune $tuneId using FlexFX $flexId waiting till finished: $wait || with maximum volume: $volumeLimit lasting (ms) $tuneDuration transposed by (semitones): $transpose"
     //% group="Playing"
     //% inlineInputMode=inline

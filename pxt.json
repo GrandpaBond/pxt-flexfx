@@ -9,7 +9,8 @@
         "flexFX.ts",
         "README.md",
         "tutorial-info-cache.json",
-        "main.ts"
+        "main.ts",
+        "temp.md"
     ],
     "testFiles": [
         "test.ts"

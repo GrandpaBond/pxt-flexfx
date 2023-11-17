@@ -8,18 +8,15 @@ Many microbit projects can be brought to life by adding sound-effects to indicat
 The ``|music:Music|`` category has a ``||music:micro:bit(V2)||`` section with blocks for **sound-expressions**. 
 These let you build some amazing sounds, but sometimes you need something a bit more complex.
 
-A ``||flexFx:flexFX||`` provides a "sound journey", following a sonic path through time that 
-flows smoothly between fixed [pitch, volume] points, simultaneously tracking the pitch-profile 
-and the volume-profile. It stitches together multiple sound-expressions to be played one after the 
-other, giving a smoothly varying result. 
+A ``||flexFx:flexFX||`` provides a "sound journey", following a sonic path through time that flows smoothly through two or more fixed points in both pitch & volume. To achieve  this, it can stitch together multiple consecutive sound-expressions to give a smoothly varying result. 
 
-As its name suggests, a ``||flexFX:flexFX||`` recipe can be re-used flexibly, with different performances
-(or Plays**) that independently scale these profiles and stretch or shrink their duration. 
+As its name suggests, once defined, a ``||flexFX:flexFX||`` recipe can be re-used flexibly for different performances
+(or **Plays**) that independently scale these pitch & volume profiles and stretch or shrink their duration. 
 You can choose which ``||flexFX:flexFX||`` to play from a drop-down list of built-in sounds.
 
 Any ``||flexFX:flexFX||`` can also be used as the "instrument" on which to play a short melody.
-You can choose from a small selection of built-in **Tunes**, automatically creating a separate
-Play for each of its notes.
+You can choose from a small selection of built-in **Tunes**: playing one automatically creates a sequence of individually tuned
+Plays, one for each of its notes.
 
 When playing an individual ``||flexFX:flexFX||`` or a Tune, you can either wait for it to finish, 
 or you can let it continue playing in the background while executing other code. If it hasn't already

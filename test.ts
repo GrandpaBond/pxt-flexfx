@@ -186,15 +186,19 @@ pause(2000);
  
 // check asynchrony of tunes
 basic.showIcon(IconNames.Target);
-flexFX.playTune("birthday", "hum", false, 200, 6000, -24);
+flexFX.playTune("birthday", "hum", false, 200, 12000, -5);
 basic.showNumber(flexFX.waitingToPlay());
 pause(1000);
 flexFX.startPlaying();
 while (flexFX.isActive()) {
     images.iconImage(IconNames.StickFigure).showImage(-1, 150);
+    pause(200);
     images.iconImage(IconNames.StickFigure).showImage(0, 150);
+    pause(200);
     images.iconImage(IconNames.StickFigure).showImage(1, 150);
+    pause(200);
     images.iconImage(IconNames.StickFigure).showImage(0, 150);
+    pause(200);
 }
 
 basic.showIcon(IconNames.Yes);

@@ -862,7 +862,7 @@ namespace flexFX {
     //% group="Play-list"
     //% weight=210
     export function setNextTempo(bpm: number) {
-        tickMs = 60000/bpm;
+        tickMs = 15000/bpm; // = (60*1000) / (4*bpm)
     }
 
 

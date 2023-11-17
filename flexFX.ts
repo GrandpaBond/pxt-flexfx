@@ -583,7 +583,7 @@ namespace flexFX {
 
     //% block="play tune $tuneId using FlexFX $flexId waiting till finished: $wait || with maximum volume: $volumeLimit lasting (ms) $tuneDuration transposed by (semitones): $transpose"
     //% group="Playing"
-    //% inlineInputMode=inline
+    //% inlineInputMode=external
     //% expandableArgumentMode="toggle"
     //% weight=310
     //% flexId.defl="woof"
@@ -848,6 +848,18 @@ namespace flexFX {
         } else {
             target.extend(score);
         }
+    }
+
+    /**
+     * sets the speed for the next Tune played 
+     * @param bpm the beats-per-minute(BPM) for the next playTune()
+     */
+    //% block="set Tune speed (beats/minute) %bpm"
+    //% bpm.defl=120
+    //% group="Play-list"
+    //% weight=210
+    export function setNextTempo(bpm: number) {
+        tickMs = 60000/bpm;
     }
 
 

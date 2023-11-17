@@ -71,9 +71,9 @@ and increasing volume. The first two performances last just 0.4 seconds each, wh
 takes 1.6 seconds to complete. 
   
  ```block 
- flexFX.playFlexFX("chime", music.Note.G4, 100, 400); 
- flexFX.playFlexFX("chime", music.Note.E4, 175, 400); 
- flexFX.playFlexFX("chime", music.Note.C4, 250, 1600); 
+ flexFX.playFlexFX("chime", true, Note.G4, 100, 400); 
+ flexFX.playFlexFX("chime", true, Note.E4, 175, 400); 
+ flexFX.playFlexFX("chime", true, Note.C4, 250, 1600); 
  ``` 
 
 ## Selecting a Tune #flexFX-builtInTune 
@@ -94,7 +94,7 @@ flexFX.playTune(title, flexId, wait, transpose, volumeLimit, tuneDuration)
  
 > ``||flexFX:flexId||`` is the name of the``||flexFX:FlexFX||`` to be used to play it.
 
-> ``||flexFX:wait||`` is a switch. If **"True"**, the Tune is played to completion. If **"False"**,  
+> ``||flexFX:wait||`` is a switch. If **"true"**, the Tune is played to completion. If **"false"**,  
  its sequence of Plays all get added to the Play-list to be played in the background. 
  (If the Play-list is currently empty, the Tune will start playing immediately.) 
  
@@ -107,6 +107,12 @@ of this performance of the Tune.
   
 > ``||flexFX:tuneDuration||`` sets how long (in milliseconds) the overall performance will last. 
 
+
+The following example uses the built-in whalesong to celebrate your birthday rather slowly:
+
+```blocks
+flexFX.playTune("birthday", "whale", true, -7, 250, 30000);
+```
 
 # Background Play-list 
 Often, a sound-effect or melody is intended to accompany other actions that require codes to be executed. 
@@ -137,12 +143,12 @@ Use this function to space-out your Plays, by adding a silent pause onto the Pla
    
 This example plays three bell-sounds in the background, separated by gaps of 1.5 seconds: 
 
-```block 
-   flexFX.playFlexFX("ting", music.Note.G5, 100, 400, true); 
+```blocks
+   flexFX.playFlexFX("ting", true, Note.G5, 100, 400); 
    flexFX.playSilence(1500); 
-   flexFX.playFlexFX("ting", music.Note.E5, 175, 400, true); 
+   flexFX.playFlexFX("ting", true, Note.E5, 175, 400); 
    flexFX.playSilence(1500); 
-   flexFX.playFlexFX("ting", music.Note.C5, 250, 1600, true); 
+   flexFX.playFlexFX("ting", true, Note.C5, 250, 1600); 
 ``` 
   
 ## Waiting for the Play-list... 
@@ -195,7 +201,7 @@ flexFX.deletePlaylist()
 Deletes from the Play-list everything left unplayed. 
 
 
-# Play-list Example:  Lip-sync
+## Play-list Example:  Lip-sync
 So for example this code snippet would choreograph a crying face, alternating the two icons to achieve lip-sync.  
 
 The code queues up some Plays of the built-in FlexFX "cry" on the Play-list,  
@@ -203,18 +209,18 @@ with different pauses queued in-between. Note that by calling ``||flexFX:stopPla
 we prevent the first Plays happening until we are ready to call ``||flexFX:startPlaying||``.  
 Within the loop, we use ``||flexFX:awaitPlayStart||`` and ``||flexFX:awaitPlayFinish||`` to synchronise the mouth-changes. 
 
-```block 
+```blocks
 // first queue up some Plays on the Play-list, with pauses queued in-between 
 flexFX.stopPlaying();  // don't start Playing yet... 
-flexFX.playFlexFX("cry", 200, 250, 1000, true); 
+flexFX.playFlexFX("cry", true, 200, 250, 1000); 
 flexFX.playSilence(2000); 
-flexFX.playFlexFX("cry", 300, 250, 1000, true); 
+flexFX.playFlexFX("cry", true, 300, 250, 1000); 
 flexFX.playSilence(1500); 
-flexFX.playFlexFX("cry", 400, 250, 1000, true); 
+flexFX.playFlexFX("cry", true, 400, 250, 1000); 
 flexFX.playSilence(1000); 
-flexFX.playFlexFX("cry", 600, 250, 1000, true); 
+flexFX.playFlexFX("cry", true, 600, 250, 1000); 
 flexFX.playSilence(800); 
-flexFX.playFlexFX("cry", 800, 250, 1000, true); 
+flexFX.playFlexFX("cry", true, 800, 250, 1000); 
 basic.showNumber(flexFX.waitingToPlay()); 
 basic.pause(500);
 
@@ -248,39 +254,39 @@ Note that each part can use a different style of sound, specified by its own **w
 ### Style: Wave-shape 
 The wave-shape sets the basic tonal quality: the spikier the wave, the harsher the sound. There are six shapes available: 
 
-``||flexFX:Pure||`` selects a Sine-wave, a smooth, clean shape giving a smooth, clean tone. 
+> ``||flexFX:Pure||`` selects a Sine-wave, a smooth, clean shape giving a smooth, clean tone. 
 
-``||flexFX:Buzzy||`` selects a Square-wave containing harmonics, partial tones that are multiples (in this case 3,5,7...) of the main frequency. This gives a square wave a richer and buzzier sound. 
+> ``||flexFX:Buzzy||`` selects a Square-wave containing harmonics, partial tones that are multiples (in this case 3,5,7...) of the main frequency. This gives a square wave a richer and buzzier sound. 
 
-``||flexFX:Bright||`` selects a Triangular-wave containing the same odd harmonics as a square wave, but with the higher ones tapering off. It sounds clear and bright. 
+> ``||flexFX:Bright||`` selects a Triangular-wave containing the same odd harmonics as a square wave, but with the higher ones tapering off. It sounds clear and bright. 
 
-``||flexFX:Harsh||`` selects a Sawtooth-wave which is the richest in terms of harmonics, making it sound even harsher than a square wave, 
+> ``||flexFX:Harsh||`` selects a Sawtooth-wave which is the richest in terms of harmonics, making it sound even harsher than a square wave, 
 
-``||flexFX:Noisy||`` selects a randomised wave-shape that takes harshness to the extreme: it doesn't have any real pitch left at all! 
+> ``||flexFX:Noisy||`` selects a randomised wave-shape that takes harshness to the extreme: it doesn't have any real pitch left at all! 
 
-``||flexFX:Silence||`` is an option that allows you to put silent gaps into your sound, while specify the start-point for the next part. 
+> ``||flexFX:Silence||`` is an option that allows you to put silent gaps into your sound, while specify the start-point for the next part. 
 
 ### Style: Attack 
 The attack chooses how fast the pitch moves from the start-point to the end-point of the FlexFX part. 
 
-``||flexFX:Fast||`` gives an extreme percussive attack, moving very rapidly away from the start-point towards the end-point.  
+> ``||flexFX:Fast||`` gives an extreme percussive attack, moving very rapidly away from the start-point towards the end-point.  
 
-``||flexFX:Medium||`` follows a curved path, changing more quickly to start with, then gradually slowing down. 
+> ``||flexFX:Medium||`` follows a curved path, changing more quickly to start with, then gradually slowing down. 
 
-``||flexFX:Slow||`` selects a simple straight-line path, changing evenly over time. 
+> ``||flexFX:Slow||`` selects a simple straight-line path, changing evenly over time. 
 
-``||flexFX:Delayed||`` moves slowly away from the start-point, accelerating with time. 
+> ``||flexFX:Delayed||`` moves slowly away from the start-point, accelerating with time. 
 
 ### Style: Effect 
 There are three special-effects that can optionally be added. 
 
-``||flexFX:Vibrato||`` wobbles the pitch up and down as it progresses. 
+> ``||flexFX:Vibrato||`` wobbles the pitch up and down as it progresses. 
 
-``||flexFX:Tremolo||`` flutters the volume throughout. 
+> ``||flexFX:Tremolo||`` flutters the volume throughout. 
 
-``||flexFX:Warble||`` is a rather more extreme version of Vibrato. 
+> ``||flexFX:Warble||`` is a rather more extreme version of Vibrato. 
 
-``||flexFX:None||`` skips any of these effects. 
+> ``||flexFX:None||`` skips any of these effects. 
 
 There is currently no control of how rapidly or deeply these effects are applied. (This functionality would be a welcome upgrade
 to the core system). 
@@ -297,14 +303,23 @@ flexFX.createFlexFX()
 A new ``||flexFX:FlexFX||`` has just one part (so is really just a tuneable version of a standard sound-expression).
     * Specify the first (or only) part of a new FlexFX.
     * Any existing FlexFX with the same "id" is first deleted.
+
 > ``||flexFX:id||``  the identifier of the flexFX to be created or changed
+
 > ``||flexFX:startPitch||``  the initial frequency of the sound (in Hz)
+
 > ``||flexFX:startVolume||``  the initial volume of the sound (0 to 255)
+
 > ``||flexFX:wave||``  chooses the wave-form that characterises this sound
+
 > ``||flexFX:attack||``  chooses how fast the sound moves from its initial to final pitch
+
 > ``||flexFX:effect||``  chooses a possible modification to the sound, such as vibrato
+
 > ``||flexFX:endPitch||``  the final frequency of the sound (in Hz)
+
 > ``||flexFX:endVolume||``  the final volume of the sound (0 to 255)
+
 > ``||flexFX:duration||``  the duration of the sound (in ms)   
 
 
@@ -314,11 +329,17 @@ Every call to  ``||flexFX:extendFlexFX||`` adds another part to your ``||flexFX:
 * Add another part to an existing FlexFX, continuing from its current final frequency and volume.
     * 
 > ``||flexFX:id||``  - the identifier of the flexFX to be extended
+
 > ``||flexFX:wave||``  - chooses the wave-form that characterises this next part
+
 > ``||flexFX:attack||``  - chooses how fast this part moves from its initial to final pitch
+
 > ``||flexFX:effect||``  - chooses a possible modification to this part, such as vibrato
+
 > ``||flexFX:endPitch||``  - the new final frequency of the FlexFX (in Hz)
+
 > ``||flexFX:endVolume||``  - the new final volume of the FlexFX (0 to 255)
+
 > ``||flexFX:duration||``  - the additional duration of this new part (in ms)
 
 

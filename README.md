@@ -50,7 +50,7 @@ This lets you play a ``||flexFX:flexFX||``, optionally changing some of its char
   
 > ``||flexFX:id||`` says which one to play.
   
-> ``||flexFX:wait||`` is a switch. If **"True"**, the sound is played to completion. If **"False"**,
+> ``||flexFX:wait||`` is a switch. If **"true"**, the sound is played to completion. If **"false"**,
 it is added to the Play-list, to be played in the background. (If the Play-list is empty, 
 it will start playing immediately.) 
  
@@ -70,7 +70,7 @@ The following example would play the built-in FlexFX called **"chime"** three ti
 and increasing volume. The first two performances last just 0.4 seconds each, while the final performance 
 takes 1.6 seconds to complete. 
   
- ```block 
+ ```blocks 
  flexFX.playFlexFX("chime", true, Note.G4, 100, 400); 
  flexFX.playFlexFX("chime", true, Note.E4, 175, 400); 
  flexFX.playFlexFX("chime", true, Note.C4, 250, 1600); 
@@ -90,12 +90,12 @@ provides a drop-down list from which you can choose a built-in Tune to play.
 flexFX.playTune(title, flexId, wait, transpose, volumeLimit, tuneDuration)
 ```
 
-> ``||flexFX:title||`` is the name of the ``||flexFX:Tune||` to be played.
+> ``||flexFX:title||`` is the name of the Tune to be played.
  
 > ``||flexFX:flexId||`` is the name of the``||flexFX:FlexFX||`` to be used to play it.
 
 > ``||flexFX:wait||`` is a switch. If **"true"**, the Tune is played to completion. If **"false"**,  
- its sequence of Plays all get added to the Play-list to be played in the background. 
+ its sequence of notes all get added to the Play-list to be played in the background. 
  (If the Play-list is currently empty, the Tune will start playing immediately.) 
  
 By repeatedly clicking on the "+" you can access three additional parameters to change the pitch, volume or duration
@@ -103,13 +103,12 @@ of this performance of the Tune.
   
 > ``||flexFX:transpose||`` specifies a number of semitone steps by which to raise (or, if negative, lower) all notes in the flexFX:Tune.
   
-> ``||flexFX:volumeLimit||`` sets the peak volume for every note, as a number in the range 0-255. 
+> ``||flexFX:volumeLimit||`` sets the peak volume for every note played, as a number in the range 0-255. 
   
-> ``||flexFX:tuneDuration||`` sets how long (in milliseconds) the overall performance will last. 
+> ``||flexFX:tuneDuration||`` changes how long (in milliseconds) the overall performance will last. (By default, it will be played 
+at the speed set by the last ``||flexFX:playTune||``, or by explicitly using ``||flexFX:setNextTempo||``)
 
-
-The following example uses the built-in whalesong to celebrate your birthday rather slowly:
-
+The following example uses the built-in whalesong to celebrate your birthday (but rather slowly):
 ```blocks
 flexFX.playTune("birthday", "whale", true, -7, 250, 30000);
 ```
@@ -118,9 +117,9 @@ flexFX.playTune("birthday", "whale", true, -7, 250, 30000);
 Often, a sound-effect or melody is intended to accompany other actions that require codes to be executed. 
   
 By switching the **wait** parameter of ``||flexFX:playFlexFX||`` or ``||flexFX:playTune||`` to **true**, the function will return 
-immediately, and queue-up the FlexFX performance(s) (which we call **Plays**) so that they happen in the background.  
+immediately, and queue-up the ``||flexFX:FlexFX||`` performance(s) (which we call **Plays**) so that they happen in the background.  
   
-You can queue-up many different Plays on the internal Play-list, and the background process will just work steadily through them, 
+You can queue-up many different Plays on the internal **Play-list**, and the background process will just work steadily through them, 
 one-at-a-time, allowing your code to get on with something else.
 
 ### ~reminder
@@ -136,8 +135,7 @@ interact with the Play-list.
 flexFX.playSilence(ms) 
 ``` 
   
-When queueing-up a series of Plays, you may not always want them to follow-on straightaway.  
-Use this function to space-out your Plays, by adding a silent pause onto the Play-list. 
+When queueing-up a series of Plays, you may not always want them to follow-on straightaway. Use this function to space-out your Plays, by adding a silent pause onto the Play-list. 
  
 > ``||flexFX:ms||`` : specifies the length of the gap in milliseconds.
    
@@ -152,7 +150,7 @@ This example plays three bell-sounds in the background, separated by gaps of 1.5
 ``` 
   
 ## Waiting for the Play-list... 
-If your codes need to synchronise other activites (such as servo-actions or display-changes) precisely  
+If your codes need to synchronise other activites (such as servo-actions or display-changes) precisely 
 to the performance of a queued sequence of sound-effects, you can use one of these **wait** blocks: 
   
 ## Waiting for the next Play to start  #flexFX-awaitPlayStart 
@@ -202,7 +200,7 @@ Deletes from the Play-list everything left unplayed.
 
 
 ## Play-list Example:  Lip-sync
-So for example this code snippet would choreograph a crying face, alternating the two icons to achieve lip-sync.  
+So for example, this code snippet would choreograph a crying face, alternating the two icons to achieve lip-sync.  
 
 The code queues up some Plays of the built-in FlexFX "cry" on the Play-list,  
 with different pauses queued in-between. Note that by calling ``||flexFX:stopPlaying||`` first,  
@@ -246,7 +244,7 @@ there are some advanced blocks (under ``||flexFX:more...||``) that will let you 
 ## Anatomy of a FlexFX 
 The basic idea is that a FlexFX is built from one or more **parts**. 
 
-Each part is a sound-expression that takes a particular **style** of sound and varies its **[pitch,volume]**  
+Each part is a sound-expression that takes a particular **style** of sound and varies its **[pitch,volume]** 
 parameters from a start-point to an end-point, over some period of time. Successive parts inherit the previous end-point as their own start-point.
 
 Note that each part can use a different style of sound, specified by its own **wave-shape** and **attack**, plus a possible **effect**. 
@@ -256,15 +254,17 @@ The wave-shape sets the basic tonal quality: the spikier the wave, the harsher t
 
 > ``||flexFX:Pure||`` selects a Sine-wave, a smooth, clean shape giving a smooth, clean tone. 
 
-> ``||flexFX:Buzzy||`` selects a Square-wave containing harmonics, partial tones that are multiples (in this case 3,5,7...) of the main frequency. This gives a square wave a richer and buzzier sound. 
+> ``||flexFX:Buzzy||`` selects a Square-wave containing harmonics, partial tones that are multiples (in this case 3,5,7...) of the main frequency. 
+This gives a square wave a richer and buzzier sound. 
 
-> ``||flexFX:Bright||`` selects a Triangular-wave containing the same odd harmonics as a square wave, but with the higher ones tapering off. It sounds clear and bright. 
+> ``||flexFX:Bright||`` selects a Triangular-wave containing the same odd harmonics as a square wave, but with the higher ones tapering off. 
+It sounds clear and bright. 
 
 > ``||flexFX:Harsh||`` selects a Sawtooth-wave which is the richest in terms of harmonics, making it sound even harsher than a square wave, 
 
 > ``||flexFX:Noisy||`` selects a randomised wave-shape that takes harshness to the extreme: it doesn't have any real pitch left at all! 
 
-> ``||flexFX:Silence||`` is an option that allows you to put silent gaps into your sound, while specify the start-point for the next part. 
+> ``||flexFX:Silence||`` is an option that allows you to put silent gaps into your sound, while specifying the start-point for the next part. 
 
 ### Style: Attack 
 The attack chooses how fast the pitch moves from the start-point to the end-point of the FlexFX part. 
@@ -276,6 +276,12 @@ The attack chooses how fast the pitch moves from the start-point to the end-poin
 > ``||flexFX:Slow||`` selects a simple straight-line path, changing evenly over time. 
 
 > ``||flexFX:Delayed||`` moves slowly away from the start-point, accelerating with time. 
+
+
+### ~reminder
+Note that the Attack can only apply to pitch changes: the internal soundEffects synthesiser only ever changes the volume linearly from start-point 
+to end-point. So percussive sounds (where an initial rapid fall in volume is followed by a slower decay) will require two or more parts.
+### ~
 
 ### Style: Effect 
 There are three special-effects that can optionally be added. 
@@ -289,22 +295,20 @@ There are three special-effects that can optionally be added.
 > ``||flexFX:None||`` skips any of these effects. 
 
 There is currently no control of how rapidly or deeply these effects are applied. (This functionality would be a welcome upgrade
-to the core system). 
+to the core soundEffect synthesis system). 
 
-### Profiles 
-A FlexFX stitches its parts together, so that the end-point of one part forms the start-point of the next part. This means that its 
-pitch will vary smoothly across the parts, as will the volume. We call these sets of fixed points the **pitch-profile** and the **volume-profile**. 
 
 ## Creating a FlexFX #flexFX-createFlexFX 
 
 ```sig 
 flexFX.createFlexFX() 
 ``` 
-A new ``||flexFX:FlexFX||`` has just one part (so is really just a tuneable version of a standard sound-expression).
-    * Specify the first (or only) part of a new FlexFX.
-    * Any existing FlexFX with the same "id" is first deleted.
 
-> ``||flexFX:id||``  the identifier of the flexFX to be created or changed
+This complex block is used to specify the first (or only) part of a new ``||flexFX:FlexFX||``. (When first created, it has just the one part 
+so is really just a tuneable version of a standard soundExpression).
+   
+
+> ``||flexFX:id||``  the identifier of the flexFX to be created or changed. (Any existing FlexFX with the same "id" is first deleted.)
 
 > ``||flexFX:startPitch||``  the initial frequency of the sound (in Hz)
 
@@ -325,9 +329,8 @@ A new ``||flexFX:FlexFX||`` has just one part (so is really just a tuneable vers
 
 
 ## Extending a FlexFX #flexFX-extendFlexFX 
-Every call to  ``||flexFX:extendFlexFX||`` adds another part to your ``||flexFX:FlexFX||``.
-* Add another part to an existing FlexFX, continuing from its current final frequency and volume.
-    * 
+Every call to  ``||flexFX:extendFlexFX||`` adds another part to your ``||flexFX:FlexFX||``, continuing on from its current final frequency and volume.
+
 > ``||flexFX:id||``  - the identifier of the flexFX to be extended
 
 > ``||flexFX:wave||``  - chooses the wave-form that characterises this next part
@@ -343,7 +346,6 @@ Every call to  ``||flexFX:extendFlexFX||`` adds another part to your ``||flexFX:
 > ``||flexFX:duration||``  - the additional duration of this new part (in ms)
 
 
-
 ### ~reminder
 By specifying it by name (its **id**), any ``||flexFX:FlexFX||`` can be freely modified using  ``||flexFX:createFlexFX||`` 
 or ``||flexFX:extendFlexFX||``. The basic rule is that if it exists, it gets changed; otherwise it is created from scratch. 
@@ -351,11 +353,7 @@ Obviously, each ``||flexFX:FlexFX||`` you create will take up memory:  if you cr
 at which memory runs out! 
 ### ~
 
-
-
-
 # Composing Tunes
-
 
 ## EKO-notation 
 FlexFX Tunes are written out as text-strings using a special code that we call **EKO_notation** (pronounced "echo"). 
@@ -400,9 +398,10 @@ Although not as compact, our EKO-notation is far more logical and straightforwar
 ```sig 
 flexFX.composeTune(title, score)
 ```
-This block lets you compose a new Tune, using EKO-notation (Extent-Key-Octave).
+This block lets you start composing a new Tune, using EKO-notation (Extent-Key-Octave).
 
-> ``||flexFX:title||`` is the song-title  
+> ``||flexFX:title||`` is the song-title. (Any existing Tune with the same "title" is first deleted.)
+
 > ``||flexFX:score||`` is simply a list of the notes in the melody, defined as EKO codes.
 
 ## Extending a Tune #flexFX-extendTune 
@@ -416,7 +415,8 @@ By following ``||flexFX:composeTune||`` with one or more calls to ``||flexFX:ext
 one line at a time.	
 
 > ``||flexFX:title||`` identifies the song to be added-to.  
-> ``||flexFX:score||`` is an EKO-codes list of the notes to be added to the end of the Tune.
+
+> ``||flexFX:score||`` is the list of the notes, defined as EKO codes, to be added to the end of the Tune.
 
 ### ~reminder
 By specifying its title, any Tune can be freely modified using  ``||flexFX:composeTune||``, or ``||flexFX:extendTune||``.

@@ -492,6 +492,7 @@ namespace flexFX {
     }
 
     // ---- UI BLOCKS ----
+    
     /** builtInFlexFX()
      * Selector block to choose and return the name of a built-in FlexFx
      */
@@ -573,8 +574,8 @@ namespace flexFX {
      * Use a FlexFX to play a Tune  
      * @title  is the name of the Tune to be played.
      * @flexId  is the name of the FlexFX to be used to play it.
-     * @wait  If "True", the Tune is played to completion. 
-     *        If "False" it will be played in the background.
+     * @wait  If "true", the Tune is played to completion. 
+     *        If "false" it will be played in the background.
      * optional parameters:
      * @transpose  semitone steps by which to raise (or, if negative, lower) all notes in the @Tune||`.
      * @volumeLimit  peak volume for every note, as a number in the range 0-255.
@@ -767,13 +768,13 @@ namespace flexFX {
     /**
      * Add another part to an existing FlexFX, continuing from its current final frequency and volume.
      * 
-     * @param id  - the identifier of the flexFX to be extended
-     * @param wave  - chooses the wave-form that characterises this next part
-     * @param attack  - chooses how fast this part moves from its initial to final pitch
-     * @param effect  - chooses a possible modification to this part, such as vibrato
-     * @param endPitch  - the new final frequency of the FlexFX (in Hz)
-     * @param endVolume  - the new final volume of the FlexFX (0 to 255)
-     * @param duration  - the additional duration of this new part (in ms)
+     * @param id  the identifier of the flexFX to be extended
+     * @param wave  chooses the wave-form that characterises this next part
+     * @param attack  chooses how fast this part moves from its initial to final pitch
+     * @param effect  chooses a possible modification to this part, such as vibrato
+     * @param endPitch  the new final frequency of the FlexFX (in Hz)
+     * @param endVolume  the new final volume of the FlexFX (0 to 255)
+     * @param duration  the additional duration of this new part (in ms)
      */
 
     //% block="continue FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch profile goes to $endPitch|volume profile goes to $endVolume| duration extended by (ms) $duration"
@@ -815,6 +816,7 @@ namespace flexFX {
 
     //% block="compose Tune: $id with notes: $score"
     //% group="Creating"
+    //% inlineInputMode=inline
     //% advanced=true
     //% weight=130
     //% id.defl="newTune"
@@ -835,6 +837,7 @@ namespace flexFX {
 
     //% block="extend Tune: $id with extra notes: $score"
     //% group="Creating"
+    //% inlineInputMode=inline
     //% advanced=true
     //% weight=120
     //% id.defl="newTune"
@@ -852,7 +855,7 @@ namespace flexFX {
 
     /**
      * sets the speed for the next Tune played 
-     * @param bpm the beats-per-minute(BPM) for the next playTune()
+     * @param bpm   the beats-per-minute(BPM) for the next playTune()
      */
     //% block="set Tune speed (beats/minute) %bpm"
     //% bpm.defl=120

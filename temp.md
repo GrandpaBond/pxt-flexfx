@@ -18,4 +18,5 @@ flexFX.playSilence(1500);
 flexFX.playFlexFX("ting", true, Note.E5, 175, 400); 
 flexFX.playSilence(1500); 
 flexFX.playFlexFX("ting", true, Note.C5, 250, 1600); 
+
 ``` 

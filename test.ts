@@ -1,6 +1,5 @@
 // *********** test codes **********
 /***
- ***/
 // perform a built-in FlexFX with all the defaults
 basic.showIcon(IconNames.Target); 
 flexFX.playFlexFX("uhoh");
@@ -183,10 +182,10 @@ flexFX.playTune("birthday", "tweet");
 
 basic.showIcon(IconNames.Yes);
 pause(2000);
- 
+
 // check asynchrony of tunes
 basic.showIcon(IconNames.Target);
-flexFX.playTune("birthday", "hum", false, 200, 12000, -5);
+flexFX.playTune("birthday", "hum", false, -5, 200, 12000);
 basic.showNumber(flexFX.waitingToPlay());
 pause(1000);
 flexFX.startPlaying();
@@ -204,9 +203,10 @@ while (flexFX.isActive()) {
 basic.showIcon(IconNames.Yes);
 pause(2000);
 
-// check volume/duration overrides
+ ***/
+// check pitch/volume/duration overrides
 basic.showIcon(IconNames.Target);
-flexFX.playTune("newWorld", "horn",true,100,10000);
+flexFX.playTune("newWorld", "horn", true, 24, 100, 5000);
 
 basic.showIcon(IconNames.Yes);
 pause(2000);
@@ -224,7 +224,7 @@ flexFX.extendTune("edelweiss", "4E5 2G4 2G4 2A4 2B4 6C5 6C5");
 
 // Play it, on the chime, asynchronously, softly,
 //    lasting a full minute, transposed down by a fifth.
-flexFX.playTune("edelweiss", "chime", false, 150, 60000, -7);
+flexFX.playTune("edelweiss", "chime", false, -7, 150, 60000);
 basic.clearScreen();
 basic.showNumber(flexFX.waitingToPlay());
 pause(1000);

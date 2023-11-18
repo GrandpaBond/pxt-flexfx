@@ -530,17 +530,23 @@ namespace flexFX {
 
     /**
      * Perform a FlexFX
-     */
-    //% block="play FlexFX $id waiting till finished: $wait || at pitch $pitch with maximum volume: $volumeLimit lasting (ms) $newDuration"
+     * @flexId  is the name of the FlexFX to be played.
+     * @wait  if "true", the FlexFX is played straightaway; else it will be played in the background.
+     * optional parameters (if left 0, defaults will apply):
+     * @pitch  different base-frequency to use (in Hz)
+     * @volumeLimit  peak volume, as a number in the range 0-255.
+     * @tuneDuration  how long (in milliseconds) the overall performance will last .
+ */
+    //% block="play FlexFX $id waiting? $wait || at pitch $pitch|with maximum volume: $volumeLimit| lasting (ms) $newDuration"
     //% group="Playing"
-    //% inlineInputMode=inline
+    //% inlineInputMode=external
     //% expandableArgumentMode="toggle"
     //% weight=310
     //% id.defl="ting"
+    //% wait.defl=true
     //% pitch.min=50 pitch.max=2000 pitch.defl=0
     //% vol.min=0 vol.max=255 vol.defl=200
     //% ms.min=0 ms.max=10000 ms.defl=800
-    //% wait.defl=true
     export function playFlexFX(id: string, wait: boolean = true,
         pitch: number = 0, volumeLimit: number = 0, newDuration: number = 0) {
         let target: FlexFX = flexFXList.find(i => i.id === id);
@@ -574,27 +580,25 @@ namespace flexFX {
      * Use a FlexFX to play a Tune  
      * @title  is the name of the Tune to be played.
      * @flexId  is the name of the FlexFX to be used to play it.
-     * @wait  If "true", the Tune is played to completion. 
-     *        If "false" it will be played in the background.
-     * optional parameters:
-     * @transpose  semitone steps by which to raise (or, if negative, lower) all notes in the @Tune||`.
+     * @wait  if "true", the Tune is played to completion; else it will be played in the background.
+     * optional parameters (if left 0, defaults will apply):
+     * @transpose  semitone steps by which to raise (or, if negative, lower) all notes in the Tune.
      * @volumeLimit  peak volume for every note, as a number in the range 0-255.
-     * @tuneDuration  how long (in milliseconds) the overall performance will last.
+     * @tuneDuration  how long (in milliseconds) the overall performance should last .
      */
 
-    //% block="play tune $tuneId using FlexFX $flexId waiting till finished: $wait || with maximum volume: $volumeLimit lasting (ms) $tuneDuration transposed by (semitones): $transpose"
-    //% group="Playing"
+    //% block="play tune $tuneId using FlexFX $flexId waiting?$wait||transposed by (semitones): $transpose|with maximum volume: $volumeLimit|performance lasting (ms) $tuneDuration"    //% group="Playing"
     //% inlineInputMode=external
-    //% expandableArgumentMode="toggle"
+    //% expandableArgumentMode="enabled"
     //% weight=310
-    //% flexId.defl="woof"
+    //% flexId.defl="ting"
     //% tuneId.defl="happy birthday"
     //% wait.defl=true
-    //% volumeLimit.defl=200
-    //% tuneDuration.defl=0
     //% transpose.defl=0
+    //% volumeLimit.defl=0
+    //% tuneDuration.defl=0
     export function playTune(tuneId: string, flexId: string, wait: boolean = true, 
-        volumeLimit: number = 0, tuneDuration: number = 0, transpose: number = 0) {
+        transpose: number = 0, volumeLimit: number = 0, tuneDuration: number = 0) {
         let tune: Tune = tuneList.find(i => i.id === tuneId);
         let flex: FlexFX = flexFXList.find(i => i.id === flexId);
         if ((flex != null) && (flex != null)) {
@@ -615,11 +619,11 @@ namespace flexFX {
                 // compile and add our Play onto the playList 
                     playList.push(flex.makeTunedPlay(pitch, volumeLimit, ms));
                 }
-                if (wait) {
-                    awaitAllFinished(); // make sure it has been played
-                }
             }
             activatePlayer();  // make sure it gets played (unless Stopped)
+            if (wait) {
+                awaitAllFinished(); // make sure it has been played
+            }
         }
     }
 
@@ -666,6 +670,7 @@ namespace flexFX {
 
     /**
      * Add a silent pause to the play-list
+     * @param ms  length of pause (in millisecs)
      */
     //% block="add a pause of $ms ms next in the play-list"
     //% group="Play-list"
@@ -737,10 +742,9 @@ namespace flexFX {
      * @param duration  the duration of the sound (in ms) 
      */
 
-    //% block="define FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch profile goes from $startPitch|                       to $endPitch|volume profile goes from $startVolume|                       to $endVolume|default    pitch=$pitch|default   volume=$volume|default duration=$duration"
+    //% block="define FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes from $startPitch|               to $endPitch|volume goes from $startVolume|               to $endVolume|default duration=$duration"
     //% group="Creating"
     //% inlineInputMode=external
-    //% expandableArgumentMode="enabled"
     //% advanced=true
     //% weight=150
     //% id.defl="new"
@@ -777,10 +781,9 @@ namespace flexFX {
      * @param duration  the additional duration of this new part (in ms)
      */
 
-    //% block="continue FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch profile goes to $endPitch|volume profile goes to $endVolume| duration extended by (ms) $duration"
+    //% block="continue FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes to $endPitch|volume goes to $endVolume| extended by (ms) $duration"
     //% group="Creating"
     //% inlineInputMode=external
-    //% expandableArgumentMode="enabled"
     //% advanced=true
     //% weight=140
     //% id.defl="new"
@@ -816,7 +819,6 @@ namespace flexFX {
 
     //% block="compose Tune: $id with notes: $score"
     //% group="Creating"
-    //% inlineInputMode=inline
     //% advanced=true
     //% weight=130
     //% id.defl="newTune"
@@ -837,7 +839,6 @@ namespace flexFX {
 
     //% block="extend Tune: $id with extra notes: $score"
     //% group="Creating"
-    //% inlineInputMode=inline
     //% advanced=true
     //% weight=120
     //% id.defl="newTune"
@@ -854,7 +855,7 @@ namespace flexFX {
     }
 
     /**
-     * sets the speed for the next Tune played 
+     * Set the speed for the next Tune played 
      * @param bpm   the beats-per-minute(BPM) for the next playTune()
      */
     //% block="set Tune speed (beats/minute) %bpm"

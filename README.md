@@ -54,10 +54,11 @@ it will start playing immediately.)
 By repeatedly clicking on the "+" you can access three additional parameters to change the pitch, 
 volume or duration of this Play.
 
-> ``||flexFX:pitch||``  lets you specify a different **base-frequency** for this performance. 
- (The base-frequency is the average pitch across the whole sound). It is measured in Hertz, 
- and for convenience you can set the new pitch using the ``||music:noteFrequency()||`` function,
- or the various musical note constants such as ``||music: Music.C5||``.
+> ``||flexFX:pitch||``  lets you specify a different **base-frequency** for this performance, measured in Hertz. 
+(The base-frequency is the average pitch across the whole sound). If you use the ``||Middle C||`` reporter block from 
+the ``||music: Music||`` category to change the base-frequency, you can then click on it to select a note from the 
+pop-up piano keyboard.
+
   
 > ``||flexFX:volumeLimit||`` sets the peak volume as a number in the range 0-255. 
   
@@ -72,6 +73,10 @@ takes 1.6 seconds to complete.
  flexFX.playFlexFX("chime", true, Note.E4, 175, 400); 
  flexFX.playFlexFX("chime", true, Note.C4, 250, 1600); 
  ``` 
+### ~reminder
+When coding in Javascript, for convenience you can set the new pitch using the ``||music:noteFrequency()||`` function,
+or any of the various musical note constants such as ``||music: Music.C5||``. 
+### ~
 
 ## Selecting a Tune #flexFX-builtInTune 
 

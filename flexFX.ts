@@ -540,7 +540,7 @@ namespace flexFX {
      * @volumeLimit  peak volume, as a number in the range 0-255.
      * @tuneDuration  how long (in milliseconds) the overall performance will last .
  */
-    //% block="play FlexFX $id waiting? $wait || at pitch $pitch|with maximum volume: $volumeLimit| lasting (ms) $newDuration"
+    //% block="play FlexFX $id waiting? $wait|| at pitch $pitch|with maximum volume: $volumeLimit| lasting (ms) $newDuration"
     //% group="Playing"
     //% inlineInputMode=external
     //% expandableArgumentMode="toggle"
@@ -590,7 +590,8 @@ namespace flexFX {
      * @tuneDuration  how long (in milliseconds) the overall performance should last .
      */
 
-    //% block="play tune $tuneId using FlexFX $flexId waiting?$wait||transposed by (semitones): $transpose|with maximum volume: $volumeLimit|performance lasting (ms) $tuneDuration"    //% group="Playing"
+    //% block="play tune $tuneId using FlexFX $flexId waiting?$wait||transposed by (semitones): $transpose|with maximum volume: $volumeLimit|performance lasting (ms) $tuneDuration"    
+    //% group="Playing"
     //% inlineInputMode=external
     //% expandableArgumentMode="enabled"
     //% weight=310
@@ -791,9 +792,9 @@ namespace flexFX {
     //% advanced=true
     //% weight=140
     //% id.defl="new"
-    //% endPitch.min=25 endPitch.max=10000 endPitch.defl=500
+    //% endPitch.min=25 endPitch.max=4000 endPitch.defl=500
     //% endVolume.min=0 endVolume.max=255 endVolume.defl=200
-    //% duration.min=0 duration.max=10000 duration.defl=800
+    //% duration.min=0 duration.max=10000 duration.defl=500
 
     export function extendFlexFX(id: string, wave: Wave, attack: Attack, effect: Effect,
                 endPitch: number, endVolume: number, duration: number) {
@@ -821,7 +822,7 @@ namespace flexFX {
          * @param score  a text-string listing the notes in the Tune
          */
 
-    //% block="compose Tune: $id with notes: $score"
+    //% block="compose Tune: $tuneId with notes: $score"
     //% group="Creating"
     //% advanced=true
     //% weight=130
@@ -841,7 +842,7 @@ namespace flexFX {
           * @param score  a text-string listing the notes to be added
           */
 
-    //% block="extend Tune: $id with extra notes: $score"
+    //% block="extend Tune: $tuneId with extra notes: $score"
     //% group="Creating"
     //% advanced=true
     //% weight=120

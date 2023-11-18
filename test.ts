@@ -1,5 +1,6 @@
 // *********** test codes **********
 /***
+ ***/
 // perform a built-in FlexFX with all the defaults
 basic.showIcon(IconNames.Target); 
 flexFX.playFlexFX("uhoh");
@@ -8,9 +9,9 @@ pause(2000);
 
 // perform the simple built-in chime flexFX
 basic.showIcon(IconNames.Target);
-flexFX.playFlexFX("ting", true, Note.G5, 180, 400); // up a fifth
-flexFX.playFlexFX("ting", true, Note.E5, 180, 400); // up a major 3rd
-flexFX.playFlexFX("ting", true, Note.C5, 250, 1600);
+flexFX.playFlexFX("chime", true, Note.G5, 180, 400); // up a fifth
+flexFX.playFlexFX("chime", true, Note.E5, 180, 400); // up a major 3rd
+flexFX.playFlexFX("chime", true, Note.C5, 250, 1600);
 
 basic.showIcon(IconNames.Yes);
 pause(2000);
@@ -132,11 +133,11 @@ pause(2000);
 basic.showIcon(IconNames.Target);
 // first re-build the Play-list of 5 cries
 flexFX.stopPlaying();  // inhibit Playing
-flexFX.playFlexFX("cry", false, 200, 250, 1000);
+flexFX.playFlexFX("uhoh", false, 200, 250, 1000);
 flexFX.playFlexFX("cry", false, 300, 250, 1000);
-flexFX.playFlexFX("cry", false, 400, 250, 1000);
+flexFX.playFlexFX("uhoh", false, 400, 250, 1000);
 flexFX.playFlexFX("cry", false, 600, 250, 1000);
-flexFX.playFlexFX("cry", false, 800, 250, 1000);
+flexFX.playFlexFX("wail", false, 800, 250, 1000);
 basic.showNumber(flexFX.waitingToPlay());
 pause(1000)
 basic.showIcon(IconNames.Sad);
@@ -203,7 +204,6 @@ while (flexFX.isActive()) {
 basic.showIcon(IconNames.Yes);
 pause(2000);
 
- ***/
 // check pitch/volume/duration overrides
 basic.showIcon(IconNames.Target);
 flexFX.playTune("newWorld", "horn", true, 24, 100, 5000);

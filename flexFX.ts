@@ -169,6 +169,9 @@ namespace flexFX {
     const MINIM_TICKS = 8;
     const SEMIBREVE_TICKS = 16;
 
+    // for default Tempo of 120 BPM... 
+    const DEFAULT_TICKMS = 125; //  = (60*1000) / (4*120)
+
     // (Basically, a TuneStep is a musical Note, but renamed to avoid confusion with the native "Note")
     class TuneStep {
         name: string = ""; // e.g. "C4" for middle-C
@@ -602,12 +605,13 @@ namespace flexFX {
         let tune: Tune = tuneList.find(i => i.id === tuneId);
         let flex: FlexFX = flexFXList.find(i => i.id === flexId);
         if ((flex != null) && (flex != null)) {
+            let myTick = tickMs;  // adopt current default tempo
             if (tuneDuration != 0) {
-                tickMs = tuneDuration / tune.nTicks; // set global tick-rate (i.e speed) to achieve tuneDuration
+                myTick = tuneDuration / tune.nTicks; // tick-rate needed to achieve tuneDuration
             }
             while (tune.notes.length > 0)
             {   let note = tune.notes.shift();
-                let ms = note.ticks * tickMs;
+                let ms = note.ticks * myTick;
                 let pitch = note.pitch;
                 if (note.volume == 0) { // if this note is a Rest, play silence
                     playSilence(ms);
@@ -855,14 +859,14 @@ namespace flexFX {
     }
 
     /**
-     * Set the speed for the next Tune played 
-     * @param bpm   the beats-per-minute(BPM) for the next playTune()
+     * Set the speed for future Tunes
+     * @param bpm   the beats-per-minute(BPM) for playTune() to use
      */
     //% block="set Tune speed (beats/minute) %bpm"
     //% bpm.defl=120
     //% group="Play-list"
     //% weight=210
-    export function setNextTempo(bpm: number) {
+    export function setNextTempo(bpm: number) {  // CHANGES GLOBAL SETTING
         tickMs = 15000/bpm; // = (60*1000) / (4*bpm)
     }
 
@@ -876,8 +880,7 @@ namespace flexFX {
     // Tunes can be registered separately from FlexFXs
     // You can then mix & match them using playTune(flexId,tuneId)
     let tuneList: Tune[] = [];
-
-    let tickMs = 200; // default tune speed = 75 BPM
+    let tickMs = DEFAULT_TICKMS; // default tune speed
 
     // control flags:
     let playerPlaying = false; // a performance is being played
@@ -893,10 +896,10 @@ namespace flexFX {
     // Populate the FlexFX array with the selection of built-in sounds
     function populateBuiltInFlexFXs() {
         // simple "ting"
-        defineFlexFX("ting", 2000, 255, Wave.Triangle, Attack.Fast, Effect.None, 2000, 25, 200);
+        defineFlexFX("ting", 2000, 255, Wave.Triangle, Attack.Fast, Effect.None, 2000, 50, 200);
         // longer chime effect
         defineFlexFX("chime", 315, 200, Wave.Sine, Attack.Fast, Effect.None, 300, 100, 400);
-        extendFlexFX("chime", Wave.Sine, Attack.Even, Effect.None, 300, 100, 1600);
+        extendFlexFX("chime", Wave.Sine, Attack.Even, Effect.None, 300, 30, 1600);
         // wailing sound
         defineFlexFX("cry", 200, 125, Wave.Square, Attack.Even, Effect.None, 800, 250, 264);
         extendFlexFX("cry", Wave.Square, Attack.Even, Effect.None, 400, 250, 264);

@@ -102,8 +102,8 @@ of this performance of the Tune.
   
 > ``||flexFX:volumeLimit||`` sets the peak volume for every note played, as a number in the range 0-255. 
   
-> ``||flexFX:tuneDuration||`` changes how long (in milliseconds) the overall performance will last. (By default, it will be played 
-at the speed set by the last ``||flexFX:playTune||``, or by explicitly using ``||flexFX:setNextTempo||``)
+> ``||flexFX:tuneDuration||`` changes how long (in milliseconds) the overall performance will last. If left at 0, the Tune will be
+played at the default speed of 120 beats-per-minute (or as specified by ``||flexFX:setNextTempo()||``)
 
 The following example uses the built-in whalesong to celebrate your birthday (but rather slowly):
 ```blocks
@@ -381,7 +381,7 @@ At this default tempo, the following table shows how the ``||flexFX:Extent||`` r
 |  12    | dotted-minim    | 1500 |  0.67 |    40 | 
 |  16    | semibreve       | 2000 |  0.50 |    30 | 
 
-
+You can change the default speed using ``||flexFX:setNextTempo()||``. 
 
 
 ### ~reminder 

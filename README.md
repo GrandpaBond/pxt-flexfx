@@ -24,7 +24,7 @@ finished when you play another one, the new Play(s) will be added to the **Play-
 so you can queue-up several sounds to happen in the background. You can interact with this 
 Play-list to synchronise the sound-track with your other codes. (See ``||flexFX:Background Play-list||`` below).
 
-If you need a sound that is not built-in, you can create your own. (See ``||flexFX:Building a FlexFX||`` below)
+If you need a sound that is not built-in, you can design your own. (See ``||flexFX:Designing a FlexFX||`` below)
 
 You can also compose your own Tunes, using a simple text notation. (See ``||flexFX:Composing Tunes||`` below)
 
@@ -239,7 +239,7 @@ basic.pause(500);
 basic.showIcon(IconNames.Happy); 
 ``` 
 
-# Building a FlexFX 
+# Designing a FlexFX 
 There are lots of ``||flexFX:flexFX||`` sounds already built-in, but if you wanted something different 
 there are some advanced blocks (under ``||flexFX:more...||``) that will let you build your own from scratch. 
 
@@ -300,7 +300,7 @@ There is currently no control of how rapidly or deeply these effects are applied
 to the core soundEffect synthesis system). 
 
 
-## Creating a FlexFX #flexFX-createFlexFX 
+## Creating a new FlexFX #flexFX-createFlexFX 
 
 ```sig 
 flexFX.createFlexFX() 

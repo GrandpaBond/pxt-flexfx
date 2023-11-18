@@ -118,7 +118,7 @@ flexFX.playTune("birthday", "whale", true, -7, 250, 30000);
 # Background Play-list 
 Often, a sound-effect or melody is intended to accompany other actions that require codes to be executed. 
   
-By switching the **wait** parameter of ``||flexFX:playFlexFX||`` or ``||flexFX:playTune||`` to **true**, the function will return 
+By switching the **wait** parameter of ``||flexFX:playFlexFX||`` or ``||flexFX:playTune||`` to **false**, the function will return 
 immediately, and queue-up the ``||flexFX:FlexFX||`` performance(s) (which we call **Plays**) so that they happen in the background.  
   
 You can queue-up many different Plays on the internal **Play-list**, and the background process will just work steadily through them, 

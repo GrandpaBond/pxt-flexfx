@@ -531,7 +531,7 @@ namespace flexFX {
         return "ting"
     }
 
-    /**
+    /*
      * Perform a FlexFX
      * @flexId  is the name of the FlexFX to be played.
      * @wait  if "true", the FlexFX is played straightaway; else it will be played in the background.
@@ -539,7 +539,7 @@ namespace flexFX {
      * @pitch  different base-frequency to use (in Hz)
      * @volumeLimit  peak volume, as a number in the range 0-255.
      * @tuneDuration  how long (in milliseconds) the overall performance will last .
- */
+     */
     //% block="play FlexFX $id waiting? $wait||at pitch $pitch|with maximum volume: $volumeLimit| lasting (ms) $newDuration"
     //% group="Playing"
     //% inlineInputMode=external

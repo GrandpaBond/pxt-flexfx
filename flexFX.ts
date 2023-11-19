@@ -540,7 +540,7 @@ namespace flexFX {
      * @volumeLimit  peak volume, as a number in the range 0-255.
      * @tuneDuration  how long (in milliseconds) the overall performance will last .
  */
-    //% block="play FlexFX $id waiting? $wait|| at pitch $pitch|with maximum volume: $volumeLimit| lasting (ms) $newDuration"
+    //% block="play FlexFX $id waiting? $wait||at pitch $pitch|with maximum volume: $volumeLimit| lasting (ms) $newDuration"
     //% group="Playing"
     //% inlineInputMode=external
     //% expandableArgumentMode="toggle"

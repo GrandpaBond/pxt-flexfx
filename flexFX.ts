@@ -826,7 +826,8 @@ namespace flexFX {
     //% group="Creating"
     //% advanced=true
     //% weight=130
-    //% id.defl="newTune"
+    //% tuneId.defl="beethoven5"
+    //% score.defl="2R 2G4 2G4 2G4 8Eb4"
     //% score.defl=""
     export function composeTune(tuneId: string, score: string) {
         // first delete any existing definition having this id (works even when missing!)
@@ -846,8 +847,8 @@ namespace flexFX {
     //% group="Creating"
     //% advanced=true
     //% weight=120
-    //% id.defl="newTune"
-    //% score.defl=""
+    //% tuneId.defl="beethoven5"
+    //% score.defl="2R 2F4 2F4 2F4 8D4"
     export function extendTune(tuneId: string, score: string) {
         let target: Tune = tuneList.find(i => i.id === tuneId);
         if (target == null) {

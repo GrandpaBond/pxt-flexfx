@@ -358,7 +358,7 @@ at which memory runs out!
 # Composing Tunes
 
 ## EKO-notation 
-FlexFX Tunes are written out as text-strings using a special code that we call **EKO_notation** (pronounced "echo"). 
+FlexFX Tunes are written out as text-strings using a special code that we call **EKO-notation** (pronounced "echo"). 
 Notes are defined by three-part EKO codes, separated by spaces. 
 
 > ``||flexFX:Extent||``: The first part of the code is a number showing how long the note should last (measured in quarter-beat ticks). 
@@ -369,6 +369,12 @@ Notes are defined by three-part EKO codes, separated by spaces.
 
 
 So, the first line of "Happy Birthday" might be scored as  "4G4 2G4 6A4 6G4 6C5 12B4". 
+
+### Musical Rests
+
+In EKO-notation, musical rests have the Extent followed by just the letter "R" (with no Octave).
+
+So, the start of Beethoven's Fifth Symphony might be scored as "2R 2G4 2G4 2G4 8Eb4".
 
 ### Tempo 
 The length of a tick controls how fast a Tune is played. The initial default speed of 120 beats-per-minute (BPM) 
@@ -406,6 +412,12 @@ This block lets you start composing a new Tune, using EKO-notation (Extent-Key-O
 
 > ``||flexFX:score||`` is simply a list of the notes in the melody, defined as EKO codes.
 
+This example adds the Tune "Edelweiss", defining the notes in its first line:
+
+```blocks
+flexFX.composeTune("edelweiss", "4E4 2G4 6D5 4C5 2G4 4F4 2R");
+```
+
 ## Extending a Tune #flexFX-extendTune 
 
 ```sig 
@@ -420,6 +432,14 @@ one line at a time.
 
 > ``||flexFX:score||`` is the list of the notes, defined as EKO codes, to be added to the end of the Tune.
 
+This example extends the Tune "Edelweiss" by adding the next three lines:
+
+```blocks
+flexFX.extendTune("edelweiss", "4E4 2E4 2E4 2F4 2G4 6A4 4G4 2R");
+flexFX.extendTune("edelweiss", "4E4 2G4 6D5 4C5 2G4 4F4 2R");
+flexFX.extendTune("edelweiss", "4E4 2G4 2G4 2A4 2B4 6C5 4C5 2R");
+```
+
 ### ~reminder
 By specifying its title, any Tune can be freely modified using  ``||flexFX:composeTune||``, or ``||flexFX:extendTune||``.
 The basic rule is that if it exists, it gets changed; otherwise it is created from scratch. Obviously, each Tune 
@@ -432,10 +452,8 @@ a point at which memory runs out!
 -----------------------------------------------------------------------
 -----------------------------------------------------------------------
 # Acknowledgements 
-Credit must go to Bill Siever (on the Micro:bit Developer Slack Forum) for his experienced insights into the workings 
-of the Micro:bit run-time, and his unstinting assistance in navigating the complex process of publishing an Extension.
-Credit must also go to Martin Williams (of the Micro:bit Educational Foundation) for his meticulous appraisals 
-and generous inputs that have been invaluable in developoing and evolving the FlexFX design.
+Credit must go to Martin Williams (of the Micro:bit Educational Foundation) for his meticulous appraisals 
+and generous inputs that have been invaluable in developing and evolving the FlexFX design.
 
 
 > Open this page at [https://grandpabond.github.io/pxt-flexfx/](https://grandpabond.github.io/pxt-flexfx/)

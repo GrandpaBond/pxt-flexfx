@@ -395,14 +395,16 @@ namespace flexFX {
             let soundExpr = music.createSoundExpression(waveNumber, startPitch, endPitch,
                 startVolume, endVolume, duration, effectNumber, attackNumber);      
     
-            // fix the "shape" parameter for Delayed effects
+            // add-in appropriate "shape" & "steps" parameters for Delayed effects
             if (attack == Attack.Delayed) {
                 let tempSound = new soundExpression.Sound;
                 tempSound.src = soundExpr.getNotes();
                 if (endPitch > startPitch) {
                     tempSound.shape = soundExpression.InterpolationEffect.ExponentialRising; // (faked with Sin)
+                    tempSound.steps = 30; // Try this!
                 } else {
                     tempSound.shape = soundExpression.InterpolationEffect.ExponentialFalling; // (faked with Cos)
+                    tempSound.steps = 30; // Try this!
                 }
                 soundExpr = new SoundExpression(tempSound.src);
             }

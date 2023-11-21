@@ -1,6 +1,5 @@
 // *********** test codes **********
 /***
- ***/
 // perform a built-in FlexFX with all the defaults
 basic.showIcon(IconNames.Target); 
 flexFX.playFlexFX("uhoh");
@@ -264,4 +263,19 @@ while (flexFX.isActive()) {
         `);
     basic.pause(30);
 }
+basic.showIcon(IconNames.Yes);
+
+
+// test new Attack.Delayed
+basic.showIcon(IconNames.Target);
+ ***/
+flexFX.defineFlexFX("even", 1000, 250, flexFX.Wave.Sine, flexFX.Attack.Even,   flexFX.Effect.None, 1500, 250, 1000);
+flexFX.defineFlexFX("delay",1000, 250, flexFX.Wave.Sine, flexFX.Attack.Delayed,flexFX.Effect.None, 1500, 250, 1000);
+flexFX.playFlexFX("even",true);
+pause(800)
+music.tonePlayable(1500, 2000);
+pause(800)
+flexFX.playFlexFX("delay",true);
+pause(800)
+music.tonePlayable(1500, 2000);
 basic.showIcon(IconNames.Yes);

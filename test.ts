@@ -186,7 +186,7 @@ pause(2000);
 
 // check asynchrony of tunes
 basic.showIcon(IconNames.Target);
-flexFX.playTune("birthday", "hum", false, -5, 200, 12000);
+flexFX.playTune("birthday", "woof", false, -5, 200, 20000);
 basic.showNumber(flexFX.waitingToPlay());
 pause(1000);
 flexFX.startPlaying();

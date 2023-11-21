@@ -182,7 +182,7 @@ namespace flexFX {
 
         // create using a 3-part EKO-notation specifier: {extent}{key}{octave}
         constructor(spec: string) {
-            let chars = spec;
+            let chars = spec.toUpperCase();
             // parse {extent} in ticks [0-9]*
  
             let code = chars.charCodeAt(0);
@@ -191,8 +191,10 @@ namespace flexFX {
                 chars = chars.slice(1);
                 code = chars.charCodeAt(0);
             }
-
-            this.name = chars; // save the note-name {Key}{Octave}
+            this.name = chars; // save the note-name {Key}{Octave}...     
+            if (chars[1] == "B") {  // ...using lower-case "b" for flats
+                this.name = chars[0] + "b" + chars.slice(2);
+            }
 
         // for a silent musical rest, {Key} = "R" and {Octave} is absent
             if (chars[0] != "R") {
@@ -207,7 +209,7 @@ namespace flexFX {
                     key++;
                     chars = chars.slice(1);
                 }
-                if (chars[0] == "b") {
+                if (chars[0] == "B") {
                     key--;
                     chars = chars.slice(1);
                 }
@@ -610,8 +612,8 @@ namespace flexFX {
             if (tuneDuration != 0) {
                 myTick = tuneDuration / tune.nTicks; // tick-rate needed to achieve tuneDuration
             }
-            while (tune.notes.length > 0)
-            {   let note = tune.notes.shift();
+            for (let i = 0; i < tune.notes.length; i++) {
+                let note = tune.notes[i];
                 let ms = note.ticks * myTick;
                 let pitch = note.pitch;
                 if (note.volume == 0) { // if this note is a Rest, play silence

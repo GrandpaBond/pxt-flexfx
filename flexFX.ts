@@ -401,10 +401,10 @@ namespace flexFX {
                 tempSound.src = soundExpr.getNotes();
                 if (endPitch > startPitch) {
                     tempSound.shape = soundExpression.InterpolationEffect.ExponentialRising; // (faked with Sin)
-                    tempSound.steps = 30; // Try this!
+                    tempSound.steps = 90; // 1-degree steps
                 } else {
                     tempSound.shape = soundExpression.InterpolationEffect.ExponentialFalling; // (faked with Cos)
-                    tempSound.steps = 30; // Try this!
+                    tempSound.steps = 90; // 1-degree steps
                 }
                 soundExpr = new SoundExpression(tempSound.src);
             }

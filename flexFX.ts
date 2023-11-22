@@ -61,8 +61,8 @@ namespace flexFX {
         Medium = InterpolationCurve.Curve,
         //% block="Even"
         Even = InterpolationCurve.Linear,
-        //% block="Delayed"
-        Delayed = 99 // later, mapped to Sine or Cosine, depending on slope of profile
+        //% block="Delayed"   *** option temporarily removed...
+        // Delayed = 99 later, mapped to Sine or Cosine, depending on slope of profile
     }
     // Simplify (slightly) the selection of modulation-style...
     export enum Effect {
@@ -379,8 +379,8 @@ namespace flexFX {
                         break;
                     case Attack.Even: blend = 0.5; // fifty-fifty
                         break;
-                    case Attack.Delayed: blend = 0.8; // mostly Start pitch
-                        break;
+                //  case Attack.Delayed: blend = 0.8; // mostly Start pitch
+                //      break;   *** option temporarily removed...
                 }
                 let pitch = (blend * startPitch) + ((1-blend) * endPitch);
                 // update overall average pitch, weighted by duration of each part
@@ -395,6 +395,12 @@ namespace flexFX {
             let soundExpr = music.createSoundExpression(waveNumber, startPitch, endPitch,
                 startVolume, endVolume, duration, effectNumber, attackNumber);      
     
+            /* The underlying implementation in "codal-microbit-v2/source/SoundSynthesizerEffects.cpp"
+            of the functions: 
+                  SoundSynthesizerEffects::exponentialRisingInterpolation()
+            and   SoundSynthesizerEffects::exponentialFallingInterpolation()
+            currently contain maths bugs, so Attack.Delayed is being temporarily removed...
+
             // add-in appropriate "shape" & "steps" parameters for Delayed effects
             if (attack == Attack.Delayed) {
                 let tempSound = new soundExpression.Sound;
@@ -408,6 +414,7 @@ namespace flexFX {
                 }
                 soundExpr = new SoundExpression(tempSound.src);
             }
+            */
 
             // add new sound into the prototype
             this.prototype.parts.push(soundExpr);

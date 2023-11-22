@@ -277,8 +277,6 @@ The attack chooses how fast the pitch moves from the start-point to the end-poin
 
 > ``||flexFX:Slow||`` selects a simple straight-line path, changing evenly over time. 
 
-> ``||flexFX:Delayed||`` moves slowly away from the start-point, accelerating with time. 
-
 
 ### ~reminder
 Note that the Attack can only apply to pitch changes: the internal soundEffects synthesiser only ever changes the volume linearly from start-point 
@@ -365,16 +363,16 @@ Notes are defined by three-part EKO codes, separated by spaces.
 
 > ``||flexFX:Key||``: This is followed by the key-letter [CDEFGAB]. For the black keys (on a piano) you add "#" (sharp) to the key below, or "b" (flat) to the key above. 
 
-> ``||flexFX:Octave||``: The last part of the code gives the octave-number [1‐8], where C4 is middle-C. 
+> ``||flexFX:Octave||``: The last part of the code gives the octave-number [1‐9], where C4 is middle-C. 
 
 
 So, the first line of "Happy Birthday" might be scored as  "4G4 2G4 6A4 6G4 6C5 12B4". 
 
 ### Musical Rests
 
-In EKO-notation, musical rests have the Extent followed by just the letter "R" (with no Octave).
+In EKO-notation, musical rests are coded using an Extent followed by just the letter "R" (with no Octave).
 
-So, the start of Beethoven's Fifth Symphony might be scored as "2R 2G4 2G4 2G4 8Eb4".
+So, the start of Beethoven's Fifth Symphony might be scored as "2R 2G4 2G4 2G4 8Eb4 2R 2F4 2F4 2F4 8D4".
 
 ### Tempo 
 The length of a tick controls how fast a Tune is played. The initial default speed of 120 beats-per-minute (BPM) 
@@ -386,7 +384,7 @@ At this default tempo, the following table shows how the ``||flexFX:Extent||`` r
 | ---:   | :-------------- | ---: | ----: | ----: | 
 |   1    | semi-quaver     |  125 |  8.00 |   480 | 
 |   2    | quaver          |  250 |  4.00 |   240 | 
-|   4    | crotchet        |  500 |  2.00 |   120 | 
+|   4    | crotchet(1 beat)|  500 |  2.00 |   120 | 
 |   6    | dotted-crotchet |  750 |  1.33 |    80 | 
 |   8    | minim           | 1000 |  1.00 |    60 | 
 |  12    | dotted-minim    | 1500 |  0.67 |    40 | 

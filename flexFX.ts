@@ -688,7 +688,6 @@ namespace flexFX {
     //% block="extend Tune: $tuneId with extra notes: $score"
     //% group="Playing"
     //% weight=930
-    //% advanced=true
     //% tuneId.defl="beethoven5"
     //% score.defl="2R 2F4 2F4 2F4 8D4"
     export function extendTune(tuneId: string, score: string) {

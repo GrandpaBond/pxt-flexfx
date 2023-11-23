@@ -126,10 +126,29 @@ provides a drop-down list from which you can choose a built-in Tune to play.
 flexFX.setNextTempo(bpm)
 ```
 
-This block 
+This block adjusts the speed at which a Tune is played.
 
  bpm   the beats-per-minute(BPM) for playTune() to use
-  
+
+
+ ### Tempo 
+The length of a tick controls how fast a Tune is played. The initial default speed of 120 beats-per-minute (BPM) 
+means that the default quarter-beat tick lasts 125 ms. 
+At this default tempo, the following table shows how the ``||flexFX:Extent||`` relates to conventional musical note-lengths: 
+
+
+| Extent | length          |ms    |per-Sec|per-Min| 
+| ---:   | :-------------- | ---: | ----: | ----: | 
+|   1    | semi-quaver     |  125 |  8.00 |   480 | 
+|   2    | quaver          |  250 |  4.00 |   240 | 
+|   4    | crotchet(1 beat)|  500 |  2.00 |   120 | 
+|   6    | dotted-crotchet |  750 |  1.33 |    80 | 
+|   8    | minim           | 1000 |  1.00 |    60 | 
+|  12    | dotted-minim    | 1500 |  0.67 |    40 | 
+|  16    | semibreve       | 2000 |  0.50 |    30 | 
+
+You can change the default speed using ``||flexFX:setNextTempo()||``. 
+ 
 ## Composing Tunes
 
 ### EKO-notation 
@@ -151,23 +170,6 @@ In EKO-notation, musical rests are coded using an Extent followed by just the le
 
 So, the start of Beethoven's Fifth Symphony might be scored as "2R 2G4 2G4 2G4 8Eb4 2R 2F4 2F4 2F4 8D4".
 
-### Tempo 
-The length of a tick controls how fast a Tune is played. The initial default speed of 120 beats-per-minute (BPM) 
-means that the default quarter-beat tick lasts 125 ms. 
-At this default tempo, the following table shows how the ``||flexFX:Extent||`` relates to conventional musical note-lengths: 
-
-
-| Extent | length          |ms    |per-Sec|per-Min| 
-| ---:   | :-------------- | ---: | ----: | ----: | 
-|   1    | semi-quaver     |  125 |  8.00 |   480 | 
-|   2    | quaver          |  250 |  4.00 |   240 | 
-|   4    | crotchet(1 beat)|  500 |  2.00 |   120 | 
-|   6    | dotted-crotchet |  750 |  1.33 |    80 | 
-|   8    | minim           | 1000 |  1.00 |    60 | 
-|  12    | dotted-minim    | 1500 |  0.67 |    40 | 
-|  16    | semibreve       | 2000 |  0.50 |    30 | 
-
-You can change the default speed using ``||flexFX:setNextTempo()||``. 
 
 
 ### ~reminder 

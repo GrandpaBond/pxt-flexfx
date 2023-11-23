@@ -505,14 +505,47 @@ namespace flexFX {
         playerActive = false;
     }
 
-    // ---- UI BLOCKS ----
+    // ---- UI BLOCKS: PLAYING ----
     
-    /** builtInFlexFX()
-     * Selector block to choose and return the name of a built-in FlexFx
+    /*
+     * Perform a FlexFX
+     * @flexId  is the name of the FlexFX to be played.
+     * @wait  if "true", the FlexFX is played straightaway; else it will be played in the background.
+     * 
+     * optional parameters (if left as 0, defaults will apply):
+     * @pitch  different base-frequency to use (in Hz)
+     * @volumeLimit  peak volume, as a number in the range 0-255.
+     * @tuneDuration  how long (in milliseconds) the overall performance will last .
      */
+    //% block="play FlexFX $id waiting? $wait||at pitch $pitch|with maximum volume: $volumeLimit| lasting (ms) $newDuration"
+    //% group="Playing"
+    //% inlineInputMode=external
+    //% expandableArgumentMode="toggle"
+    //% weight=990
+    //% id.defl="ting"
+    //% wait.defl=true
+    //% pitch.min=50 pitch.max=2000 pitch.defl=0
+    //% vol.min=0 vol.max=255 vol.defl=200
+    //% ms.min=0 ms.max=10000 ms.defl=800
+    export function playFlexFX(id: string, wait: boolean = true,
+        pitch: number = 0, volumeLimit: number = 0, newDuration: number = 0) {
+        let target: FlexFX = flexFXList.find(i => i.id === id);
+        if (target != null) {
+            // compile and add our Play onto the playList 
+            playList.push(target.makeTunedPlay(pitch, volumeLimit, newDuration));
+            activatePlayer();  // make sure it gets played (unless Stopped)
+            if (wait) {
+                awaitAllFinished(); // make sure it has been played
+            }
+        }
+    }
+
+    /** builtInFlexFX()
+    * Selector block to choose and return the name of a built-in FlexFx
+    */
     //% blockId="builtin_name" block="$fx"
     //% group="Playing"
-    //% weight=305
+    //% weight=980
     export function builtInFlexFX(fx: BuiltInFlexFX): string {
         switch (fx) {
             case BuiltInFlexFX.Chime: return "chime";
@@ -532,7 +565,7 @@ namespace flexFX {
             case BuiltInFlexFX.Siren: return "siren";
             case BuiltInFlexFX.Snore: return "snore";
             case BuiltInFlexFX.Ting: return "ting";
-            
+
             case BuiltInFlexFX.Tweet: return "tweet";
             case BuiltInFlexFX.Uhoh: return "uh-oh";
             case BuiltInFlexFX.Violin: return "violin";
@@ -542,60 +575,14 @@ namespace flexFX {
         return "ting"
     }
 
-    /*
-     * Perform a FlexFX
-     * @flexId  is the name of the FlexFX to be played.
-     * @wait  if "true", the FlexFX is played straightaway; else it will be played in the background.
-     * optional parameters (if left 0, defaults will apply):
-     * @pitch  different base-frequency to use (in Hz)
-     * @volumeLimit  peak volume, as a number in the range 0-255.
-     * @tuneDuration  how long (in milliseconds) the overall performance will last .
-     */
-    //% block="play FlexFX $id waiting? $wait||at pitch $pitch|with maximum volume: $volumeLimit| lasting (ms) $newDuration"
-    //% group="Playing"
-    //% inlineInputMode=external
-    //% expandableArgumentMode="toggle"
-    //% weight=310
-    //% id.defl="ting"
-    //% wait.defl=true
-    //% pitch.min=50 pitch.max=2000 pitch.defl=0
-    //% vol.min=0 vol.max=255 vol.defl=200
-    //% ms.min=0 ms.max=10000 ms.defl=800
-    export function playFlexFX(id: string, wait: boolean = true,
-        pitch: number = 0, volumeLimit: number = 0, newDuration: number = 0) {
-        let target: FlexFX = flexFXList.find(i => i.id === id);
-        if (target != null) {
-            // compile and add our Play onto the playList 
-            playList.push(target.makeTunedPlay(pitch, volumeLimit, newDuration));
-            activatePlayer();  // make sure it gets played (unless Stopped)
-            if (wait) {
-                awaitAllFinished(); // make sure it has been played
-            }
-        }
-    }
-
-    /**
-     * Selector block to choose and return the name of a built-in Tune
-     */
-    //% blockId="builtin_tune" block="$tune"
-    //% group="Playing"
-    //% weight=305
-    export function builtInTune(tune: BuiltInTune): string {
-        switch (tune) {
-            case BuiltInTune.Birthday: return "birthday";
-            case BuiltInTune.NewWorld: return "newWorld";
-            case BuiltInTune.Bach: return "bach";
-            case BuiltInTune.Beethoven: return "beethoven";
-        }
-        return "beethoven";
-    }
 
     /*
      * Use a FlexFX to play a Tune  
      * @title  is the name of the Tune to be played.
      * @flexId  is the name of the FlexFX to be used to play it.
      * @wait  if "true", the Tune is played to completion; else it will be played in the background.
-     * optional parameters (if left 0, defaults will apply):
+     * 
+     * optional parameters (if left as 0, defaults will apply):
      * @transpose  semitone steps by which to raise (or, if negative, lower) all notes in the Tune.
      * @volumeLimit  peak volume for every note, as a number in the range 0-255.
      * @tuneDuration  how long (in milliseconds) the overall performance should last .
@@ -603,11 +590,11 @@ namespace flexFX {
 
     //% block="play tune $tuneId using FlexFX $flexId waiting?$wait||transposed by (semitones): $transpose|with maximum volume: $volumeLimit|performance lasting (ms) $tuneDuration"    
     //% group="Playing"
+    //% weight=970
     //% inlineInputMode=external
     //% expandableArgumentMode="enabled"
-    //% weight=310
     //% flexId.defl="ting"
-    //% tuneId.defl="happy birthday"
+    //% tuneId.defl="birthday"
     //% wait.defl=true
     //% transpose.defl=0
     //% volumeLimit.defl=0
@@ -643,13 +630,89 @@ namespace flexFX {
         }
     }
 
+    /**
+     * Selector block to choose and return the name of a built-in Tune
+     */
+    //% blockId="builtin_tune" block="$tune"
+    //% group="Playing"
+    //% weight=960
+    export function builtInTune(tune: BuiltInTune): string {
+        switch (tune) {
+            case BuiltInTune.Birthday: return "birthday";
+            case BuiltInTune.NewWorld: return "newWorld";
+            case BuiltInTune.Bach: return "bach";
+            case BuiltInTune.Beethoven: return "beethoven";
+        }
+        return "beethoven";
+    }
+
+    /**
+     * Set the speed for playing future Tunes
+     * @param bpm   the beats-per-minute(BPM) for playTune() to use
+     */
+    //% block="set tempo (beats/minute): %bpm"
+    //% group="Playing"
+    //% weight=950
+    //% bpm.defl=120
+    export function setNextTempo(bpm: number) {  // CHANGES GLOBAL SETTING
+        tickMs = 15000 / bpm; // = (60*1000) / (4*bpm)
+    }
+
+    /**
+         * Compose a Tune using EKO-notation (Extent-Key-Octave).
+         *
+         * @param id  the identifier of the Tune to be created or replaced
+         * @param score  a text-string listing the notes in the Tune
+         */
+
+    //% block="compose Tune: $tuneId with notes: $score"
+    //% group="Playing"
+    //% weight=940
+    //% tuneId.defl="beethoven5"
+    //% score.defl="2R 2G4 2G4 2G4 8Eb4"
+    //% score.defl=""
+    export function composeTune(tuneId: string, score: string) {
+        // first delete any existing definition having this id (works even when missing!)
+        tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === tuneId), 1), 1);
+        // add this new definition
+        tuneList.push(new Tune(tuneId, score));
+    }
+
+    /**
+          * Add notes to a Tune using EKO-notation (Extent-Key-Octave).
+          *
+          * @param id  the identifier of the Tune to be extended
+          * @param score  a text-string listing the notes to be added
+          */
+
+    //% block="extend Tune: $tuneId with extra notes: $score"
+    //% group="Playing"
+    //% weight=930
+    //% advanced=true
+    //% tuneId.defl="beethoven5"
+    //% score.defl="2R 2F4 2F4 2F4 8D4"
+    export function extendTune(tuneId: string, score: string) {
+        let target: Tune = tuneList.find(i => i.id === tuneId);
+        if (target == null) {
+            // OOPS! trying to extend a non-existent Tune: 
+            // rather than fail, just create a new one
+            tuneList.push(new Tune(tuneId, score));
+        } else {
+            target.extend(score);
+        }
+    }
+
+
+    // ---- UI BLOCKS: PLAY-LIST ----
+
 
     /**
      * Await start of next FlexFX on the play-list
      */
     //% block="wait until next FlexFX starts"
     //% group="Play-list"
-    //% weight=270
+    //% weight=890
+    //% advanced=true
     export function awaitPlayStart() {
         if (playList.length >= 0) {
             playerStopped = false; // in case it was
@@ -663,7 +726,8 @@ namespace flexFX {
      */
     //% block="wait until current FlexFX finished"
     //% group="Play-list"
-    //% weight=260
+    //% weight=880
+    //% advanced=true
     export function awaitPlayFinish() {
         if (playerPlaying) {
             control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.FINISHED);
@@ -675,7 +739,8 @@ namespace flexFX {
      */
     //% block="wait until everything played"
     //% group="Play-list"
-    //% weight=250
+    //% weight=870
+    //% advanced=true
     export function awaitAllFinished() {
         if (playList.length >= 0) {
             playerStopped = false; // in case it was
@@ -690,7 +755,8 @@ namespace flexFX {
      */
     //% block="add a pause of $ms ms next in the play-list"
     //% group="Play-list"
-    //% weight=240
+    //% weight=860
+    //% advanced=true
     //% ms.defl=500
     export function playSilence(ms: number) {
         // adds a special-case sound-string of format "snnn.." 
@@ -706,7 +772,8 @@ namespace flexFX {
      */
     //% block="length of play-list"
     //% group="Play-list"
-    //% weight=230
+    //% weight=850
+    //% advanced=true
     export function waitingToPlay(): number {
         return playList.length;
     }
@@ -716,7 +783,8 @@ namespace flexFX {
      */
     //% block="pause play-list"
     //% group="Play-list"
-    //% weight=220
+    //% weight=840
+    //% advanced=true
     export function stopPlaying() {
         playerStopped = true;
     }
@@ -726,23 +794,25 @@ namespace flexFX {
      */
     //% block="play play-list"
     //% group="Play-list"
-    //% weight=210
+    //% weight=830
+    //% advanced=true
     export function startPlaying() {
         playerStopped = false;
         activatePlayer();
     }
-
 
     /**
      * Delete from the play-list everything left unplayed
      */
     //% block="forget play-list"
     //% group="Play-list"
-    //% weight=200
+    //% weight=820
+    //% advanced=true
     export function deletePlaylist() {
         while (playList.length > 0) { playList.pop() }
     }
 
+    // ---- UI BLOCKS: CREATING --
 
     /**
      * Specify the first (or only) part of a new FlexFX.
@@ -760,9 +830,9 @@ namespace flexFX {
 
     //% block="define FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes from $startPitch|               to $endPitch|volume goes from $startVolume|               to $endVolume|default duration=$duration"
     //% group="Creating"
-    //% inlineInputMode=external
+    //% weight=790
     //% advanced=true
-    //% weight=150
+    //% inlineInputMode=external
     //% id.defl="new"
     //% startPitch.min=25 startPitch.max=10000 startPitch.defl=1000
     //% startVolume.min=0 startVolume.max=255 startVolume.defl=200
@@ -799,9 +869,9 @@ namespace flexFX {
 
     //% block="continue FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes to $endPitch|volume goes to $endVolume| extended by (ms) $duration"
     //% group="Creating"
-    //% inlineInputMode=external
+    //% weight=780
     //% advanced=true
-    //% weight=140
+    //% inlineInputMode=external
     //% id.defl="new"
     //% endPitch.min=25 endPitch.max=4000 endPitch.defl=500
     //% endVolume.min=0 endVolume.max=255 endVolume.defl=200
@@ -825,64 +895,6 @@ namespace flexFX {
         }
         storeFlexFX(target);
     }
-
-    /**
-         * Compose a Tune using EKO-notation (Extent-Key-Octave).
-         *
-         * @param id  the identifier of the Tune to be created or replaced
-         * @param score  a text-string listing the notes in the Tune
-         */
-
-    //% block="compose Tune: $tuneId with notes: $score"
-    //% group="Creating"
-    //% advanced=true
-    //% weight=130
-    //% tuneId.defl="beethoven5"
-    //% score.defl="2R 2G4 2G4 2G4 8Eb4"
-    //% score.defl=""
-    export function composeTune(tuneId: string, score: string) {
-        // first delete any existing definition having this id (works even when missing!)
-        tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === tuneId), 1), 1);
-        // add this new definition
-        tuneList.push(new Tune(tuneId, score));
-    }
-
-    /**
-          * Add notes to a Tune using EKO-notation (Extent-Key-Octave).
-          *
-          * @param id  the identifier of the Tune to be extended
-          * @param score  a text-string listing the notes to be added
-          */
-
-    //% block="extend Tune: $tuneId with extra notes: $score"
-    //% group="Creating"
-    //% advanced=true
-    //% weight=120
-    //% tuneId.defl="beethoven5"
-    //% score.defl="2R 2F4 2F4 2F4 8D4"
-    export function extendTune(tuneId: string, score: string) {
-        let target: Tune = tuneList.find(i => i.id === tuneId);
-        if (target == null) {
-            // OOPS! trying to extend a non-existent Tune: 
-            // rather than fail, just create a new one
-            tuneList.push(new Tune(tuneId, score));
-        } else {
-            target.extend(score);
-        }
-    }
-
-    /**
-     * Set the speed for future Tunes
-     * @param bpm   the beats-per-minute(BPM) for playTune() to use
-     */
-    //% block="set Tune speed (beats/minute) %bpm"
-    //% bpm.defl=120
-    //% group="Play-list"
-    //% weight=210
-    export function setNextTempo(bpm: number) {  // CHANGES GLOBAL SETTING
-        tickMs = 15000/bpm; // = (60*1000) / (4*bpm)
-    }
-
 
  // general initialisation...
     // lists...

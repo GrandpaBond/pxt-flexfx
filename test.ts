@@ -1,5 +1,6 @@
 // *********** test codes **********
 /***
+***/
 // perform a built-in FlexFX with all the defaults
 basic.showIcon(IconNames.Target); 
 flexFX.playFlexFX("uhoh");
@@ -44,7 +45,7 @@ basic.showIcon(IconNames.Yes);
 pause(2000);
 // create a flexFX for a two-tone police-siren (middle part is silent)
 basic.showIcon(IconNames.Target);
-flexFX.defineFlexFX("police", 760, 160, flexFX.Wave.Sawtooth, flexFX.Attack.Delayed, flexFX.Effect.None, 800, 200, 450);
+flexFX.defineFlexFX("police", 760, 160, flexFX.Wave.Sawtooth, flexFX.Attack.Even, flexFX.Effect.None, 800, 200, 450);
 // (add a silent gap in the middle)
 flexFX.extendFlexFX("police", flexFX.Wave.Silence, flexFX.Attack.Even, flexFX.Effect.None, 560, 200, 100);
 flexFX.extendFlexFX("police", flexFX.Wave.Sawtooth, flexFX.Attack.Even, flexFX.Effect.None, 600, 160, 450);
@@ -266,16 +267,3 @@ while (flexFX.isActive()) {
 basic.showIcon(IconNames.Yes);
 
 
-// test new Attack.Delayed
-basic.showIcon(IconNames.Target);
- ***/
-flexFX.defineFlexFX("even", 1000, 250, flexFX.Wave.Sine, flexFX.Attack.Even,   flexFX.Effect.None, 1500, 250, 1000);
-flexFX.defineFlexFX("delay",1000, 250, flexFX.Wave.Sine, flexFX.Attack.Delayed,flexFX.Effect.None, 1500, 250, 1000);
-flexFX.playFlexFX("even",true);
-pause(800)
-music.tonePlayable(1500, 2000);
-pause(800)
-flexFX.playFlexFX("delay",true);
-pause(800)
-music.tonePlayable(1500, 2000);
-basic.showIcon(IconNames.Yes);

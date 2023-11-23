@@ -670,7 +670,6 @@ namespace flexFX {
     //% weight=940
     //% tuneId.defl="beethoven5"
     //% score.defl="2R 2G4 2G4 2G4 8Eb4"
-    //% score.defl=""
     export function composeTune(tuneId: string, score: string) {
         // first delete any existing definition having this id (works even when missing!)
         tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === tuneId), 1), 1);

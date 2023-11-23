@@ -18,6 +18,8 @@ Any ``||flexFX:flexFX||`` can also be used as the "instrument" on which to play 
 You can choose from a small selection of built-in **Tunes**: playing one automatically creates a sequence of individually tuned
 Plays, one for each of its notes.
 
+You can also compose your own Tunes, using a simple text notation. (See ``||flexFX:Composing Tunes||`` below)
+
 When playing an individual ``||flexFX:flexFX||`` or a Tune, you can either wait for it to finish, 
 or you can let it continue playing in the background while executing other code. If it hasn't already
 finished when you play another one, the new Play(s) will be added to the **Play-list**, 
@@ -26,18 +28,6 @@ Play-list to synchronise the sound-track with your other codes. (See ``||flexFX:
 
 If you need a sound that is not built-in, you can design your own. (See ``||flexFX:Designing a FlexFX||`` below)
 
-You can also compose your own Tunes, using a simple text notation. (See ``||flexFX:Composing Tunes||`` below)
-
-## Selecting a FlexFX #flexFX-builtInFlexFX 
-
-```sig
-flexFX.builtInFlexFX(fx): string 
-```
-
-Every ``||flexFX:flexFX||`` has a unique name: its identifier. This reporter block (which may be used as the first 
-parameter of the ``||flexFX:playFlexFX||`` block below) provides a drop-down list from which you can choose 
-a built-in ``||flexFX:flexFX||`` to hear.
- 
 ## Playing a FlexFX #flexFX-playFlexFX 
 
  ```sig 
@@ -78,14 +68,21 @@ When coding in Javascript, for convenience you can set the new pitch using the `
 or any of the various musical note constants such as ``||music: Music.C5||``. 
 ### ~
 
-## Selecting a Tune #flexFX-builtInTune 
+## Selecting a FlexFX #flexFX-builtInFlexFX 
 
 ```sig
-flexFX.builtInTune(tune): string 
+flexFX.builtInFlexFX(flex): string 
 ```
-This reporter block (which may be used as the first parameter of the ``||flexFX:playTune||`` block below) 
-provides a drop-down list from which you can choose a built-in Tune to play.
-  
+
+Every ``||flexFX:flexFX||`` has a unique name: its identifier. This reporter block (which may be used as the first 
+parameter of the ``||flexFX:playFlexFX||`` block below) provides a drop-down list from which you can choose 
+a built-in ``||flexFX:flexFX||`` to hear.
+ 
+# Tunes
+Since a ``||flexFX:FlexFX||`` can vary its pitch and duration, you can easily use it to play a Tune.
+There are blocks that allow you to perform built-in Tunes and also compose your own new ones 
+
+
 ## Playing a Tune #flexFX-playTune
 
 ```sig
@@ -114,6 +111,117 @@ The following example uses the built-in whalesong to celebrate your birthday (bu
 ```blocks
 flexFX.playTune("birthday", "whale", true, -7, 250, 30000);
 ```
+
+## Selecting a Tune #flexFX-builtInTune 
+
+```sig
+flexFX.builtInTune(tune): string 
+```
+This reporter block (which may be used as the first parameter of the ``||flexFX:playTune||`` block below) 
+provides a drop-down list from which you can choose a built-in Tune to play.
+
+## Setting the Speed #flexFX-setNextTempo
+
+```sig
+flexFX.setNextTempo(bpm)
+```
+
+This block 
+
+ bpm   the beats-per-minute(BPM) for playTune() to use
+  
+## Composing Tunes
+
+### EKO-notation 
+FlexFX Tunes are written out as text-strings using a special code that we call **EKO-notation** (pronounced "echo"). 
+Notes are defined by three-part EKO codes, separated by spaces. 
+
+> ``||flexFX:Extent||``: The first part of the code is a number showing how long the note should last (measured in quarter-beat ticks). 
+
+> ``||flexFX:Key||``: This is followed by the key-letter [CDEFGAB]. For the black keys (on a piano) you add "#" (sharp) to the key below, or "b" (flat) to the key above. 
+
+> ``||flexFX:Octave||``: The last part of the code gives the octave-number [1‐9], where C4 is middle-C. 
+
+
+So, the first line of "Happy Birthday" might be scored as  "4G4 2G4 6A4 6G4 6C5 12B4". 
+
+### Musical Rests
+
+In EKO-notation, musical rests are coded using an Extent followed by just the letter "R" (with no Octave).
+
+So, the start of Beethoven's Fifth Symphony might be scored as "2R 2G4 2G4 2G4 8Eb4 2R 2F4 2F4 2F4 8D4".
+
+### Tempo 
+The length of a tick controls how fast a Tune is played. The initial default speed of 120 beats-per-minute (BPM) 
+means that the default quarter-beat tick lasts 125 ms. 
+At this default tempo, the following table shows how the ``||flexFX:Extent||`` relates to conventional musical note-lengths: 
+
+
+| Extent | length          |ms    |per-Sec|per-Min| 
+| ---:   | :-------------- | ---: | ----: | ----: | 
+|   1    | semi-quaver     |  125 |  8.00 |   480 | 
+|   2    | quaver          |  250 |  4.00 |   240 | 
+|   4    | crotchet(1 beat)|  500 |  2.00 |   120 | 
+|   6    | dotted-crotchet |  750 |  1.33 |    80 | 
+|   8    | minim           | 1000 |  1.00 |    60 | 
+|  12    | dotted-minim    | 1500 |  0.67 |    40 | 
+|  16    | semibreve       | 2000 |  0.50 |    30 | 
+
+You can change the default speed using ``||flexFX:setNextTempo()||``. 
+
+
+### ~reminder 
+In the past, melodies have often been written down as text using **ABC-notation**. That scheme lists the notes to be played quite simply, 
+but involves many complex rhythmic and octave-selection conventions that require a fair degree of study and musical expertise to master.
+Although not as compact, our EKO-notation is far more logical and straightforward, and is much easier for beginners to use. 
+### ~
+
+## Composing a new Tune #flexFX-composeTune 
+
+```sig 
+flexFX.composeTune(title, score)
+```
+This block lets you start composing a new Tune, using EKO-notation (Extent-Key-Octave).
+
+> ``||flexFX:title||`` is the song-title. (Any existing Tune with the same "title" is first deleted.)
+
+> ``||flexFX:score||`` is simply a list of the notes in the melody, defined as EKO codes.
+
+This example adds the Tune "Edelweiss", defining the notes in its first line:
+
+```blocks
+flexFX.composeTune("edelweiss", "4E4 2G4 6D5 4C5 2G4 4F4 2R");
+```
+
+## Extending a Tune #flexFX-extendTune 
+
+```sig 
+flexFX.extendTune(title, score) 
+``` 
+
+For all but the shortest melody, the score would get unmanageably long (and confusing) to specify on just a single call.
+By following ``||flexFX:composeTune||`` with one or more calls to ``||flexFX:extendTune||``, you can write it out more conveniently,
+one line at a time.	
+
+> ``||flexFX:title||`` identifies the song to be added-to.  
+
+> ``||flexFX:score||`` is the list of the notes, defined as EKO codes, to be added to the end of the Tune.
+
+This example extends the Tune "Edelweiss" by adding the next three lines:
+
+```blocks
+flexFX.extendTune("edelweiss", "4E4 2E4 2E4 2F4 2G4 6A4 4G4 2R");
+flexFX.extendTune("edelweiss", "4E4 2G4 6D5 4C5 2G4 4F4 2R");
+flexFX.extendTune("edelweiss", "4E4 2G4 2G4 2A4 2B4 6C5 4C5 2R");
+```
+
+### ~reminder
+By specifying its title, any Tune can be freely modified using  ``||flexFX:composeTune||``, or ``||flexFX:extendTune||``.
+The basic rule is that if it exists, it gets changed; otherwise it is created from scratch. Obviously, each Tune 
+you create will take up memory: the longer the tune, the more memory required to hold it. If you get too creative, there will come 
+a point at which memory runs out! 
+### ~
+
 
 # Background Play-list 
 Often, a sound-effect or melody is intended to accompany other actions that require codes to be executed. 
@@ -352,99 +460,6 @@ or ``||flexFX:extendFlexFX||``. The basic rule is that if it exists, it gets cha
 Obviously, each ``||flexFX:FlexFX||`` you create will take up memory:  if you create too many, there will come a point 
 at which memory runs out! 
 ### ~
-
-# Composing Tunes
-
-## EKO-notation 
-FlexFX Tunes are written out as text-strings using a special code that we call **EKO-notation** (pronounced "echo"). 
-Notes are defined by three-part EKO codes, separated by spaces. 
-
-> ``||flexFX:Extent||``: The first part of the code is a number showing how long the note should last (measured in quarter-beat ticks). 
-
-> ``||flexFX:Key||``: This is followed by the key-letter [CDEFGAB]. For the black keys (on a piano) you add "#" (sharp) to the key below, or "b" (flat) to the key above. 
-
-> ``||flexFX:Octave||``: The last part of the code gives the octave-number [1‐9], where C4 is middle-C. 
-
-
-So, the first line of "Happy Birthday" might be scored as  "4G4 2G4 6A4 6G4 6C5 12B4". 
-
-### Musical Rests
-
-In EKO-notation, musical rests are coded using an Extent followed by just the letter "R" (with no Octave).
-
-So, the start of Beethoven's Fifth Symphony might be scored as "2R 2G4 2G4 2G4 8Eb4 2R 2F4 2F4 2F4 8D4".
-
-### Tempo 
-The length of a tick controls how fast a Tune is played. The initial default speed of 120 beats-per-minute (BPM) 
-means that the default quarter-beat tick lasts 125 ms. 
-At this default tempo, the following table shows how the ``||flexFX:Extent||`` relates to conventional musical note-lengths: 
-
-
-| Extent | length          |ms    |per-Sec|per-Min| 
-| ---:   | :-------------- | ---: | ----: | ----: | 
-|   1    | semi-quaver     |  125 |  8.00 |   480 | 
-|   2    | quaver          |  250 |  4.00 |   240 | 
-|   4    | crotchet(1 beat)|  500 |  2.00 |   120 | 
-|   6    | dotted-crotchet |  750 |  1.33 |    80 | 
-|   8    | minim           | 1000 |  1.00 |    60 | 
-|  12    | dotted-minim    | 1500 |  0.67 |    40 | 
-|  16    | semibreve       | 2000 |  0.50 |    30 | 
-
-You can change the default speed using ``||flexFX:setNextTempo()||``. 
-
-
-### ~reminder 
-In the past, melodies have often been written down as text using **ABC-notation**. That scheme lists the notes to be played quite simply, 
-but involves many complex rhythmic and octave-selection conventions that require a fair degree of study and musical expertise to master.
-Although not as compact, our EKO-notation is far more logical and straightforward, and is much easier for beginners to use. 
-### ~
-
-## Composing a new Tune #flexFX-composeTune 
-
-```sig 
-flexFX.composeTune(title, score)
-```
-This block lets you start composing a new Tune, using EKO-notation (Extent-Key-Octave).
-
-> ``||flexFX:title||`` is the song-title. (Any existing Tune with the same "title" is first deleted.)
-
-> ``||flexFX:score||`` is simply a list of the notes in the melody, defined as EKO codes.
-
-This example adds the Tune "Edelweiss", defining the notes in its first line:
-
-```blocks
-flexFX.composeTune("edelweiss", "4E4 2G4 6D5 4C5 2G4 4F4 2R");
-```
-
-## Extending a Tune #flexFX-extendTune 
-
-```sig 
-flexFX.extendTune(title, score) 
-``` 
-
-For all but the shortest melody, the score would get unmanageably long (and confusing) to specify on just a single call.
-By following ``||flexFX:composeTune||`` with one or more calls to ``||flexFX:extendTune||``, you can write it out more conveniently,
-one line at a time.	
-
-> ``||flexFX:title||`` identifies the song to be added-to.  
-
-> ``||flexFX:score||`` is the list of the notes, defined as EKO codes, to be added to the end of the Tune.
-
-This example extends the Tune "Edelweiss" by adding the next three lines:
-
-```blocks
-flexFX.extendTune("edelweiss", "4E4 2E4 2E4 2F4 2G4 6A4 4G4 2R");
-flexFX.extendTune("edelweiss", "4E4 2G4 6D5 4C5 2G4 4F4 2R");
-flexFX.extendTune("edelweiss", "4E4 2G4 2G4 2A4 2B4 6C5 4C5 2R");
-```
-
-### ~reminder
-By specifying its title, any Tune can be freely modified using  ``||flexFX:composeTune||``, or ``||flexFX:extendTune||``.
-The basic rule is that if it exists, it gets changed; otherwise it is created from scratch. Obviously, each Tune 
-you create will take up memory: the longer the tune, the more memory required to hold it. If you get too creative, there will come 
-a point at which memory runs out! 
-### ~
-
 
 
 -----------------------------------------------------------------------

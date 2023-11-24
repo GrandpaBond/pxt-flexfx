@@ -387,7 +387,7 @@ The attack chooses how fast the pitch moves from the start-point to the end-poin
 
 ### ~reminder
 Note that the Attack can only apply to pitch changes: the internal soundEffects synthesiser only ever changes the volume linearly from start-point 
-to end-point. So percussive sounds (where an initial rapid fall in volume is followed by a slower decay) will require two or more parts.
+to end-point. So percussive, bell-like sounds (where an initial rapid fall in volume is followed by a slower decay) will require two or more parts.
 ### ~
 
 ### Style: Effect 
@@ -459,7 +459,6 @@ or ``||flexFX:extendFlexFX||``. The basic rule is that if it exists, it gets cha
 Obviously, each ``||flexFX:FlexFX||`` you create will take up memory:  if you create too many, there will come a point 
 at which memory runs out! 
 ### ~
-
 
 -----------------------------------------------------------------------
 -----------------------------------------------------------------------

@@ -349,17 +349,20 @@ namespace flexFX {
 
             this.pitchProfile.push(this.goodPitch(endPitch));
             
-            let v = this.goodVolume(endVolume*4);
-            this.volumeProfile.push(v);
-            this.peakVolume = Math.max(this.peakVolume, v);
+            let bigV = this.goodVolume(endVolume*4);
+            this.volumeProfile.push(bigV);
+            this.peakVolume = Math.max(this.peakVolume, bigV);
 
             let d = this.goodDuration(duration);
             this.durationProfile.push(d);
 
-            // turn our enums into simple numbers & create the sound string for this part
+            // turn our enums into simple numbers
             let waveNumber: number = wave;
             let effectNumber: number = effect;
             let attackNumber: number = attack;
+
+            // start where the [pitch,volume] last ended:
+            // (this.nParts hasn't yet been incremented, so indexes the previous part)
             let startPitch = this.pitchProfile[this.nParts];
             let startVolume = this.volumeProfile[this.nParts]
     
@@ -393,7 +396,7 @@ namespace flexFX {
 
             // create the SoundExpression
             let soundExpr = music.createSoundExpression(waveNumber, startPitch, endPitch,
-                startVolume, endVolume, duration, effectNumber, attackNumber);      
+                startVolume, bigV, duration, effectNumber, attackNumber);      
     
             /* The underlying implementation in "codal-microbit-v2/source/SoundSynthesizerEffects.cpp"
             of the functions: 

@@ -1,12 +1,13 @@
 // *********** test codes **********
+
 /***
 ***/
+
 // perform a built-in FlexFX with all the defaults
 basic.showIcon(IconNames.Target); 
 flexFX.playFlexFX("uhoh");
 basic.showIcon(IconNames.Yes);
 pause(2000);
-
 // perform the simple built-in chime flexFX
 basic.showIcon(IconNames.Target);
 flexFX.playFlexFX("chime", true, Note.G5, 180, 400); // up a fifth
@@ -265,5 +266,4 @@ while (flexFX.isActive()) {
     basic.pause(30);
 }
 basic.showIcon(IconNames.Yes);
-
 

@@ -588,7 +588,7 @@ namespace flexFX {
      * @tuneDuration  how long (in milliseconds) the overall performance should last .
      */
 
-    //% block="play tune $tuneId using FlexFX $flexId waiting?$wait||transposed by (semitones): $transpose|with maximum volume: $volumeLimit|performance lasting (ms) $tuneDuration"    
+    //% block="play tune $tuneId using FlexFX $flexId waiting? $wait||transposed by (semitones): $transpose|with maximum volume: $volumeLimit|performance lasting (ms) $tuneDuration"    
     //% group="Playing"
     //% weight=970
     //% inlineInputMode=external

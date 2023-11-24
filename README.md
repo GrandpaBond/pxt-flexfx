@@ -26,7 +26,7 @@ finished when you play another one, the new Play(s) will be added to the **Play-
 so you can queue-up several sounds to happen in the background. You can interact with this 
 Play-list to synchronise the sound-track with your other codes. (See ``||flexFX:Background Play-list||`` below).
 
-If you need a sound that is not built-in, you can design your own. (See ``||flexFX:Designing a FlexFX||`` below)
+If you need a sound that is not built-in, you can even design your own. (See ``||flexFX:Designing a FlexFX||`` below)
 
 ## Playing a FlexFX #flexFX-playFlexFX 
 
@@ -75,7 +75,7 @@ flexFX.builtInFlexFX(flex): string
 ```
 
 Every ``||flexFX:flexFX||`` has a unique name: its identifier. This reporter block (which may be used as the first 
-parameter of the ``||flexFX:playFlexFX||`` block below) provides a drop-down list from which you can choose 
+parameter of the ``||flexFX:playFlexFX||`` block above) provides a drop-down list from which you can choose 
 a built-in ``||flexFX:flexFX||`` to hear.
  
 # Tunes
@@ -117,25 +117,24 @@ flexFX.playTune("birthday", "whale", true, -7, 250, 30000);
 ```sig
 flexFX.builtInTune(tune): string 
 ```
-This reporter block (which may be used as the first parameter of the ``||flexFX:playTune||`` block below) 
+This reporter block (which may be used as the first parameter of the ``||flexFX:playTune||`` block above) 
 provides a drop-down list from which you can choose a built-in Tune to play.
 
-## Setting the Speed #flexFX-setNextTempo
+## Setting the Tempo #flexFX-setNextTempo
 
 ```sig
 flexFX.setNextTempo(bpm)
 ```
+This block adjusts the speed at which Tunes are played.
 
-This block adjusts the speed at which a Tune is played.
+> ``||flexFX:bpm||`` adjusts the beats-per-minute (BPM) for playTune() to use.
 
- bpm   the beats-per-minute(BPM) for playTune() to use
+The length of each note in a Tune (its **Extent**) is actually measured in quarter-beat **Ticks**. 
+The current length of a Tick controls how fast ``||flexFX:playTune||`` plays the Tune 
+(unless its optional ``||flexFX:tuneDuration||`` parameter says otherwise). 
 
-
- ### Tempo 
-The length of a tick controls how fast a Tune is played. The initial default speed of 120 beats-per-minute (BPM) 
-means that the default quarter-beat tick lasts 125 ms. 
+The initial default speed of 120 beats-per-minute (BPM) means that the default Tick lasts 125 ms. 
 At this default tempo, the following table shows how the ``||flexFX:Extent||`` relates to conventional musical note-lengths: 
-
 
 | Extent | length          |ms    |per-Sec|per-Min| 
 | ---:   | :-------------- | ---: | ----: | ----: | 
@@ -169,7 +168,6 @@ So, the first line of "Happy Birthday" might be scored as  "4G4 2G4 6A4 6G4 6C5 
 In EKO-notation, musical rests are coded using an Extent followed by just the letter "R" (with no Octave).
 
 So, the start of Beethoven's Fifth Symphony might be scored as "2R 2G4 2G4 2G4 8Eb4 2R 2F4 2F4 2F4 8D4".
-
 
 
 ### ~reminder 
@@ -209,7 +207,7 @@ one line at a time.
 
 > ``||flexFX:score||`` is the list of the notes, defined as EKO codes, to be added to the end of the Tune.
 
-This example extends the Tune "Edelweiss" by adding the next three lines:
+This example extends the Tune "edelweiss" by adding the next three lines:
 
 ```blocks
 flexFX.extendTune("edelweiss", "4E4 2E4 2E4 2F4 2G4 6A4 4G4 2R");
@@ -239,8 +237,8 @@ Obviously, the queue of Plays take up memory: if the Play-list is allowed to get
 which this runs out! 
 ### ~
 
-Sometimes you might want tighter control over exactly when each queued Play occurs, so various blocks are provided that let you 
-interact with the Play-list. 
+Sometimes you might want tighter control over exactly when each queued Play occurs, so various advanced blocks are provided 
+(under ``||flexFX:... more||``) that let you interact with the Play-list. 
   
 ## Spacing-out background Plays  #flexFX-playSilence                 
 ```sig 
@@ -287,8 +285,7 @@ Awaits completion of everything on the Play-list.  (Returns immediately if there
  ```sig 
 flexFX.stopPlaying()  
  ``` 
-You can also pause (and later re-start) the background Play-list: 
-``||flexFX:stopPlaying||`` suspends future background playing from the Play-list 
+You can also pause (and later re-start) the background Play-list. This block suspends future background playing from the Play-list 
 (once any currently active Play has finished). 
   
 ## Playing the rest of the Play-list  #flexFX-startPlaying 
@@ -351,7 +348,7 @@ basic.showIcon(IconNames.Happy);
 
 # Designing a FlexFX 
 There are lots of ``||flexFX:flexFX||`` sounds already built-in, but if you wanted something different 
-there are some advanced blocks (under ``||flexFX:more...||``) that will let you build your own from scratch. 
+there are some advanced blocks (under ``||flexFX:... more||``) that will let you build your own from scratch. 
 
 ## Anatomy of a FlexFX 
 The basic idea is that a FlexFX is built from one or more **parts**. 
@@ -418,23 +415,23 @@ This complex block is used to specify the first (or only) part of a new ``||flex
 so is really just a tuneable version of a standard soundExpression).
    
 
-> ``||flexFX:id||``  the identifier of the flexFX to be created or changed. (Any existing FlexFX with the same "id" is first deleted.)
+> ``||flexFX:id||`` - the identifier of the flexFX to be created or changed. (Any existing FlexFX with the same "id" is first deleted.)
 
-> ``||flexFX:startPitch||``  the initial frequency of the sound (in Hz)
+> ``||flexFX:startPitch||`` - the initial frequency of the sound (in Hz)
 
-> ``||flexFX:startVolume||``  the initial volume of the sound (0 to 255)
+> ``||flexFX:startVolume||`` - the initial volume of the sound (0 to 255)
 
-> ``||flexFX:wave||``  chooses the wave-form that characterises this sound
+> ``||flexFX:wave||`` - chooses the wave-form that characterises this sound
 
-> ``||flexFX:attack||``  chooses how fast the sound moves from its initial to final pitch
+> ``||flexFX:attack||`` - chooses how fast the sound moves from its initial to final pitch
 
-> ``||flexFX:effect||``  chooses a possible modification to the sound, such as vibrato
+> ``||flexFX:effect||`` - chooses a possible modification to the sound, such as vibrato
 
-> ``||flexFX:endPitch||``  the final frequency of the sound (in Hz)
+> ``||flexFX:endPitch||`` - the final frequency of the sound (in Hz)
 
-> ``||flexFX:endVolume||``  the final volume of the sound (0 to 255)
+> ``||flexFX:endVolume||`` - the final volume of the sound (0 to 255)
 
-> ``||flexFX:duration||``  the duration of the sound (in ms)   
+> ``||flexFX:duration||`` - the duration of the sound (in ms)   
 
 
 

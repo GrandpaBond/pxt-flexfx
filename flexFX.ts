@@ -124,15 +124,6 @@ namespace flexFX {
         Woof
     }
 
-    // array of built-in FlexFX ids (no longer needed)
-    /**** must precicely match the enum BuiltInFlexFX above
-    let builtInId: string[] = [
-        "chime", "cry", "flute", "horn", "hum",        // [0...4]
-        "laugh", "miaow", "moan", "moo", "motor",      // [5...9]
-        "query", "shout", "siren", "snore","ting",     // [10...14]
-        "tweet", "uh-oh", "violin", "whale", "woof" ]; // [15...19]
-     ****/
-
     // list of built-in Tunes
     export enum BuiltInTune {
         //% block="happy birthday"
@@ -570,7 +561,7 @@ namespace flexFX {
             case BuiltInFlexFX.Ting: return "ting";
 
             case BuiltInFlexFX.Tweet: return "tweet";
-            case BuiltInFlexFX.Uhoh: return "uh-oh";
+            case BuiltInFlexFX.Uhoh: return "uhoh";
             case BuiltInFlexFX.Violin: return "violin";
             case BuiltInFlexFX.Whale: return "whale";
             case BuiltInFlexFX.Woof: return "woof";

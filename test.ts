@@ -1,5 +1,4 @@
 // *********** test codes **********
-
 /***
 ***/
 
@@ -221,7 +220,7 @@ flexFX.extendTune("edelweiss", "4E4 2G4 2G4 2A4 2B4 6C5 6C5");
 flexFX.extendTune("edelweiss", "3D5 1G4 2G4 3B4 1A4 2G4 4E4 2G4 6C5");
 flexFX.extendTune("edelweiss", "4A4 2C5 4D5 2C5 6B4 6G4");
 flexFX.extendTune("edelweiss", "4E4 2G4 6D5 4C5 2G#4 6F5");
-flexFX.extendTune("edelweiss", "4E5 2G4 2G4 2A4 2B4 6C5 6C5");
+flexFX.extendTune("edelweiss", "4E5 2G5 2G5 2A5 2B5 6C6 6C6");
 
 // Play it, on the chime, asynchronously, softly,
 //    lasting a full minute, transposed down by a fifth.
@@ -266,4 +265,3 @@ while (flexFX.isActive()) {
     basic.pause(30);
 }
 basic.showIcon(IconNames.Yes);
-

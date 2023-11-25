@@ -349,9 +349,9 @@ namespace flexFX {
 
             this.pitchProfile.push(this.goodPitch(endPitch));
             
-            let bigV = this.goodVolume(endVolume*4);
-            this.volumeProfile.push(bigV);
-            this.peakVolume = Math.max(this.peakVolume, bigV);
+            let bigEndVol = this.goodVolume(endVolume*4);
+            this.volumeProfile.push(bigEndVol);
+            this.peakVolume = Math.max(this.peakVolume, bigEndVol);
 
             let d = this.goodDuration(duration);
             this.durationProfile.push(d);
@@ -370,7 +370,7 @@ namespace flexFX {
                 // ensure this part plays silently, while preserving the end-point of the previous part 
                 // and the start-point of any following part
                 startVolume = 0;
-                endVolume = 0;
+                bigEndVol = 0;
                 waveNumber = WaveShape.Sine; // arbitrarily, as silent!
             } else {
                 // compute average pitch of this part
@@ -396,7 +396,7 @@ namespace flexFX {
 
             // create the SoundExpression
             let soundExpr = music.createSoundExpression(waveNumber, startPitch, endPitch,
-                startVolume, bigV, duration, effectNumber, attackNumber);      
+                startVolume, bigEndVol, duration, effectNumber, attackNumber);      
     
             /* The underlying implementation in "codal-microbit-v2/source/SoundSynthesizerEffects.cpp"
             of the functions: 

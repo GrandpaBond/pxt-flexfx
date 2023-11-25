@@ -460,6 +460,38 @@ Obviously, each ``||flexFX:FlexFX||`` you create will take up memory:  if you cr
 at which memory runs out! 
 ### ~
 
+
+# Examples 
+
+## Create a Tom-Tom FlexFX.
+This example creates a new ``||flexFX:FlexFX||`` sounding a bit like a Tom-Tom.
+
+```blocks
+flexFX.defineFlexFX("tomtom", 669, 255, flexFX.Wave.Triangle,
+            flexFX.Attack.Fast, flexFX.Effect.Vibrato, 500, 100, 100);
+flexFX.extendFlexFX("tomtom", flexFX.Wave.Triangle,
+            flexFX.Attack.Even, flexFX.Effect.None, 500, 30, 500);
+flexFX.extendFlexFX("tomtom", flexFX.Wave.Triangle, 
+            flexFX.Attack.Even, flexFX.Effect.None, 200, 20, 200);
+```
+
+It starts with a short (100ms) percussion sound that dips slightly in pitch, and dies away quickly.
+This is followed by a longer (half-second) resonant vibration, getting slightly quieter.
+In the final 200ms, the pitch falls away strongly.
+
+
+## Create an Owl call.
+This more complex example creates a new ``||flexFX:FlexFX||`` giving the familiar "Tu-Whit, Tu-Whooo" call of the Tawny Owl.
+
+```blocks
+
+```
+
+This six-part simulation starts with a falling "Tu" followed by a rising "-Whit".
+There is then a silent gap before the second section.
+This repeats the falling "Tu" part, followed by a long rise and an even longer falling tone,
+creating the final "-Whooo" of the call.
+
 -----------------------------------------------------------------------
 -----------------------------------------------------------------------
 # Acknowledgements 

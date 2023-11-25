@@ -1,7 +1,7 @@
 ```package
 pxt-flexfx=github:grandpabond/pxt-flexfx
 ```
-
+scratch
 # FlexFX - Flexible Sound-effect Recipes
 Many microbit projects can be brought to life by adding sound-effects to indicate their state.
 
@@ -216,7 +216,7 @@ flexFX.extendTune("edelweiss", "4E4 2G4 2G4 2A4 2B4 6C5 4C5 2R");
 
 ### ~reminder
 By specifying its title, any Tune can be freely modified using  ``||flexFX:composeTune||``, or ``||flexFX:extendTune||``.
-The basic rule is that if it exists, it gets changed; otherwise it is created from scratch. Obviously, each Tune 
+The basic rule is that if it exists, it gets changed; otherwise a fresh one is created. Obviously, each Tune 
 you create will take up memory: the longer the tune, the more memory required to hold it. If you get too creative, there will come 
 a point at which memory runs out! 
 ### ~
@@ -244,7 +244,8 @@ Sometimes you might want tighter control over exactly when each queued Play occu
 flexFX.playSilence(ms) 
 ``` 
   
-When queueing-up a series of Plays, you may not always want them to follow-on straightaway. Use this function to space-out your Plays, by adding a silent pause onto the Play-list. 
+When queueing-up a series of Plays, you may not always want them to follow-on straightaway. 
+Use this function to space-out your Plays, by adding a silent pause onto the Play-list. 
  
 > ``||flexFX:ms||`` : specifies the length of the gap in milliseconds.
    
@@ -347,7 +348,7 @@ basic.showIcon(IconNames.Happy);
 
 # Designing a FlexFX 
 There are lots of ``||flexFX:flexFX||`` sounds already built-in, but if you wanted something different 
-there are some advanced blocks (under ``||flexFX:... more||``) that will let you build your own from scratch. 
+there are some advanced blocks (under ``||flexFX:... more||``) that will let you build your very own ``||flexFX:flexFX||``. 
 
 ## Anatomy of a FlexFX 
 The basic idea is that a FlexFX is built from one or more **parts**. 
@@ -435,6 +436,11 @@ so is really just a tuneable version of a standard soundExpression).
 
 
 ## Extending a FlexFX #flexFX-extendFlexFX 
+
+```sig 
+flexFX.extendFlexFX() 
+``` 
+
 Every call to  ``||flexFX:extendFlexFX||`` adds another part to your ``||flexFX:FlexFX||``, continuing on from its current final frequency and volume.
 
 > ``||flexFX:id||``  - the identifier of the flexFX to be extended
@@ -454,7 +460,7 @@ Every call to  ``||flexFX:extendFlexFX||`` adds another part to your ``||flexFX:
 
 ### ~reminder
 By specifying it by name (its **id**), any ``||flexFX:FlexFX||`` can be freely modified using  ``||flexFX:createFlexFX||`` 
-or ``||flexFX:extendFlexFX||``. The basic rule is that if it exists, it gets changed; otherwise it is created from scratch. 
+or ``||flexFX:extendFlexFX||``. The basic rule is that if it exists, it gets changed; otherwise a brand new one is created. 
 Obviously, each ``||flexFX:FlexFX||`` you create will take up memory:  if you create too many, there will come a point 
 at which memory runs out! 
 ### ~
@@ -463,7 +469,7 @@ at which memory runs out!
 # Examples 
 
 ## Create a Tom-Tom FlexFX.
-This example creates a new ``||flexFX:FlexFX||`` sounding a bit like a Tom-Tom.
+This example creates a new ``||flexFX:FlexFX||`` sounding a bit like a Tom-Tom drum.
 
 ```blocks
 flexFX.defineFlexFX("tomtom", 669, 255, flexFX.Wave.Triangle,

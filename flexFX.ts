@@ -128,12 +128,14 @@ namespace flexFX {
     export enum BuiltInTune {
         //% block="happy birthday"
         Birthday,
+        //% block="jingle bells"
+        JingleBells,
         //% block="new world"
         NewWorld,
-        //% block="bach"
-        Bach,
-        //% block="beethoven"
-        Beethoven
+        //% block="bach violin"
+        BachViolin,
+        //% block="ode to joy"
+        OdeToJoy
     }
     
     // constants used in conversions between frequency & MIDI note-number:
@@ -633,9 +635,10 @@ namespace flexFX {
     export function builtInTune(tune: BuiltInTune): string {
         switch (tune) {
             case BuiltInTune.Birthday: return "birthday";
+            case BuiltInTune.JingleBells: return "jingleBells";
             case BuiltInTune.NewWorld: return "newWorld";
-            case BuiltInTune.Bach: return "bach";
-            case BuiltInTune.Beethoven: return "beethoven";
+            case BuiltInTune.BachViolin: return "bachViolin";
+            case BuiltInTune.OdeToJoy: return "odeToJoy";
         }
         return "beethoven";
     }
@@ -982,24 +985,36 @@ namespace flexFX {
    }
 
     function populateBuiltInTunes() {
-        composeTune("birthday", "2G4 1G4 3A4 3G4 3C5 6B4");    // line 1
-        extendTune("birthday", "2G4 1G4 3A4 3G4 3D5 6C5");     // line 2
-        extendTune("birthday", "2G4 1G4 3G5 3E5 3C5 3B4 6A4"); // line 3
-        extendTune("birthday", "2F5 1F5 3E5 3C5 3D5 6C5");     // line 4
-        composeTune("newWorld", "6E3 2G3 8G3 6E3 2D3 8C3"); // line 1
-        extendTune("newWorld", "4D3 4E3 4G3 4E3 8D3 8R");   // line 2
-        extendTune("newWorld", "6E3 2G3 8G3 6E3 2D3 8C3");  // line 2
-        extendTune("newWorld", "4D3 4E3 6D3 2C3 8C3 8R");   // line 2
-        composeTune("odeToJoy", "4B4 4B4 4C5 4D5 4D5 4C5 4B4 4A4");     // line 1
-        extendTune("odeToJoy", "4G4 4G4 4A4 4B4 6B4 2A4 8A4");         // line 2
-        extendTune("odeToJoy", "4B4 4B4 4C5 4D5 4D5 4C5 4B4 4A4");     // line 3
-        extendTune("odeToJoy", "4G4 4G4 4A4 4B4 6A4 2G4 8G4");         // line 4
-        extendTune("odeToJoy", "4A4 4A4 4B4 4G4 4A4 2B4 2C5 4B4");     // line 5
-        extendTune("odeToJoy", "4G4 4A4 2B4 2C5 4B4 4A4 4G4 4A4 4D4"); // line 6
-        extendTune("odeToJoy", "8B4 4B4 4C5 4D5 4D5 4C5 4B4 4A4");     // line 7
-        extendTune("odeToJoy", "4G4 4G4 4A4 4B4 6A4 2G4 8G4");         // line 8
-        composeTune("bachViolin", ""); // line 1
-        composeTune("bachViolin", "");  // line 2
+        composeTune("birthday", "2G4 1G4 3A4 3G4 3C5 6B4");
+        extendTune("birthday", "2G4 1G4 3A4 3G4 3D5 6C5");
+        extendTune("birthday", "2G4 1G4 3G5 3E5 3C5 3B4 6A4");
+        extendTune("birthday", "2F5 1F5 3E5 3C5 3D5 6C5");
+
+        composeTune("jingleBells", "2E5 2E5 4E5 2E5 2E5 4E5");
+        extendTune("jingleBells", "2E5 2G5 3C5 1D5 4E5 4R");
+        extendTune("jingleBells", "2F5 2F5 3F5 1F5 2F5 2E5 2E5 2E5");
+        extendTune("jingleBells", "2E5 2D5 2D5 2E5 2D5 2R 2G5 2R");
+        extendTune("jingleBells", "2E5 2E5 4E5 2E5 2E5 4E5");
+        extendTune("jingleBells", "2E5 2G5 3C5 1D5 4E5 4R");
+        extendTune("jingleBells", "2F5 2F5 3F5 1F5 2F5 2E5 2E5 2E5");
+        extendTune("jingleBells", "2G5 2G5 2F5 2D5 6C5");
+        
+        composeTune("newWorld", "6E3 2G3 8G3 6E3 2D3 8C3");
+        extendTune("newWorld", "4D3 4E3 4G3 4E3 8D3 8R");
+        extendTune("newWorld", "6E3 2G3 8G3 6E3 2D3 8C3");
+        extendTune("newWorld", "4D3 4E3 6D3 2C3 8C3 8R");
+
+        composeTune("bachViolin", "2E5 6A5 2E5 6F5 2D5 1E5 1D5 1C5 1E5");
+        extendTune("bachViolin", "1D5 1C5 1B4 1D5 2C5 6A4");
+        
+        composeTune("odeToJoy", "4B4 4B4 4C5 4D5 4D5 4C5 4B4 4A4");
+        extendTune("odeToJoy", "4G4 4G4 4A4 4B4 6B4 2A4 8A4");
+        extendTune("odeToJoy", "4B4 4B4 4C5 4D5 4D5 4C5 4B4 4A4");
+        extendTune("odeToJoy", "4G4 4G4 4A4 4B4 6A4 2G4 8G4");
+        extendTune("odeToJoy", "4A4 4A4 4B4 4G4 4A4 2B4 2C5 4B4");
+        extendTune("odeToJoy", "4G4 4A4 2B4 2C5 4B4 4A4 4G4 4A4 4D4");
+        extendTune("odeToJoy", "8B4 4B4 4C5 4D5 4D5 4C5 4B4 4A4");
+        extendTune("odeToJoy", "4G4 4G4 4A4 4B4 6A4 2G4 8G4");
 
     }
 

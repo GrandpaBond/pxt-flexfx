@@ -1,7 +1,7 @@
 // *********** test codes **********
-/***
-***/
 
+flexFX.playTune("bachViolin","violin");
+/***
 // perform a built-in FlexFX with all the defaults
 basic.showIcon(IconNames.Target); 
 flexFX.playFlexFX("uhoh");
@@ -265,3 +265,5 @@ while (flexFX.isActive()) {
     basic.pause(30);
 }
 basic.showIcon(IconNames.Yes);
+
+***/

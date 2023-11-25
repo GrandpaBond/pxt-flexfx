@@ -49,7 +49,6 @@ volume or duration of this Play.
 the ``||music: Music||`` category to change the base-frequency, you can then click on it to select a note from the 
 pop-up piano keyboard.
 
-  
 > ``||flexFX:volumeLimit||`` sets the peak volume as a number in the range 0-255. 
   
 > ``||flexFX:newDuration||`` sets how long (in milliseconds) the overall performance will last. 
@@ -473,6 +472,10 @@ flexFX.extendFlexFX("tomtom", flexFX.Wave.Triangle,
             flexFX.Attack.Even, flexFX.Effect.None, 500, 30, 500);
 flexFX.extendFlexFX("tomtom", flexFX.Wave.Triangle, 
             flexFX.Attack.Even, flexFX.Effect.None, 200, 20, 200);
+
+flexFX.playFlexFX("tomtom", true, Note.F3);
+flexFX.playFlexFX("tomtom", true, Note.C3);
+flexFX.playFlexFX("tomtom", true, Note.F3);
 ```
 
 It starts with a short (100ms) percussion sound that dips slightly in pitch, and dies away quickly.
@@ -481,15 +484,29 @@ In the final 200ms, the pitch falls away strongly.
 
 
 ## Create an Owl call.
-This more complex example creates a new ``||flexFX:FlexFX||`` giving the familiar "Tu-Whit, Tu-Whooo" call of the Tawny Owl.
+This rather more complex example creates a new ``||flexFX:FlexFX||`` giving the 
+familiar "Tu-Whit, Tu-Whooo" call of the Tawny Owl.
 
 ```blocks
+    flexFX.defineFlexFX("owl", 300, 150, flexFX.Wave.Sine, 
+                        flexFX.Attack.Medium, flexFX.Effect.None, 220, 200, 80);
+    flexFX.extendFlexFX("owl", flexFX.Wave.Sine, 
+                        flexFX.Attack.Even, flexFX.Effect.None, 380, 180, 150);
+    flexFX.extendFlexFX("owl", flexFX.Wave.Silence,
+                        flexFX.Attack.Even, flexFX.Effect.None, 300, 150, 300);
+    flexFX.extendFlexFX("owl", flexFX.Wave.Sine,
+                        flexFX.Attack.Even, flexFX.Effect.None, 220, 200, 80);
+    flexFX.extendFlexFX("owl", flexFX.Wave.Sine,
+                        flexFX.Attack.Medium, flexFX.Effect.None, 350, 255, 800);
+    flexFX.extendFlexFX("owl", flexFX.Wave.Sine,
+                        flexFX.Attack.Even, flexFX.Effect.None, 200, 30, 1000);
 
+    flexFX.playFlexFX("owl",true);
 ```
 
 This six-part simulation starts with a falling "Tu" followed by a rising "-Whit".
-There is then a silent gap before the second section.
-This repeats the falling "Tu" part, followed by a long rise and an even longer falling tone,
+There is then a silent gap of 300ms before the second section.
+Part 4 repeats the falling "Tu" part, followed by a long rise and an even longer falling tone,
 creating the final "-Whooo" of the call.
 
 -----------------------------------------------------------------------

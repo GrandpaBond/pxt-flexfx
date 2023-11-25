@@ -167,19 +167,20 @@ namespace flexFX {
 
     // (Basically, a TuneStep is a musical Note, but renamed to avoid confusion with the native "Note")
     class TuneStep {
-        name: string = ""; // e.g. "C4" for middle-C
+        name: string = "BAD"; // e.g. "C4" for middle-C (not strictly needed)
         ticks: number = 0; // note-extent, measured in quarter-beat "ticks"
         midi: number = 0; // standard MIDI note-number
         pitch: number = 0; // frequency in Hz
-        volume: number = 0;  // UI volume [0..255] (quadrupled internally)
+        volume: number = 0;  // UI volume [0..255] (gets quadrupled internally)
 
         // create using a 3-part EKO-notation specifier: {extent}{key}{octave}
         constructor(spec: string) {
+            // we need to be defensive about parsing malformed strings!
             let chars = spec.toUpperCase();
-            // parse {extent} in ticks [0-9]*
+            // parse {extent} in ticks as one or more digits
  
             let code = chars.charCodeAt(0);
-            while ((code > 47) && (code < 58)) {
+            while ((code > 47) && (code < 58)) {  // ["0" to "9"]
                 this.ticks = this.ticks * 10 + code - 48
                 chars = chars.slice(1);
                 code = chars.charCodeAt(0);
@@ -189,9 +190,13 @@ namespace flexFX {
                 this.name = chars[0] + "b" + chars.slice(2);
             }
 
-        // for a silent musical rest, {Key} = "R" and {Octave} is absent
+        // for a silent musical rest: {Key} = "R", and {Octave} is absent
             if (chars[0] != "R") {
                 this.volume = 255; // remains at 0 for special-case musical Rests
+                if ((code > 64) && (code < 72)) { // "A" to "G"
+
+                } else 
+                { }
                 // parse {key} as [A-G]
                 let key = 2 * ((code - 60) % 7);
                 if (key > 4) key--;
@@ -219,8 +224,20 @@ namespace flexFX {
                 this.midi = 12 * (octave + 1) + key;
                 this.pitch = midiToHertz(this.midi);
             }
+   
+            if (  (this.name == "BAD")
+                || (this.ticks == 0)
+                || (this.midi == 0)
+                || (this.pitch == 0)
+                || (this.volume == 0) ) {
+        // insert a long high-pitched error-tone
+                this.name = "C8";
+                this.ticks = 16;
+                this.midi = 108;
+                this.pitch = 4186;
+                this.volume = 255;
+            }
         }
-
     }
 
     class Tune {
@@ -236,7 +253,7 @@ namespace flexFX {
             this.id = tuneId;
             this.notes = [];
             this.nTicks = 0;
-            let specs = source.split(" ");
+            let specs = source.trim().split(" ");
             this.nNotes = specs.length;
             for (let i = 0; i < this.nNotes; i++) {
                 let nextNote = new TuneStep(specs[i]);

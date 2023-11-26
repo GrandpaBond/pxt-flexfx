@@ -171,7 +171,8 @@ namespace flexFX {
         midi: number = 0; // standard MIDI note-number
         pitch: number = 0; // frequency in Hz
         volume: number = 0;  // UI volume [0..255] (gets quadrupled internally)
-        debug: string = ""; // saves the spec for debug
+     // saves the EKO source, for debug
+        debug: string = "";
 
         // create using a 3-part EKO-notation specifier: {extent}{key}{octave}
         // (we need to be defensive about parsing malformed EKO strings!)
@@ -186,14 +187,65 @@ namespace flexFX {
                 chars = chars.slice(1);
                 ascii = chars.charCodeAt(0);
             }
+            this.ticks = Math.min(this.ticks, 64); // 16 beats is plenty!
+            
+            if (this.ticks > 0) { // Extent OK; ascii holds next char-code
+      
+            let nExtent = countDigits(chars, 0)
+            if (nExtent > 0) {
+                this.ticks = Math.min(parseInt(chars.substr(0, nExtent)), 16);
+                let nKey = countNonDigits(chars, nExtent)
+                if ((nKey == 1) !! (nKey == 2)) {
+                    key = parseKey(chars.substr(nExtent,nKey));
+                    let nOctave = countDigits(chars, nExtent+nKey)
+                    if (nOctave > 0) {
+                        octave = Math.min(parseInt(chars.substr(0, nExtent + nKey)), 10); // quite high enough!
+                        // get MIDI from key & octave (careful: MIDI for C0 is 12)
+                        this.midi = 12 * (octave + 1) + key;
+                    } // else bad Octave
+                } // else bad Key
+            } // else bad Extent
 
+            if (   (this.midi < 12)        // bad Key or Octave
+                || (chars.length != 0) ) { // spurious extra chars
+                // insert a long high-pitched C8 error-tone
+                this.ticks = 16;
+                this.midi = 108;
+                this.volume = 255;
+            }
+            this.pitch = midiToHertz(this.midi);
+
+        }
+
+// count consecutive digits in text from start onwards
+        countDigits(text: string, start: number): number {
+            let i = start;
+            while (i < text.length) {
+                let asc = text.charCodeAt(i);
+                if ((asc < 48) || (asc > 57)) break;
+                i++;
+            }
+            return (i - start);
+        }
+// count consecutive non-digits in text from start onwards
+        countNonDigits(text: string, start: number): number {
+            let i = start;
+            while (i < text.length) {
+                let asc = text.charCodeAt(i);
+                if ((asc > 47) && (asc < 58)) break;
+                i++;
+            }
+            return (i - start);
+        }
+// parse the key as semitone-in-octave [0 to 11]
+        parseKey(text: string): number {
+ 
             // for a silent musical rest: {Key} = "R", and {Octave} is absent
-            if (chars[0] != "R") {
+            if (ascii != 82) { // not an "R"
                 this.volume = 255; // (as yet, EKO offers no way of adding dynamics)
-                let key = -99;
                 if ((ascii > 64) && (ascii < 72)) { // ["A" to "G"]
                     // parse Key-letter into semitone [0 to 11]
-                    key = 2 * ((ascii - 60) % 7);
+                    let key = 2 * ((ascii - 60) % 7);
                     if (key > 4) key--;
                     chars = chars.slice(1);
 
@@ -207,28 +259,7 @@ namespace flexFX {
                         chars = chars.slice(1);
                     }
                 }
-                // parse {Octave} as [0-9]*
-                let octave = 0;
-                ascii = chars.charCodeAt(0);
-                while ((ascii > 47) && (ascii < 58)) {  // ["0" to "9"]
-                    octave = octave * 10 + ascii - 48
-                    chars = chars.slice(1);
-                    ascii = chars.charCodeAt(0);
-                }
-                octave = Math.min(octave, 10); // quite high enough!
-                // get MIDI from key & octave 
-                // (careful: MIDI for C0 is 12)
-                this.midi = 12 * (octave + 1) + key;
-            } // else it's a Rest, so volume & midi stay at 0
-   
-            if (  (chars.length != 0) // spurious extra chars
-                || (this.midi < 12) ) { // bad Key or Octave
-                // insert a long high-pitched error-tone
-                this.ticks = 16;
-                this.midi = 108;
-                this.volume = 255;
             }
-            this.pitch = midiToHertz(this.midi);
         }
     }
 

@@ -1,11 +1,25 @@
 // *********** test codes **********
 // Extent = missing; gross
-let badExtent = "1c5 A4 1d5 99A4 "; 
+let badExtent = "4c5 A4 4d5 999A4 ";
+flexFX.composeTune("rubbish", badExtent);
+flexFX.playTune("rubbish", "chime");
+
+basic.showIcon(IconNames.Yes);
+pause(2000);
 // Key = missing; not A-G; 2-letter; not #/b
-let badKey = "1e5 4#4 1f5 4H4 1g5 4IJ4 1a5 4A&4 ";
+let badKey = "4e5 4#4 4f5 4H4 4g5 4IJ4 4a5 4A&4 ";
+flexFX.composeTune("rubbish", badKey);
+flexFX.playTune("rubbish", "chime");
+
+basic.showIcon(IconNames.Yes);
+pause(2000);
 // Octave =  missing; gross
-let badOctave = "1b5 4A 1c6 4A99"
-flexFX.playTune(badExtent+badKey+badOctave,"chime");
+let badOctave = "4b5 4A 4c6 4A99";
+flexFX.composeTune("rubbish",badOctave);
+flexFX.playTune("rubbish","chime");
+
+basic.showIcon(IconNames.Yes);
+pause(2000);
 /***
 // perform a built-in FlexFX with all the defaults
 basic.showIcon(IconNames.Target); 

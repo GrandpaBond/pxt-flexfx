@@ -1,6 +1,11 @@
 // *********** test codes **********
-
-flexFX.playTune("bachViolin","violin");
+// Extent = missing; gross
+let badExtent = "1c5 A4 1d5 99A4 "; 
+// Key = missing; not A-G; 2-letter; not #/b
+let badKey = "1e5 4#4 1f5 4H4 1g5 4IJ4 1a5 4A&4 ";
+// Octave =  missing; gross
+let badOctave = "1b5 4A 1c6 4A99"
+flexFX.playTune(badExtent+badKey+badOctave,"chime");
 /***
 // perform a built-in FlexFX with all the defaults
 basic.showIcon(IconNames.Target); 

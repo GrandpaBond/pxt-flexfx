@@ -167,76 +167,68 @@ namespace flexFX {
 
     // (Basically, a TuneStep is a musical Note, but renamed to avoid confusion with the native "Note")
     class TuneStep {
-        name: string = "BAD"; // e.g. "C4" for middle-C (not strictly needed)
         ticks: number = 0; // note-extent, measured in quarter-beat "ticks"
         midi: number = 0; // standard MIDI note-number
         pitch: number = 0; // frequency in Hz
         volume: number = 0;  // UI volume [0..255] (gets quadrupled internally)
+        debug: string = ""; // saves the spec for debug
 
         // create using a 3-part EKO-notation specifier: {extent}{key}{octave}
+        // (we need to be defensive about parsing malformed EKO strings!)
         constructor(spec: string) {
-            // we need to be defensive about parsing malformed strings!
+            this.debug = spec; // (save our input string for debug purposes)
             let chars = spec.toUpperCase();
-            // parse {extent} in ticks as one or more digits
- 
-            let code = chars.charCodeAt(0);
-            while ((code > 47) && (code < 58)) {  // ["0" to "9"]
-                this.ticks = this.ticks * 10 + code - 48
+
+            // parse {extent} in ticks, as one or more leading digits
+            let ascii = chars.charCodeAt(0);
+            while ((ascii > 47) && (ascii < 58)) {  // ["0" to "9"]
+                this.ticks = this.ticks * 10 + ascii - 48
                 chars = chars.slice(1);
-                code = chars.charCodeAt(0);
-            }
-            this.name = chars; // save the note-name {Key}{Octave}...     
-            if (chars[1] == "B") {  // ...using lower-case "b" for flats
-                this.name = chars[0] + "b" + chars.slice(2);
+                ascii = chars.charCodeAt(0);
             }
 
-        // for a silent musical rest: {Key} = "R", and {Octave} is absent
+            // for a silent musical rest: {Key} = "R", and {Octave} is absent
             if (chars[0] != "R") {
-                this.volume = 255; // remains at 0 for special-case musical Rests
-                if ((code > 64) && (code < 72)) { // "A" to "G"
-
-                } else 
-                { }
-                // parse {key} as [A-G]
-                let key = 2 * ((code - 60) % 7);
-                if (key > 4) key--;
-                chars = chars.slice(1);
-
-                // adjust for accidentals [# or b]
-                if (chars[0] == "#") {
-                    key++;
+                this.volume = 255; // (as yet, EKO offers no way of adding dynamics)
+                let key = -99;
+                if ((ascii > 64) && (ascii < 72)) { // ["A" to "G"]
+                    // parse Key-letter into semitone [0 to 11]
+                    key = 2 * ((ascii - 60) % 7);
+                    if (key > 4) key--;
                     chars = chars.slice(1);
-                }
-                if (chars[0] == "B") {
-                    key--;
-                    chars = chars.slice(1);
+
+                    // adjust for accidentals [# or b]
+                    if (chars[0] == "#") {
+                        key++;
+                        chars = chars.slice(1);
+                    }
+                    if (chars[0] == "B") {
+                        key--;
+                        chars = chars.slice(1);
+                    }
                 }
                 // parse {Octave} as [0-9]*
                 let octave = 0;
-                code = chars.charCodeAt(0);
-                while ((code > 47) && (code < 58)) {
-                    octave = octave * 10 + code - 48
+                ascii = chars.charCodeAt(0);
+                while ((ascii > 47) && (ascii < 58)) {  // ["0" to "9"]
+                    octave = octave * 10 + ascii - 48
                     chars = chars.slice(1);
-                    code = chars.charCodeAt(0);
+                    ascii = chars.charCodeAt(0);
                 }
+                octave = Math.min(octave, 10); // quite high enough!
                 // get MIDI from key & octave 
                 // (careful: MIDI for C0 is 12)
                 this.midi = 12 * (octave + 1) + key;
-                this.pitch = midiToHertz(this.midi);
-            }
+            } // else it's a Rest, so volume & midi stay at 0
    
-            if (  (this.name == "BAD")
-                || (this.ticks == 0)
-                || (this.midi == 0)
-                || (this.pitch == 0)
-                || (this.volume == 0) ) {
-        // insert a long high-pitched error-tone
-                this.name = "C8";
+            if (  (chars.length != 0) // spurious extra chars
+                || (this.midi < 12) ) { // bad Key or Octave
+                // insert a long high-pitched error-tone
                 this.ticks = 16;
                 this.midi = 108;
-                this.pitch = 4186;
                 this.volume = 255;
             }
+            this.pitch = midiToHertz(this.midi);
         }
     }
 

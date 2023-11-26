@@ -167,47 +167,58 @@ namespace flexFX {
 
     // (Basically, a TuneStep is a musical Note, but renamed to avoid confusion with the native "Note")
     class TuneStep {
-        ticks: number = 0; // note-extent, measured in quarter-beat "ticks"
-        midi: number = 0; // standard MIDI note-number
+        ticks: number = -1; // note-extent, measured in quarter-beat "ticks"
+        midi: number = -1; // standard MIDI note-number
         pitch: number = 0; // frequency in Hz
         volume: number = 0;  // UI volume [0..255] (gets quadrupled internally)
-     // saves the EKO source, for debug
-        debug: string = "";
+    
+        debug: string = ""; // saves the EKO source, for debug
 
         // create using a 3-part EKO-notation specifier: {extent}{key}{octave}
         // (we need to be defensive about parsing malformed EKO strings!)
         constructor(spec: string) {
             this.debug = spec; // (save our input string for debug purposes)
             let chars = spec.toUpperCase();
-
-            // parse {extent} in ticks, as one or more leading digits
-            let ascii = chars.charCodeAt(0);
-            while ((ascii > 47) && (ascii < 58)) {  // ["0" to "9"]
-                this.ticks = this.ticks * 10 + ascii - 48
-                chars = chars.slice(1);
-                ascii = chars.charCodeAt(0);
-            }
-            this.ticks = Math.min(this.ticks, 64); // 16 beats is plenty!
-            
-            if (this.ticks > 0) { // Extent OK; ascii holds next char-code
-      
-            let nExtent = countDigits(chars, 0)
+            let here = 0;
+            let nExtent = this.countDigits(chars, here);
             if (nExtent > 0) {
-                this.ticks = Math.min(parseInt(chars.substr(0, nExtent)), 16);
-                let nKey = countNonDigits(chars, nExtent)
-                if ((nKey == 1) !! (nKey == 2)) {
-                    key = parseKey(chars.substr(nExtent,nKey));
-                    let nOctave = countDigits(chars, nExtent+nKey)
+                this.ticks = Math.min(parseInt(chars.substr(here, nExtent)), 16);
+                // now parse the Key
+                here += nExtent;
+                let key = this.parseKey(chars.charCodeAt(here));
+                // for a silent musical rest: key = 12, and {Octave} is absent
+                if ((key > 0) && (key < 12)) { // good Key-letter; not a Rest
+                    this.volume = 255; // (as yet, EKO offers no way of adding dynamics)
+                    // adjust for accidentals [# or b] ?
+                    here++;
+                    let nOctave = this.countDigits(chars, here); 
+                    if (nOctave == 0) { // no Octave digits found yet
+                        let asc = chars.charCodeAt(here); // =the character after Key=letter
+                        switch (asc) {
+                            case 35: key++; // "#"
+                                break;
+                            case 66: key--; // "B"
+                                break;
+                            default: key = -1; // record a bad accidental
+                        }   
+                        here++; 
+                    } 
+                    // keep looking for Octave digits
+                    nOctave = this.countDigits(chars, here);
+                    let octave = -1;
                     if (nOctave > 0) {
-                        octave = Math.min(parseInt(chars.substr(0, nExtent + nKey)), 10); // quite high enough!
+                        octave = Math.min(parseInt(chars.substr(here, nOctave)), 10); // quite high enough!
                         // get MIDI from key & octave (careful: MIDI for C0 is 12)
                         this.midi = 12 * (octave + 1) + key;
-                    } // else bad Octave
-                } // else bad Key
-            } // else bad Extent
+                        here += nOctave;
+                    } // either an accidental, or missing Octave
+                } // else a bad Key-letter
+            } // else a missing Extent
 
-            if (   (this.midi < 12)        // bad Key or Octave
-                || (chars.length != 0) ) { // spurious extra chars
+            // check for errors and substitute an alert
+            if (   (this.ticks < 0)  // bad Extent?
+                || (this.midi < 0)   // bad Key or Octave?
+                || (here < chars.length) ) { // spurious extra chars?
                 // insert a long high-pitched C8 error-tone
                 this.ticks = 16;
                 this.midi = 108;
@@ -227,39 +238,20 @@ namespace flexFX {
             }
             return (i - start);
         }
-// count consecutive non-digits in text from start onwards
-        countNonDigits(text: string, start: number): number {
-            let i = start;
-            while (i < text.length) {
-                let asc = text.charCodeAt(i);
-                if ((asc > 47) && (asc < 58)) break;
-                i++;
-            }
-            return (i - start);
-        }
-// parse the key as semitone-in-octave [0 to 11]
-        parseKey(text: string): number {
- 
-            // for a silent musical rest: {Key} = "R", and {Octave} is absent
-            if (ascii != 82) { // not an "R"
-                this.volume = 255; // (as yet, EKO offers no way of adding dynamics)
-                if ((ascii > 64) && (ascii < 72)) { // ["A" to "G"]
-                    // parse Key-letter into semitone [0 to 11]
-                    let key = 2 * ((ascii - 60) % 7);
-                    if (key > 4) key--;
-                    chars = chars.slice(1);
 
-                    // adjust for accidentals [# or b]
-                    if (chars[0] == "#") {
-                        key++;
-                        chars = chars.slice(1);
-                    }
-                    if (chars[0] == "B") {
-                        key--;
-                        chars = chars.slice(1);
-                    }
-                }
-            }
+// parse the key as semitone-in-octave [0 to 11] or 12 for a Rest
+        parseKey(asc: number): number {
+            let semi = -1;
+            if (asc == 82) { // an "R" means a Rest
+                semi = 12;
+            } else {
+                if ((asc > 64) && (asc < 72)) { // ["A" to "G"]
+                    // parse Key-letter into semitone [0 to 11]
+                    semi = 2 * ((asc - 60) % 7);
+                    if (semi > 4) semi--;
+                } // else bad Key-letter
+            } 
+            return (semi);
         }
     }
 

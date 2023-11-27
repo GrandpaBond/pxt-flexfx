@@ -1,26 +1,5 @@
 // *********** test codes **********
-// Extent = missing; gross
-let badExtent = "4c5 A4 4d5 999A4 ";
-flexFX.composeTune("rubbish", badExtent);
-flexFX.playTune("rubbish", "chime");
 
-basic.showIcon(IconNames.Yes);
-pause(2000);
-// Key = missing; not A-G; 2-letter; not #/b
-let badKey = "4e5 4#4 4f5 4H4 4g5 4IJ4 4a5 4A&4 ";
-flexFX.composeTune("rubbish", badKey);
-flexFX.playTune("rubbish", "chime");
-
-basic.showIcon(IconNames.Yes);
-pause(2000);
-// Octave =  missing; gross
-let badOctave = "4b5 4A 4c6 4A99";
-flexFX.composeTune("rubbish",badOctave);
-flexFX.playTune("rubbish","chime");
-
-basic.showIcon(IconNames.Yes);
-pause(2000);
-/***
 // perform a built-in FlexFX with all the defaults
 basic.showIcon(IconNames.Target); 
 flexFX.playFlexFX("uhoh");
@@ -203,8 +182,32 @@ flexFX.playTune("birthday", "tweet");
 basic.showIcon(IconNames.Yes);
 pause(2000);
 
+// check that bad EKO note inputs get beeped
+// 1) Extent = non-EKO - missing - gross - good
+let tryExtent = " non-EKO C4 999C4    4C4   ";
+flexFX.composeTune("noteTest", tryExtent);
+flexFX.playTune("noteTest", "chime");
+
+basic.showIcon(IconNames.Yes);
+pause(2000);
+// 2) Key = missing - not A-G; multi-letter - not #/b - good
+let badKey = "4#4 4H4 4ABC4 4A&4   4C4";
+flexFX.composeTune("noteTest", badKey);
+flexFX.playTune("noteTest", "chime");
+
+basic.showIcon(IconNames.Yes);
+pause(2000);
+// 3) Octave =  missing - gross - good
+let badOctave = "4A 4A99    4C4  ";
+flexFX.composeTune("noteTest", badOctave);
+flexFX.playTune("noteTest", "chime");
+
+basic.showIcon(IconNames.Yes);
+pause(2000);
+
 // check asynchrony of tunes
 basic.showIcon(IconNames.Target);
+flexFX.stopPlaying();
 flexFX.playTune("birthday", "woof", false, -5, 200, 20000);
 basic.showNumber(flexFX.waitingToPlay());
 pause(1000);
@@ -242,8 +245,8 @@ flexFX.extendTune("edelweiss", "4E4 2G4 6D5 4C5 2G#4 6F5");
 flexFX.extendTune("edelweiss", "4E5 2G5 2G5 2A5 2B5 6C6 6C6");
 
 // Play it, on the chime, asynchronously, softly,
-//    lasting a full minute, transposed down by a fifth.
-flexFX.playTune("edelweiss", "chime", false, -7, 150, 60000);
+//    lasting exactly one minute, transposed down by a fifth.
+flexFX.playTune("edelweiss", "chime", false, -7, 120, 60000);
 basic.clearScreen();
 basic.showNumber(flexFX.waitingToPlay());
 pause(1000);
@@ -284,5 +287,3 @@ while (flexFX.isActive()) {
     basic.pause(30);
 }
 basic.showIcon(IconNames.Yes);
-
-***/

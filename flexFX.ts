@@ -172,22 +172,22 @@ namespace flexFX {
         pitch: number = 0; // frequency in Hz
         volume: number = 0;  // UI volume [0..255] (gets quadrupled internally)
     
-        debug: string = ""; // saves the EKO source, for debug
+        //debug: string = ""; // saves the EKO source, (just for debug)
 
         // create using a 3-part EKO-notation specifier: {extent}{key}{octave}
         // (we need to be defensive about parsing malformed EKO strings!)
         constructor(spec: string) {
-            this.debug = spec; // (save our input string for debug purposes)
+            //this.debug = spec; // (save our input string for debug purposes)
             let chars = spec.toUpperCase();
             let here = 0;
             let nExtent = this.countDigits(chars, here);
             if (nExtent > 0) {
-                this.ticks = Math.min(parseInt(chars.substr(here, nExtent)), 16);
+                this.ticks = Math.min(parseInt(chars.substr(here, nExtent)), 64); // max 16 beats!
                 // now parse the Key
                 here += nExtent;
                 let key = this.parseKey(chars.charCodeAt(here));
                 // for a silent musical rest: key = 12, and {Octave} is absent
-                if ((key > 0) && (key < 12)) { // good Key-letter; not a Rest
+                if ((key > -1) && (key < 12)) { // good Key-letter; not a Rest
                     this.volume = 255; // (as yet, EKO offers no way of adding dynamics)
                     // adjust for accidentals [# or b] ?
                     here++;
@@ -199,19 +199,20 @@ namespace flexFX {
                                 break;
                             case 66: key--; // "B"
                                 break;
-                            default: key = -1; // record a bad accidental
+                            default: key = -999; // midi will be end up negative!
                         }   
                         here++; 
-                    } 
-                    // keep looking for Octave digits
-                    nOctave = this.countDigits(chars, here);
+                    } // else either an accidental next, or Octave missing
+                    
+                    nOctave = this.countDigits(chars, here); // keep looking for Octave digits
                     let octave = -1;
                     if (nOctave > 0) {
                         octave = Math.min(parseInt(chars.substr(here, nOctave)), 10); // quite high enough!
+                        // (B10 is 31.6kHz; even young kids' hearing range stops at about 20kHz)
                         // get MIDI from key & octave (careful: MIDI for C0 is 12)
                         this.midi = 12 * (octave + 1) + key;
                         here += nOctave;
-                    } // either an accidental, or missing Octave
+                    } // else missing Octave
                 } // else a bad Key-letter
             } // else a missing Extent
 

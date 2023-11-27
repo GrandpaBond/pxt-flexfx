@@ -560,13 +560,13 @@ namespace flexFX {
     //% wait.defl=true
     //% pitch.min=50 pitch.max=2000 pitch.defl=0
     //% volumeLimit.min=0 volumeLimit.max=255 volumeLimit.defl=200
-    //% newDuration.min=0 newDuration.max=9999 newDuration.defl=800
+    //% newDuration.min=0 newDuration.max=10000 newDuration.defl=800
     export function playFlexFX(id: string, wait: boolean = true,
         pitch: number = 0, volumeLimit: number = 0, newDuration: number = 0) {
  
         pitch = clamp(50, pitch, 2000);
         volumeLimit = clamp(0, volumeLimit, 255);
-        newDuration = clamp(0, newDuration, 9999);
+        newDuration = clamp(0, newDuration, 10000);
         
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {

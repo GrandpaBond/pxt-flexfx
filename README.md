@@ -1,7 +1,7 @@
 ```package
 pxt-flexfx=github:grandpabond/pxt-flexfx
 ```
-scratch
+
 # FlexFX - Flexible Sound-effect Recipes
 Many microbit projects can be brought to life by adding sound-effects to indicate their state.
 
@@ -51,7 +51,7 @@ pop-up piano keyboard.
 
 > ``||flexFX:volumeLimit||`` sets the peak volume as a number in the range 0-255. 
   
-> ``||flexFX:newDuration||`` sets how long (in milliseconds) the overall performance will last. 
+> ``||flexFX:newDuration||`` sets how long this FlexFX performance will last (up to 10000 ms). 
   
 The following example would play the built-in FlexFX called **"chime"** three times over, with descending pitch, 
 and increasing volume. The first two performances last just 0.4 seconds each, while the final performance 
@@ -103,12 +103,12 @@ of this performance of the Tune.
   
 > ``||flexFX:volumeLimit||`` sets the peak volume for every note played, as a number in the range 0-255. 
   
-> ``||flexFX:tuneDuration||`` changes how long (in milliseconds) the overall performance will last. If left at 0, the Tune will be
+> ``||flexFX:tuneDuration||`` changes how long the overall performance will last (in ms, up to 300000 or 5 mins). If left at 0, the Tune will be
 played at the default speed of 120 beats-per-minute (or as specified by ``||flexFX:setNextTempo()||``)
 
 The following example uses the built-in whalesong to celebrate your birthday (but rather slowly):
 ```blocks
-flexFX.playTune("birthday", "whale", true, -7, 250, 30000);
+flexFX.playTune("birthday", "whale", true, -7, 250, 60000);
 ```
 
 ## Selecting a Tune #flexFX-builtInTune 
@@ -126,7 +126,7 @@ flexFX.setNextTempo(bpm)
 ```
 This block adjusts the speed at which Tunes are played.
 
-> ``||flexFX:bpm||`` adjusts the beats-per-minute (BPM) for playTune() to use.
+> ``||flexFX:bpm||`` adjusts the beats-per-minute (BPM: 30 to 480) for playTune() to use.
 
 The length of each note in a Tune (its **Extent**) is actually measured in quarter-beat **Ticks**. 
 The current length of a Tick controls how fast ``||flexFX:playTune||`` plays the Tune 
@@ -145,7 +145,7 @@ At this default tempo, the following table shows how the ``||flexFX:Extent||`` r
 |  12    | dotted-minim    | 1500 |  0.67 |    40 | 
 |  16    | semibreve       | 2000 |  0.50 |    30 | 
 
-You can change the default speed using ``||flexFX:setNextTempo()||``. 
+You can change the default speed using ``||flexFX:setNextTempo()||``, within the range [30 to 480]. 
  
 ## Composing Tunes
 
@@ -247,7 +247,7 @@ flexFX.playSilence(ms)
 When queueing-up a series of Plays, you may not always want them to follow-on straightaway. 
 Use this function to space-out your Plays, by adding a silent pause onto the Play-list. 
  
-> ``||flexFX:ms||`` : specifies the length of the gap in milliseconds.
+> ``||flexFX:ms||`` : specifies the length of the gap (in ms, up to 60000 or 1 min)
    
 This example plays three bell-sounds in the background, separated by gaps of 1.5 seconds: 
 
@@ -417,7 +417,7 @@ so is really just a tuneable version of a standard soundExpression).
 
 > ``||flexFX:id||`` - the identifier of the flexFX to be created or changed. (Any existing FlexFX with the same "id" is first deleted.)
 
-> ``||flexFX:startPitch||`` - the initial frequency of the sound (in Hz)
+> ``||flexFX:startPitch||`` - the initial frequency of the sound (in Hz: 25 to 10000)
 
 > ``||flexFX:startVolume||`` - the initial volume of the sound (0 to 255)
 
@@ -427,11 +427,11 @@ so is really just a tuneable version of a standard soundExpression).
 
 > ``||flexFX:effect||`` - chooses a possible modification to the sound, such as vibrato
 
-> ``||flexFX:endPitch||`` - the final frequency of the sound (in Hz)
+> ``||flexFX:endPitch||`` - the final frequency of the sound (in Hz: 25 to 10000)
 
 > ``||flexFX:endVolume||`` - the final volume of the sound (0 to 255)
 
-> ``||flexFX:duration||`` - the duration of the sound (in ms)   
+> ``||flexFX:duration||`` - the duration of the sound (in ms: 10 to 60000 or 1 min)   
 
 
 
@@ -451,11 +451,11 @@ Every call to  ``||flexFX:extendFlexFX||`` adds another part to your ``||flexFX:
 
 > ``||flexFX:effect||``  - chooses a possible modification to this part, such as vibrato
 
-> ``||flexFX:endPitch||``  - the new final frequency of the FlexFX (in Hz)
+> ``||flexFX:endPitch||``  - the new final frequency of the FlexFX (in Hz: 25 to 10000)
 
 > ``||flexFX:endVolume||``  - the new final volume of the FlexFX (0 to 255)
 
-> ``||flexFX:duration||``  - the additional duration of this new part (in ms)
+> ``||flexFX:duration||``  - the additional duration of this new part (in ms: 10 to 10000)
 
 
 ### ~reminder

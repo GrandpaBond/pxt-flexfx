@@ -137,6 +137,11 @@ namespace flexFX {
         //% block="ode to joy"
         OdeToJoy
     }
+
+    // range-clamper:
+    function clamp(bottom: number, input: number, top:number): number {
+        return (Math.max(bottom,Math.min(input,top)));
+    }
     
     // constants used in conversions between frequency & MIDI note-number:
     // a SEMITONE ratio = 12th root of 2 (as 12 semitones make an octave, which doubles the frequency)
@@ -554,10 +559,15 @@ namespace flexFX {
     //% id.defl="ting"
     //% wait.defl=true
     //% pitch.min=50 pitch.max=2000 pitch.defl=0
-    //% vol.min=0 vol.max=255 vol.defl=200
-    //% ms.min=0 ms.max=10000 ms.defl=800
+    //% volumeLimit.min=0 volumeLimit.max=255 volumeLimit.defl=200
+    //% newDuration.min=0 newDuration.max=9999 newDuration.defl=800
     export function playFlexFX(id: string, wait: boolean = true,
         pitch: number = 0, volumeLimit: number = 0, newDuration: number = 0) {
+ 
+        pitch = clamp(50, pitch, 2000);
+        volumeLimit = clamp(0, volumeLimit, 255);
+        newDuration = clamp(0, newDuration, 9999);
+        
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
             // compile and add our Play onto the playList 
@@ -625,11 +635,16 @@ namespace flexFX {
     //% flexId.defl="ting"
     //% tuneId.defl="birthday"
     //% wait.defl=true
-    //% transpose.defl=0
-    //% volumeLimit.defl=0
-    //% tuneDuration.defl=0
+    //% transpose.min=-60 transpose.max=60 transpose.defl=0
+    //% volumeLimit.min=0 volumeLimit.max=255 volumeLimit.defl=200
+    //% tuneDuration.min=50 tuneDuration.max=300000 tuneDuration.defl=0
     export function playTune(tuneId: string, flexId: string, wait: boolean = true, 
         transpose: number = 0, volumeLimit: number = 0, tuneDuration: number = 0) {
+
+        transpose = clamp(-60, transpose, 60); // +/- 5 octaves
+        volumeLimit = clamp(0, volumeLimit, 255);
+        tuneDuration = clamp(0, tuneDuration, 300000); // max 5 mins!
+        
         let tune: Tune = tuneList.find(i => i.id === tuneId);
         let flex: FlexFX = flexFXList.find(i => i.id === flexId);
         if ((flex != null) && (flex != null)) {
@@ -672,19 +687,21 @@ namespace flexFX {
             case BuiltInTune.NewWorld: return "newWorld";
             case BuiltInTune.BachViolin: return "bachViolin";
             case BuiltInTune.OdeToJoy: return "odeToJoy";
+            default: return "birthday";
         }
-        return "beethoven";
     }
 
     /**
      * Set the speed for playing future Tunes
      * @param bpm   the beats-per-minute(BPM) for playTune() to use
+     *              (valid range is 30 to 480)
      */
     //% block="set tempo (beats/minute): %bpm"
     //% group="Playing"
     //% weight=950
-    //% bpm.defl=120
+    //% bpm.min=30 bpm.max=480 bpm.defl=120
     export function setNextTempo(bpm: number) {  // CHANGES GLOBAL SETTING
+        bpm = clamp(30, bpm, 480);
         tickMs = 15000 / bpm; // = (60*1000) / (4*bpm)
     }
 

@@ -26,7 +26,7 @@ finished when you play another one, the new Play(s) will be added to the **Play-
 so you can queue-up several sounds to happen in the background. You can interact with this 
 Play-list to synchronise the sound-track with your other codes. (See ``||flexFX:Background Play-list||`` below).
 
-If you need a sound that is not built-in, you can even design your own. (See ``||flexFX:Designing a FlexFX||`` below)
+If you need a sound that is not built-in, you can even design your own. (See ``||flexFX:Designing a FlexFX||`` below).
 
 ## Playing a FlexFX #flexFX-playFlexFX 
 
@@ -117,7 +117,7 @@ flexFX.playTune("birthday", "whale", true, -7, 250, 60000);
 flexFX.builtInTune(tune): string 
 ```
 This reporter block (which may be used as the first parameter of the ``||flexFX:playTune||`` block above) 
-provides a drop-down list from which you can choose a built-in Tune to play.
+provides a drop-down list of titles, from which you can choose a built-in Tune to play.
 
 ## Setting the Tempo #flexFX-setNextTempo
 
@@ -128,25 +128,7 @@ This block adjusts the speed at which Tunes are played.
 
 > ``||flexFX:bpm||`` adjusts the beats-per-minute (BPM: 30 to 480) for playTune() to use.
 
-The length of each note in a Tune (its **Extent**) is actually measured in quarter-beat **Ticks**. 
-The current length of a Tick controls how fast ``||flexFX:playTune||`` plays the Tune 
-(unless its optional ``||flexFX:tuneDuration||`` parameter says otherwise). 
 
-The initial default speed of 120 beats-per-minute (BPM) means that the default Tick lasts 125 ms. 
-At this default tempo, the following table shows how the ``||flexFX:Extent||`` relates to conventional musical note-lengths: 
-
-| Extent | length          |ms    |per-Sec|per-Min| 
-| ---:   | :-------------- | ---: | ----: | ----: | 
-|   1    | semi-quaver     |  125 |  8.00 |   480 | 
-|   2    | quaver          |  250 |  4.00 |   240 | 
-|   4    | crotchet(1 beat)|  500 |  2.00 |   120 | 
-|   6    | dotted-crotchet |  750 |  1.33 |    80 | 
-|   8    | minim           | 1000 |  1.00 |    60 | 
-|  12    | dotted-minim    | 1500 |  0.67 |    40 | 
-|  16    | semibreve       | 2000 |  0.50 |    30 | 
-
-You can change the default speed using ``||flexFX:setNextTempo()||``, within the range [30 to 480]. 
- 
 ## Composing Tunes
 
 ### EKO-notation 
@@ -168,6 +150,27 @@ In EKO-notation, musical rests are coded using an Extent followed by just the le
 
 So, the start of Beethoven's Fifth Symphony might be scored as "2R 2G4 2G4 2G4 8Eb4 2R 2F4 2F4 2F4 8D4".
 
+### Tempo
+
+The length of each note in a Tune (its **Extent**) is measured in quarter-beat **Ticks**, and it is
+the current length of a Tick that actually controls how fast ``||flexFX:playTune||`` plays the Tune 
+(unless its optional ``||flexFX:tuneDuration||`` parameter says otherwise). 
+
+The initial default speed of 120 beats-per-minute (BPM) means that the default Tick lasts 125 ms. 
+At this default tempo, the following table shows how the ``||flexFX:Extent||`` relates to conventional musical note-lengths: 
+
+| Extent | length          |ms    |per-Sec|per-Min| 
+| ---:   | :-------------- | ---: | ----: | ----: | 
+|   1    | semi-quaver     |  125 |  8.00 |   480 | 
+|   2    | quaver          |  250 |  4.00 |   240 | 
+|   4    | crotchet(1 beat)|  500 |  2.00 |   120 | 
+|   6    | dotted-crotchet |  750 |  1.33 |    80 | 
+|   8    | minim           | 1000 |  1.00 |    60 | 
+|  12    | dotted-minim    | 1500 |  0.67 |    40 | 
+|  16    | semibreve       | 2000 |  0.50 |    30 | 
+
+You can change the default speed within the range [30 to 480] by using ``||flexFX:setNextTempo()||``.
+
 
 ### ~reminder 
 In the past, melodies have often been written down as text using **ABC-notation**. That scheme lists the notes to be played quite simply, 
@@ -186,10 +189,11 @@ This block lets you start composing a new Tune, using EKO-notation (Extent-Key-O
 
 > ``||flexFX:score||`` is simply a list of the notes in the melody, defined as EKO codes.
 
-This example adds the Tune "Edelweiss", defining the notes in its first line:
+This example adds (and then plays) the Tune "Edelweiss", defining the notes in its first line:
 
 ```blocks
 flexFX.composeTune("edelweiss", "4E4 2G4 6D5 4C5 2G4 4F4 2R");
+flexFX.playTune("edelweiss","violin");
 ```
 
 ## Extending a Tune #flexFX-extendTune 
@@ -206,12 +210,14 @@ one line at a time.
 
 > ``||flexFX:score||`` is the list of the notes, defined as EKO codes, to be added to the end of the Tune.
 
-This example extends the Tune "edelweiss" by adding the next three lines:
+This example extends the Tune "edelweiss" by adding its next three lines:
 
 ```blocks
+flexFX.composeTune("edelweiss", "4E4 2G4 6D5 4C5 2G4 4F4 2R");
 flexFX.extendTune("edelweiss", "4E4 2E4 2E4 2F4 2G4 6A4 4G4 2R");
 flexFX.extendTune("edelweiss", "4E4 2G4 6D5 4C5 2G4 4F4 2R");
 flexFX.extendTune("edelweiss", "4E4 2G4 2G4 2A4 2B4 6C5 4C5 2R");
+flexFX.playTune("edelweiss","violin");
 ```
 
 ### ~reminder
@@ -431,7 +437,7 @@ so is really just a tuneable version of a standard soundExpression).
 
 > ``||flexFX:endVolume||`` - the final volume of the sound (0 to 255)
 
-> ``||flexFX:duration||`` - the duration of the sound (in ms: 10 to 60000 or 1 min)   
+> ``||flexFX:duration||`` - the duration of the sound (in ms: 10 to 10000)   
 
 
 

@@ -806,6 +806,7 @@ namespace flexFX {
     export function playSilence(ms: number) {
         // adds a special-case sound-string of format "snnn.." 
         // so "s2500" adds a silence of 2.5 sec
+        ms = clamp(0, ms, 60000);
         let play = new Play;
         play.parts.push(new SoundExpression("s" + convertToText(Math.floor(ms))));
         playList.push(play);
@@ -888,6 +889,13 @@ namespace flexFX {
     export function defineFlexFX(id: string, startPitch: number, startVolume: number,
                 wave: Wave, attack: Attack, effect: Effect, 
                 endPitch: number, endVolume: number, duration: number) {
+        
+        startPitch = clamp(25, startPitch, 10000);
+        startVolume = clamp(0, startVolume, 255);
+        endPitch = clamp(25, endPitch, 10000);
+        endVolume = clamp(0, endVolume, 255);
+        duration = clamp(0, duration, 10000);
+        
         // are we re-defining an existing flexFX?
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
@@ -924,6 +932,10 @@ namespace flexFX {
 
     export function extendFlexFX(id: string, wave: Wave, attack: Attack, effect: Effect,
                 endPitch: number, endVolume: number, duration: number) {
+        
+        endPitch = clamp(25, endPitch, 10000);
+        endVolume = clamp(0, endVolume, 255);
+        duration = clamp(0, duration, 10000);
 
         // force our enums into numbers
         let waveNumber: number = wave;

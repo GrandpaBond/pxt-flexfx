@@ -563,11 +563,11 @@ namespace flexFX {
     //% newDuration.min=0 newDuration.max=10000 newDuration.defl=800
     export function playFlexFX(id: string, wait: boolean = true,
         pitch: number = 0, volumeLimit: number = 0, newDuration: number = 0) {
- 
-        pitch = clamp(50, pitch, 2000);
+
+        pitch = clamp(0, pitch, 2000);
         volumeLimit = clamp(0, volumeLimit, 255);
         newDuration = clamp(0, newDuration, 10000);
-        
+       
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target != null) {
             // compile and add our Play onto the playList 

@@ -67,6 +67,26 @@ When coding in Javascript, for convenience you can set the new pitch using the `
 or any of the various musical note constants such as ``||music: Music.C5||``. 
 ### ~
 
+A ``||flexFX:FlexFX||`` can also vary its pitch non-musically. This example builds a "giggle" function 
+to repeatedly alter the pitch of the built-in "laugh":
+
+```blocks
+function giggle(pitch: number, laughs: number) {
+    let offset = (laughs - 1) * 50;
+    let loop = laughs - 2;
+    for (let index = 0; index <= loop; index++) {
+        flexFX.playFlexFX("laugh", true, pitch + offset, 200, 150);
+        offset += -50;
+    }
+    flexFX.playFlexFX("laugh", true, pitch, 200, 300);
+}
+giggle(600, 5);
+basic.pause(150);
+giggle(750, 6);
+basic.pause(200);
+giggle(500, 4);
+```
+
 ## Selecting a FlexFX #flexFX-builtInFlexFX 
 
 ```sig
@@ -472,7 +492,7 @@ at which memory runs out!
 ### ~
 
 
-# Examples 
+## Examples 
 
 ## Create a Tom-Tom FlexFX.
 This example creates a new ``||flexFX:FlexFX||`` sounding a bit like a Tom-Tom drum.

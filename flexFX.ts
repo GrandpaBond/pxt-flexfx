@@ -994,56 +994,66 @@ namespace flexFX {
     function populateBuiltInFlexFXs() {
         // error FlexFX
         defineFlexFX("***", 4000, 255, Wave.Triangle, Attack.Even, Effect.None, 4000, 255, 400);
-        // simple "ting"
-        defineFlexFX("ting", 2000, 255, Wave.Triangle, Attack.Fast, Effect.None, 2000, 50, 200);
-        // longer chime effect
-        defineFlexFX("chime", 315, 200, Wave.Sine, Attack.Fast, Effect.None, 300, 100, 400);
-        extendFlexFX("chime", Wave.Sine, Attack.Even, Effect.None, 300, 30, 1600);
+        
         // wailing sound
-        defineFlexFX("cry", 200, 125, Wave.Square, Attack.Even, Effect.None, 800, 250, 264);
-        extendFlexFX("cry", Wave.Square, Attack.Even, Effect.None, 400, 250, 264);
-        extendFlexFX("cry", Wave.Square, Attack.Even, Effect.None, 600, 125, 272);
-        // breathy flute
-        defineFlexFX("flute", 25, 262,  Wave.Noise,  Attack.Fast,  Effect.Vibrato, 250, 250, 75);
-        extendFlexFX("flute", Wave.Triangle, Attack.Fast, Effect.None, 2250, 250, 1200);
-        extendFlexFX("flute", Wave.Triangle, Attack.Even, Effect.None, 200, 0, 225);
-        // French Horn (-ish)
-        defineFlexFX("horn", 12, 127, Wave.Sawtooth, Attack.Fast, Effect.None, 250, 255, 35);
-        extendFlexFX("horn", Wave.Sine, Attack.Even, Effect.None, 250, 255, 465);
-        // a gentle hum...
-        defineFlexFX("hum", 750, 80, Wave.Sawtooth, Attack.Fast, Effect.None, 250, 90, 30);
-        extendFlexFX("hum", Wave.Square, Attack.Even, Effect.None, 250, 90, 570);
-        // single laugh (repeat for giggles)
-        defineFlexFX("laugh", 280, 100, Wave.Sawtooth, Attack.Fast, Effect.None, 400, 250, 450);
-        extendFlexFX("laugh", Wave.Square, Attack.Even, Effect.None, 280, 250, 50);
+        defineFlexFX("cry", 400, 80, Wave.Square, Attack.Medium, Effect.None, 600, 250, 300);
+        extendFlexFX("cry", Wave.Square, Attack.Even, Effect.None, 400, 30, 700);
+        // longer chime effect
+        defineFlexFX("chime", 315, 200, Wave.Sine, Attack.Fast, Effect.None, 300, 20, 300);
+        extendFlexFX("chime", Wave.Sine, Attack.Even, Effect.None, 300, 0, 1000);
         // somewhat cat-like
         defineFlexFX("miaow", 630, 127, Wave.Sawtooth, Attack.Even, Effect.None, 900, 255, 300);
-        extendFlexFX("miaow", Wave.Sawtooth, Attack.Even, Effect.None, 810, 255, 700);
+        extendFlexFX("miaow", Wave.Sawtooth, Attack.Even, Effect.None, 810, 200, 700);
+        // breathy flute
+        defineFlexFX("flute", 25, 262, Wave.Noise, Attack.Fast, Effect.Vibrato, 1000, 250, 75);
+        extendFlexFX("flute", Wave.Triangle, Attack.Fast, Effect.None, 1000, 250, 1200);
+        extendFlexFX("flute", Wave.Triangle, Attack.Even, Effect.None, 900, 0, 225);
+        // French Horn (-ish)
+        defineFlexFX("horn", 12, 127, Wave.Sawtooth, Attack.Fast, Effect.None, 250, 255, 25);
+        extendFlexFX("horn", Wave.Sine, Attack.Even, Effect.None, 250, 255, 600);
+        extendFlexFX("horn", Wave.Sine, Attack.Even, Effect.None, 200, 0, 70);
+
+        // a gentle hum...
+        defineFlexFX("hum", 300, 80, Wave.Triangle, Attack.Fast, Effect.None, 500, 80, 10);
+        extendFlexFX("hum", Wave.Sawtooth, Attack.Fast, Effect.None, 250, 100, 30);
+        extendFlexFX("hum", Wave.Square, Attack.Even, Effect.None, 250, 90, 570);
+        // single laugh (repeat for giggles)
+        defineFlexFX("laugh", 280, 80, Wave.Sawtooth, Attack.Fast, Effect.None, 500, 250, 500);
+        extendFlexFX("laugh", Wave.Square, Attack.Even, Effect.None, 280, 250, 50);
         // sad whimpering moan
         defineFlexFX("moan", 540, 90, Wave.Triangle, Attack.Even, Effect.None, 450, 150, 420);
-        extendFlexFX("moan", Wave.Triangle, Attack.Even, Effect.None, 427, 150, 210);
+        extendFlexFX("moan", Wave.Triangle, Attack.Even, Effect.None, 427, 200, 210);
         extendFlexFX("moan", Wave.Triangle, Attack.Even, Effect.None, 517, 82, 70);
         // somewhat cow-like
-        defineFlexFX("moo", 98, 160, Wave.Sawtooth, Attack.Even, Effect.None, 140, 200, 600);
-        extendFlexFX("moo", Wave.Sawtooth, Attack.Even, Effect.None, 98, 200, 900);
+        defineFlexFX("moo", 98, 160, Wave.Sawtooth, Attack.Even, Effect.None, 140, 250, 600);
+        extendFlexFX("moo", Wave.Sawtooth, Attack.Even, Effect.None, 98, 180, 900);
         // engine-noise (kind-of)
         defineFlexFX("motor", 105, 240, Wave.Sawtooth, Attack.Fast, Effect.Tremolo, 150, 200, 450);
         extendFlexFX("motor", Wave.Sawtooth, Attack.Even, Effect.Tremolo, 120, 200, 2550);
+
         // questioning...
-        defineFlexFX("query", 330, 50, Wave.Square, Attack.Even, Effect.None, 300, 250, 180);
-        extendFlexFX("query", Wave.Square, Attack.Even, Effect.None, 450, 250, 720);
+        defineFlexFX("query", 330, 50, Wave.Square, Attack.Fast, Effect.None, 300, 250, 200);
+        extendFlexFX("query", Wave.Square, Attack.Even, Effect.None, 450, 180, 350);
+        // angry shout
+        defineFlexFX("shout", 120, 125, Wave.Sawtooth, Attack.Fast, Effect.None, 400, 200, 250);
+        extendFlexFX("shout", Wave.Sawtooth, Attack.Even, Effect.None, 360, 250, 250);
+        extendFlexFX("shout", Wave.Sawtooth, Attack.Even, Effect.None, 120, 187, 125);
         // Police siren (includes a silent gap)
         defineFlexFX("siren", 760, 160, Wave.Sawtooth, Attack.Even, Effect.None, 800, 200, 450);
         extendFlexFX("siren", Wave.Silence, Attack.Even, Effect.None, 560, 200, 100);
         extendFlexFX("siren", Wave.Sawtooth, Attack.Even, Effect.None, 600, 160, 450);
-        // angry shout
-        defineFlexFX("shout", 120, 125, Wave.Sawtooth, Attack.Fast, Effect.None, 400, 200, 300);
-        extendFlexFX("shout", Wave.Sawtooth, Attack.Even, Effect.None, 360, 200, 75);
-        extendFlexFX("shout", Wave.Sawtooth, Attack.Even, Effect.None, 120, 187, 125);
         // Approximation to a snore!
         defineFlexFX("snore", 3500, 22, Wave.Noise, Attack.Even, Effect.Vibrato, 700, 222, 500);
         extendFlexFX("snore", Wave.Noise, Attack.Even, Effect.Vibrato, 5000, 222, 500);
-        defineFlexFX("tweet", 480, 112, Wave.Sine, Attack.Fast, Effect.None, 600, 250, 700);
+        // simplest bell
+        defineFlexFX("ting", 2000, 255, Wave.Triangle, Attack.Fast, Effect.None, 2000, 20, 300);
+        
+        // little birdie
+        defineFlexFX("tweet", 960, 112, Wave.Sine, Attack.Fast, Effect.None, 1200, 250, 700);
+        // trouble ahead! (includes a silent gap in the middle)
+        defineFlexFX("uhoh", 165, 80, Wave.Sawtooth, Attack.Fast, Effect.None, 180, 200, 200);
+        extendFlexFX("uhoh", Wave.Silence, Attack.Even, Effect.None, 142.5, 200, 200);
+        extendFlexFX("uhoh", Wave.Square, Attack.Even, Effect.None, 127, 150, 600);
         // Violin-like
         defineFlexFX("violin", 4, 200, Wave.Sawtooth, Attack.Fast, Effect.None, 440, 150, 50);
         extendFlexFX("violin", Wave.Sawtooth, Attack.Even, Effect.None, 440, 150, 425);
@@ -1053,13 +1063,9 @@ namespace flexFX {
         extendFlexFX("whale", Wave.Square, Attack.Even, Effect.None, 450, 222, 800);
         extendFlexFX("whale", Wave.Square, Attack.Even, Effect.None, 360, 11, 1000);
         // strange breed of dog
-        defineFlexFX("woof", 300, 250, Wave.Square, Attack.Even, Effect.None, 100, 225, 30);
-        extendFlexFX("woof", Wave.Sawtooth, Attack.Even, Effect.None, 225, 225, 90);       
-        extendFlexFX("woof", Wave.Sawtooth, Attack.Even, Effect.None, 225, 225, 90);
-        // trouble ahead! (includes a silent gap in the middle)
-        defineFlexFX("uhoh", 165, 80, Wave.Sawtooth, Attack.Fast, Effect.None, 180, 200, 200);
-        extendFlexFX("uhoh", Wave.Silence, Attack.Even, Effect.None, 142.5, 200, 200);
-        extendFlexFX("uhoh", Wave.Square, Attack.Even, Effect.None, 127, 150, 600);
+        defineFlexFX("woof", 50, 200, Wave.Square, Attack.Fast, Effect.Vibrato, 100, 250, 50);
+        extendFlexFX("woof", Wave.Sawtooth, Attack.Medium, Effect.None, 450, 250, 200);
+        extendFlexFX("woof", Wave.Sawtooth, Attack.Even, Effect.None, 150, 90, 75);
 
    }
 

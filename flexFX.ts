@@ -191,11 +191,11 @@ namespace flexFX {
                 // now parse the Key
                 here += nExtent;
                 let key = this.parseKey(chars.charCodeAt(here));
+                here++;
                 // for a silent musical rest: key = 12, and {Octave} is absent
                 if ((key > -1) && (key < 12)) { // good Key-letter; not a Rest
                     this.volume = 255; // (as yet, EKO offers no way of adding dynamics)
                     // adjust for accidentals [# or b] ?
-                    here++;
                     let nOctave = this.countDigits(chars, here); 
                     if (nOctave == 0) { // no Octave digits found yet
                         let asc = chars.charCodeAt(here); // =the character after Key=letter
@@ -207,9 +207,9 @@ namespace flexFX {
                             default: key = -999; // midi will be end up negative!
                         }   
                         here++; 
-                    } // else either an accidental next, or Octave missing
-                    
-                    nOctave = this.countDigits(chars, here); // keep looking for Octave digits
+                        // keep looking for Octave digits
+                        nOctave = this.countDigits(chars, here); 
+                    }  
                     let octave = -1;
                     if (nOctave > 0) {
                         octave = Math.min(parseInt(chars.substr(here, nOctave)), 10); // quite high enough!
@@ -217,8 +217,13 @@ namespace flexFX {
                         // get MIDI from key & octave (careful: MIDI for C0 is 12)
                         this.midi = 12 * (octave + 1) + key;
                         here += nOctave;
-                    } // else missing Octave
-                } // else a bad Key-letter
+                    } else {
+                        
+                    }
+                } // else a bad Key-letter, or a Rest
+                if (key ===12) { // for a Rest...
+                    this.midi = 0; // ...lack of octave is OK
+                }
             } // else a missing Extent
 
             // check for errors and substitute an alert
@@ -569,6 +574,9 @@ namespace flexFX {
         newDuration = clamp(0, newDuration, 10000);
        
         let target: FlexFX = flexFXList.find(i => i.id === id);
+        if (target == null) {
+            target= flexFXList.find(i => i.id === "***"); // beep it
+        }
         if (target != null) {
             // compile and add our Play onto the playList 
             playList.push(target.makeTunedPlay(pitch, volumeLimit, newDuration));
@@ -582,11 +590,11 @@ namespace flexFX {
     /** builtInFlexFX()
     * Selector block to choose and return the name of a built-in FlexFx
     */
-    //% blockId="builtin_name" block="$fx"
+    //% blockId="builtin_name" block="$flexFX"
     //% group="Playing"
     //% weight=980
-    export function builtInFlexFX(fx: BuiltInFlexFX): string {
-        switch (fx) {
+    export function builtInFlexFX(flexFX: BuiltInFlexFX): string {
+        switch (flexFX) {
             case BuiltInFlexFX.Chime: return "chime";
             case BuiltInFlexFX.Cry: return "cry";
             case BuiltInFlexFX.Flute: return "flute";
@@ -611,7 +619,7 @@ namespace flexFX {
             case BuiltInFlexFX.Whale: return "whale";
             case BuiltInFlexFX.Woof: return "woof";
         }
-        return "ting"
+        return "***" // error beep
     }
 
 
@@ -646,7 +654,14 @@ namespace flexFX {
         tuneDuration = clamp(0, tuneDuration, 300000); // max 5 mins!
         
         let tune: Tune = tuneList.find(i => i.id === tuneId);
+        if (tune == null) {
+            tune = tuneList.find(i => i.id === "***"); // triple-beep it
+        }
         let flex: FlexFX = flexFXList.find(i => i.id === flexId);
+        if (flex == null) {
+            flex = flexFXList.find(i => i.id === "***"); // beep it
+        }
+
         if ((flex != null) && (flex != null)) {
             let myTick = tickMs;  // adopt current default tempo
             if (tuneDuration != 0) {
@@ -687,7 +702,7 @@ namespace flexFX {
             case BuiltInTune.NewWorld: return "newWorld";
             case BuiltInTune.BachViolin: return "bachViolin";
             case BuiltInTune.OdeToJoy: return "odeToJoy";
-            default: return "birthday";
+            default: return "***"; // triple-beep
         }
     }
 
@@ -977,6 +992,8 @@ namespace flexFX {
 
     // Populate the FlexFX array with the selection of built-in sounds
     function populateBuiltInFlexFXs() {
+        // error FlexFX
+        defineFlexFX("***", 4000, 255, Wave.Triangle, Attack.Even, Effect.None, 4000, 255, 400);
         // simple "ting"
         defineFlexFX("ting", 2000, 255, Wave.Triangle, Attack.Fast, Effect.None, 2000, 50, 200);
         // longer chime effect
@@ -1047,6 +1064,8 @@ namespace flexFX {
    }
 
     function populateBuiltInTunes() {
+        composeTune("***", "2C8 2R 2C8 2R 4C8") // error "Tune"
+
         composeTune("birthday", "2G4 1G4 3A4 3G4 3C5 6B4");
         extendTune("birthday", "2G4 1G4 3A4 3G4 3D5 6C5");
         extendTune("birthday", "2G4 1G4 3G5 3E5 3C5 3B4 6A4");

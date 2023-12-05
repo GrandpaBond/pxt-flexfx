@@ -1,31 +1,4 @@
-/* FlexFX
-While the built-in facilities for creating sound-effects are impressively flexible,
-they are insufficiently flexible for some contexts (such as to properly express moods and emotions.)
-
-This extension allows the creation of more complex sounds, that have inflections in both pitch 
-and volume. In the context of mood-sounds, this might include a laugh, a moan or an "Uh-oh" that indicates a problem.
-
-To achieve this we have defined a flexible sound-effect class called a "FlexFX", which embodies one or more sound parts 
-that play consecutively to give a smoothly varying result. A FlexFX can either be played as defined, 
-or its pitch, volume and duration can be independently scaled to suit requirements.
-
-For the novice, a selection of interesting built-in FlexFX samples (musical or otherwise) are provided.
-
-The core microbit function music.playSoundEffect() offers a playInBackground option. Unfortunately, a subsequent 
-playSoundEffect() interrupts this, rather than queuing sounds up, so the FlexFX class therefore 
-implements its own play-list to achieve the queueing of consecutive background sounds.
-
-A sequence of pitched instrument sounds forms a Tune. A flexFX.Tune can be composed using a "score" string to specify
-the length; note-name; and octave for a series of notes. Subsequently, any FlexFX can be used to play this tune.
-
-For the novice, a selection of built-in tunes is provided.
-*/
-
-/* NOTE:    The built-in enums for sound effect parameters are hardly beginner-friendly!
-            By renaming them we can expose somewhat simpler concepts, but this only seems 
-            to work if we pass them over a function-call as arguments of type: number.
-*/
-
+/* FlexFX */
 
 /**
  * Tools for creating composite sound-effects of class FlexFX that can be performed 
@@ -37,7 +10,6 @@ For the novice, a selection of built-in tunes is provided.
 //% block="FlexFX"
 //% groups="['Playing', 'Play-list', 'Creating']"
 namespace flexFX {  
-
     // Simplify the selection of wave-shape...
     export enum Wave {
         //%block="Silence"
@@ -135,6 +107,7 @@ namespace flexFX {
         IfYoureHappy,
         //% block="London Bridge is Burning Down"
         LondonBridge,
+
         //% block="Old MacDonald Had a Farm"
         OldMacdonald,
         //% block="The Bear Went Over the Mountain"
@@ -145,6 +118,7 @@ namespace flexFX {
         ThisOldMan,
         //% block="She'll be Coming Round the Mountain"
         RoundMountain,
+
         //% block="Edelweiss"
         Edelweiss,
         //% block="New World Symphony (Dvorak)"
@@ -451,7 +425,8 @@ namespace flexFX {
             let soundExpr = music.createSoundExpression(waveNumber, startPitch, endPitch,
                 startVolume, bigEndVol, duration, effectNumber, attackNumber);      
     
-            /* The underlying implementation in "codal-microbit-v2/source/SoundSynthesizerEffects.cpp"
+            /* FUTURE ENHANCEMENT 
+            The underlying implementation in "codal-microbit-v2/source/SoundSynthesizerEffects.cpp"
             of the functions: 
                   SoundSynthesizerEffects::exponentialRisingInterpolation()
             and   SoundSynthesizerEffects::exponentialFallingInterpolation()
@@ -592,7 +567,7 @@ namespace flexFX {
        
         let target: FlexFX = flexFXList.find(i => i.id === id);
         if (target == null) {
-            target= flexFXList.find(i => i.id === "***"); // beep it
+            target= flexFXList.find(i => i.id === "***"); // "alert" sound
         }
         if (target != null) {
             // compile and add our Play onto the playList 
@@ -657,8 +632,8 @@ namespace flexFX {
     //% weight=970
     //% inlineInputMode=external
     //% expandableArgumentMode="enabled"
-    //% flexId.defl="ting"
     //% tuneId.defl="birthday"
+    //% flexId.defl="ting"
     //% wait.defl=true
     //% transpose.min=-60 transpose.max=60 transpose.defl=0
     //% volumeLimit.min=0 volumeLimit.max=255 volumeLimit.defl=200
@@ -670,13 +645,14 @@ namespace flexFX {
         volumeLimit = clamp(0, volumeLimit, 255);
         tuneDuration = clamp(0, tuneDuration, 300000); // max 5 mins!
         
-        let tune: Tune = tuneList.find(i => i.id === tuneId);
-        if (tune == null) {
-            tune = tuneList.find(i => i.id === "***"); // triple-beep it
-        }
         let flex: FlexFX = flexFXList.find(i => i.id === flexId);
         if (flex == null) {
-            flex = flexFXList.find(i => i.id === "***"); // beep it
+            flex = flexFXList.find(i => i.id === "***"); // error-sound
+        }
+        let tune: Tune = tuneList.find(i => i.id === tuneId);
+        if (tune == null) {
+            flex = flexFXList.find(i => i.id === "***"); // error-sound
+            tune = tuneList.find(i => i.id === "***"); // triple error-sound "tune"
         }
 
         if ((flex != null) && (flex != null)) {
@@ -728,7 +704,7 @@ namespace flexFX {
             case BuiltInTune.NewWorld: return "newWorld";
             case BuiltInTune.OdeToJoy: return "odeToJoy";
             case BuiltInTune.BachViolin: return "bachViolin";
-            default: return "***"; // triple-beep
+            default: return "***"; // triple-beep "tune"
         }
     }
 
@@ -810,7 +786,7 @@ namespace flexFX {
     /**
      * Await completion of FLexFX currently playing
      */
-    //% block="wait until current FlexFX finished"
+    //% block="wait until current FlexFX finishes"
     //% group="Play-list"
     //% weight=880
     //% advanced=true
@@ -1019,7 +995,7 @@ namespace flexFX {
     // Populate the FlexFX array with the selection of built-in sounds
     function populateBuiltInFlexFXs() {
         // error FlexFX
-        defineFlexFX("***", 4000, 255, Wave.Triangle, Attack.Even, Effect.None, 4000, 255, 400);
+        defineFlexFX("***", 4000, 255, Wave.Triangle, Attack.Fast, Effect.None, 100, 255, 10);
         
         // wailing sound
         defineFlexFX("cry", 400, 80, Wave.Square, Attack.Medium, Effect.None, 600, 250, 300);
@@ -1098,7 +1074,7 @@ namespace flexFX {
     function populateBuiltInTunes() {
         composeTune("***", "2C8 2R 2C8 2R 4C8") // error "Tune"
 
-        composeTune("birthday", "2G4 1G4 3A4 3G4 3C5 6B4");
+        composeTune("birthday", "2G4 1G4 3A4 3G4 3C5 6B4 ");
         extendTune("birthday", "2G4 1G4 3A4 3G4 3D5 6C5");
         extendTune("birthday", "2G4 1G4 3G5 3E5 3C5 3B4 6A4");
         extendTune("birthday", "2F5 1F5 3E5 3C5 3D5 6C5");
@@ -1113,7 +1089,7 @@ namespace flexFX {
         extendTune("jingleBells", "2G5 2G5 2F5 2D5 6C5");
 
         composeTune("teaPot", "2C4 1D4 2E4 1F4 3G4 3C5 3A4 3C5 6G4");
-        extendTune("teaPot", "3F4 3G4 3E4 4C4 3D4 3B3 6C4");
+        extendTune("teaPot", "3F4 3G4 3E4 3C4 3D4 3B3 6C4");
         extendTune("teaPot", "2C5 1B4 2A4 1C5 3B4 3G4 3A4 3C5 6G4");
         extendTune("teaPot", "5C5 1A4 3G4 3F4 3E4 3D4 6C4");
 
@@ -1125,6 +1101,7 @@ namespace flexFX {
 
         composeTune("londonBridge", "3G4 1A4 2G4 2F4 2E4 2F4 4G4 2D4 2E4 4F4 2E4 2F4 4G4");
         extendTune("londonBridge", "3G4 1A4 2G4 2F4 2E4 2F4 4G4 4D4 4G4 2E4 6C4");
+
 
         composeTune("oldMacdonald", "2G4 2G4 2G4 2D4 2E4 2E4 4D4 2B4 2B4 2A4 2A4 4G4 2R");
         extendTune("oldMacdonald", "2D4 2G4 2G4 2G4 2D4 2E4 2E4 4D4 2B4 2B4 2A4 2A4 4G4 2R");
@@ -1151,6 +1128,7 @@ namespace flexFX {
         extendTune("roundMountain", "2G4 2A4 2B4 2B4 2B4 2B4 2D5 2D5 2D5 2B4 8A4 4R");
         extendTune("roundMountain", "2D5 2C5 2B4 2B4 2B4 2B4 2A4 6G4 2E4 2E4 2E4 2E4 2C5 2C5");
         extendTune("roundMountain", "2D5 2C5 2B4 2B4 2B4 2B4 2A4 2A4 2B4 2A4 12G4");
+
 
         composeTune("edelweiss", "4E4 2G4 6D5 4C5 2G4 6F4");
         extendTune("edelweiss", "4E4 2E4 2E4 2F4 2G4 6A4 6G4");

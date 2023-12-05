@@ -1,19 +1,8 @@
 // *********** test codes **********
-//flexFX.playTune("birthday", "chime");
-//flexFX.playTune("jingleBells", "chime");
-//flexFX.playTune("teaPot", "chime");
-//flexFX.playTune("ifYoureHappy", "chime");
-//flexFX.playTune("londonBridge", "chime");
-//flexFX.playTune("oldMacdonald", "chime");
-//flexFX.playTune("bearMountain", "chime");
-//flexFX.playTune("popWeasel", "chime");
-//flexFX.playTune("thisOldMan", "chime");
-//flexFX.playTune("roundMountain", "chime");
-//flexFX.playTune("edelweiss", "chime");
-//flexFX.playTune("newWorld", "horn");
-//flexFX.playTune("odeToJoy", "hum");
-flexFX.setNextTempo(180);
-flexFX.playTune("bachViolin", "violin");
+
+basic.showNumber(flexFX.waitingToPlay());
+basic.pause(500);
+
 // perform a built-in FlexFX with all the defaults
 basic.showIcon(IconNames.Target); 
 flexFX.playFlexFX("uhoh");
@@ -212,8 +201,8 @@ flexFX.playTune("this one is missing", "whale");
 basic.showIcon(IconNames.Yes);
 pause(2000);
 
-// check that bad EKO note inputs get beeped
-// 1) Extent = non-EKO - missing - gross - good
+// check that bad EKO note-inputs get beeped
+// 1) Extent = non-EKO - missing - gross - good - 
 let tryExtent = " non-EKO C4 999C4    4C4   ";
 flexFX.composeTune("noteTest", tryExtent);
 flexFX.playTune("noteTest", "chime");
@@ -221,15 +210,15 @@ flexFX.playTune("noteTest", "chime");
 basic.showIcon(IconNames.Yes);
 pause(2000);
 // 2) Key = missing - not A-G; multi-letter - not #/b - good
-let badKey = "4#4 4H4 4ABC4 4A&4   4C4";
-flexFX.composeTune("noteTest", badKey);
+let tryKey = "4#4 4H4 4ABC4 4A&4   4Eb4";
+flexFX.composeTune("noteTest",tryKey);
 flexFX.playTune("noteTest", "chime");
 
 basic.showIcon(IconNames.Yes);
 pause(2000);
 // 3) Octave =  missing - gross - good
-let badOctave = "4A 4A99    4C4  ";
-flexFX.composeTune("noteTest", badOctave);
+let tryOctave = "4A 4A99    4F#4  ";
+flexFX.composeTune("noteTest", tryOctave);
 flexFX.playTune("noteTest", "chime");
 
 basic.showIcon(IconNames.Yes);
@@ -317,3 +306,32 @@ while (flexFX.isActive()) {
     basic.pause(30);
 }
 basic.showIcon(IconNames.Yes);
+pause(2000);
+
+// Queue up a very big playlist (573 Plays)
+basic.showIcon(IconNames.Target);
+basic.pause(500);
+basic.clearScreen();
+flexFX.setNextTempo(240); // can't wait all day!
+flexFX.playTune("birthday", "chime", false);
+flexFX.playTune("jingleBells", "ting",false);
+flexFX.playTune("teaPot", "hum",false);
+flexFX.playTune("ifYoureHappy", "tweet",false);
+flexFX.playTune("londonBridge", "flute",false);
+flexFX.playTune("oldMacdonald", "chime",false);
+flexFX.playTune("bearMountain", "horn",false);
+flexFX.playTune("popWeasel", "violin",false);
+flexFX.playTune("thisOldMan", "hum",false);
+flexFX.playTune("roundMountain", "chime",false);
+flexFX.playTune("edelweiss", "flute", false);
+flexFX.playTune("newWorld", "horn", false);
+flexFX.playTune("odeToJoy", "hum", false);
+flexFX.playTune("bachViolin", "violin", false);
+while (flexFX.isActive()) {
+    basic.showNumber(flexFX.waitingToPlay());
+    basic.pause(500);
+    basic.clearScreen();
+    basic.showArrow(ArrowNames.East);
+    basic.clearScreen();
+    basic.pause(500);
+}

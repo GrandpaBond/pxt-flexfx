@@ -15,7 +15,7 @@ As its name suggests, once defined, a ``||flexFX:flexFX||`` recipe can be re-use
 You can choose which ``||flexFX:flexFX||`` to play from a drop-down list of built-in sounds.
 
 Any ``||flexFX:flexFX||`` can also be used as the "instrument" on which to play a short melody.
-You can choose from a small selection of built-in **Tunes**: playing one automatically creates a sequence of individually tuned
+You can choose from a selection of built-in **Tunes**: playing one automatically creates a sequence of individually tuned
 Plays, one for each of its notes.
 
 You can also compose your own Tunes, using a simple text notation. (See ``||flexFX:Composing Tunes||`` below)
@@ -97,9 +97,11 @@ Every ``||flexFX:flexFX||`` has a unique name: its identifier. This reporter blo
 parameter of the ``||flexFX:playFlexFX||`` block above) provides a drop-down list from which you can choose 
 a built-in ``||flexFX:flexFX||`` to hear.
  
+
+
 # Tunes
 Since a ``||flexFX:FlexFX||`` can vary its pitch and duration, you can easily use it to play a Tune.
-There are blocks that allow you to perform built-in Tunes and also compose your own new ones 
+There are blocks that allow you to perform built-in Tunes and also compose your own new ones.
 
 
 ## Playing a Tune #flexFX-playTune

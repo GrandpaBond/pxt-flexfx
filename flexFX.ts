@@ -1103,6 +1103,37 @@ namespace flexFX {
         extendTune("odeToJoy", "8B4 4B4 4C5 4D5 4D5 4C5 4B4 4A4");
         extendTune("odeToJoy", "4G4 4G4 4A4 4B4 6A4 2G4 8G4");
 
+
+        composeTune("thisOldMan", "2G4 2E4 2G4 2R 2G4 2E4 2G4 2R");
+        extendTune("thisOldMan", "2A4 2G4 2F4 2E4 2D4 2E4 2F4 2R");
+        extendTune("thisOldMan", "2G4 2C4 2C4 2C4 1C4 1D4 1E4 1F4 2G4 2R");
+        extendTune("thisOldMan", "2G4 2D4 2D4 2F4 2E4 2D4 4C4");
+
+        composeTune("bearMountain","1D4 2E4 1E4 1E4 1D4 1E4 3F4 2E4");
+        extendTune("bearMountain", "1E4 2D4 1D4 1D4 1C4 1D4 3E4 2C4");
+        extendTune("bearMountain", "1D4 2E4 1E4 1E4 1D4 1E4 2F4 1G4 5A4");
+        extendTune("bearMountain", "1A4 2G4 1F4 2E4 1D4 4C4");
+
+        composeTune("roundMountain", "1D4 1E4 1G4 1G4 1G4 1G4 1E4 1D4 1B3 1D4 4G4 2R");
+        extendTune("roundMountain", "1G4 1A4 1B4 1B4 1B4 1B4 1D5 1D5 1D5 1B4 4A4 2R");
+        extendTune("roundMountain", "1B5 1C5 1B4 1B4 1B4 1B4 1A4 3G4 1E4 1E4 1E4 1E4 1C5 1C5");
+        extendTune("roundMountain", "1D5 1C5 1B4 1B4 1B4 1B4 1A4 1A4 1B4 1A4 6C4");
+
+        composeTune("OldMacdonald", "2G4 2G4 2G4 2D4 2E4 2E4 4D4 2B4 2B4 2A4 2A4 4G4 2R");
+        extendTune("OldMacdonald", "2D4 2G4 2G4 2G4 2D4 2E4 2E4 4D4 2B4 2B4 2A4 2A4 4G4 2R");
+        extendTune("OldMacdonald", "1D4 1D4 2G4 2G4 2G4 1D4 1D4 2G4 2G4 2G4 2R");
+        extendTune("OldMacdonald", "1G4 1G4 2G4 1G4 1G4 2G4 1G4 1G4 1G4 1G4 2G4 2G4");
+        extendTune("OldMacdonald", "2G4 2G4 2G4 2D4 2E4 2E4 4D4 2B4 2B4 2A4 2A4 4G4");
+
+        composeTune("xxx", "");
+        extendTune("xxx", "");
+
+        composeTune("xxx", "");
+        extendTune("xxx", "");
+
+        composeTune("xxx", "");
+        extendTune("xxx", "");
+
     }
 
     populateBuiltInFlexFXs();

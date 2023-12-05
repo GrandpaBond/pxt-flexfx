@@ -18,7 +18,7 @@ implements its own play-list to achieve the queueing of consecutive background s
 A sequence of pitched instrument sounds forms a Tune. A flexFX.Tune can be composed using a "score" string to specify
 the length; note-name; and octave for a series of notes. Subsequently, any FlexFX can be used to play this tune.
 
-For the novice, a (small) selection of built-in tunes is provided.
+For the novice, a selection of built-in tunes is provided.
 */
 
 /* NOTE:    The built-in enums for sound effect parameters are hardly beginner-friendly!
@@ -76,8 +76,7 @@ namespace flexFX {
         Warble = SoundExpressionEffect.Warble
     }
 
-    // list of built-in FlexFXs
-    // **** must precicely match the ID array BuiltInId below ****
+    // drop-down selection of built-in FlexFXs
     export enum BuiltInFlexFX {
         //% block="chime"
         Chime,
@@ -124,18 +123,36 @@ namespace flexFX {
         Woof
     }
 
-    // list of built-in Tunes
+    //  drop-down selection of built-in Tunes
     export enum BuiltInTune {
-        //% block="happy birthday"
+        //% block="Happy Birthday To You"
         Birthday,
-        //% block="jingle bells"
+        //% block="Jingle Bells"
         JingleBells,
-        //% block="new world"
+        //% block="I'm a Little Teapot"
+        TeaPot,
+        //% block="If You're Happy and You Know It "
+        IfYoureHappy,
+        //% block="London Bridge is Burning Down"
+        LondonBridge,
+        //% block="Old MacDonald Had a Farm"
+        OldMacdonald,
+        //% block="The Bear Went Over the Mountain"
+        BearMountain,
+        //% block="Pop Goes the Weasel"
+        PopWeasel,
+        //% block="This Old Man, He Played One"
+        ThisOldMan,
+        //% block="She'll be Coming Round the Mountain"
+        RoundMountain,
+        //% block="Edelweiss"
+        Edelweiss,
+        //% block="New World Symphony (Dvorak)"
         NewWorld,
-        //% block="bach violin"
-        BachViolin,
-        //% block="ode to joy"
-        OdeToJoy
+        //% block="Ode to Joy (Beethoven)"
+        OdeToJoy,
+        //% block="Violin Concerto in A Minor (Bach)"
+        BachViolin
     }
 
     // range-clamper:
@@ -699,9 +716,18 @@ namespace flexFX {
         switch (tune) {
             case BuiltInTune.Birthday: return "birthday";
             case BuiltInTune.JingleBells: return "jingleBells";
+            case BuiltInTune.TeaPot: return "teaPot";
+            case BuiltInTune.IfYoureHappy: return "ifYoureHappy";
+            case BuiltInTune.LondonBridge: return "londonBridge";
+            case BuiltInTune.OldMacdonald: return "oldMacdonald";
+            case BuiltInTune.BearMountain: return "bearMountain";
+            case BuiltInTune.PopWeasel: return "popWeasel";
+            case BuiltInTune.ThisOldMan: return "thisOldMan";
+            case BuiltInTune.RoundMountain: return "roundMountain";
+            case BuiltInTune.Edelweiss: return "edelweiss";
             case BuiltInTune.NewWorld: return "newWorld";
-            case BuiltInTune.BachViolin: return "bachViolin";
             case BuiltInTune.OdeToJoy: return "odeToJoy";
+            case BuiltInTune.BachViolin: return "bachViolin";
             default: return "***"; // triple-beep
         }
     }
@@ -1085,15 +1111,61 @@ namespace flexFX {
         extendTune("jingleBells", "2E5 2G5 3C5 1D5 4E5 4R");
         extendTune("jingleBells", "2F5 2F5 3F5 1F5 2F5 2E5 2E5 2E5");
         extendTune("jingleBells", "2G5 2G5 2F5 2D5 6C5");
-        
-        composeTune("newWorld", "6E3 2G3 8G3 6E3 2D3 8C3");
-        extendTune("newWorld", "4D3 4E3 4G3 4E3 8D3 8R");
-        extendTune("newWorld", "6E3 2G3 8G3 6E3 2D3 8C3");
-        extendTune("newWorld", "4D3 4E3 6D3 2C3 8C3 8R");
 
-        composeTune("bachViolin", "2E5 6A5 2E5 6F5 2D5 1E5 1D5 1C5 1E5");
-        extendTune("bachViolin", "1D5 1C5 1B4 1D5 2C5 6A4");
-        
+        composeTune("teaPot", "2C4 1D4 2E4 1F4 3G4 3C5 3A4 3C5 6G4");
+        extendTune("teaPot", "3F4 3G4 3E4 4C4 3D4 3B3 6C4");
+        extendTune("teaPot", "2C5 1B4 2A4 1C5 3B4 3G4 3A4 3C5 6G4");
+        extendTune("teaPot", "5C5 1A4 3G4 3F4 3E4 3D4 6C4");
+
+        composeTune("ifYoureHappy", "2C4 1C4 2F4 1F4 2F4 1F4 2F4 1F4 2E4 1F4 6G4 3R");
+        extendTune("ifYoureHappy", "2C4 1C4 2G4 1G4 2G4 1G4 2G4 1G4 2F4 1G4 6A4 3R");
+        extendTune("ifYoureHappy", "2A4 1A4 2Bb4 1Bb4 2Bb4 1Bb4 2D4 1D4");
+        extendTune("ifYoureHappy", "2Bb4 1Bb4 2A4 1A4 2A4 1A4 2C4 1C4");
+        extendTune("ifYoureHappy", "2A4 1A4 2G4 1G4 2G4 1G4 2F4 1E4 2D4 1E4 9F4");
+
+        composeTune("londonBridge", "3G4 1A4 2G4 2F4 2E4 2F4 4G4 2D4 2E4 4F4 2E4 2F4 4G4");
+        extendTune("londonBridge", "3G4 1A4 2G4 2F4 2E4 2F4 4G4 4D4 4G4 2E4 6C4");
+
+        composeTune("oldMacdonald", "2G4 2G4 2G4 2D4 2E4 2E4 4D4 2B4 2B4 2A4 2A4 4G4 2R");
+        extendTune("oldMacdonald", "2D4 2G4 2G4 2G4 2D4 2E4 2E4 4D4 2B4 2B4 2A4 2A4 4G4 2R");
+        extendTune("oldMacdonald", "1D4 1D4 2G4 2G4 2G4 1D4 1D4 2G4 2G4 2G4 2R");
+        extendTune("oldMacdonald", "1G4 1G4 2G4 1G4 1G4 2G4 1G4 1G4 1G4 1G4 2G4 2G4");
+        extendTune("oldMacdonald", "2G4 2G4 2G4 2D4 2E4 2E4 4D4 2B4 2B4 2A4 2A4 4G4");
+
+        composeTune("bearMountain", "1D4 2E4 1E4 1E4 1D4 1E4 3F4 2E4");
+        extendTune("bearMountain", "1E4 2D4 1D4 1D4 1C4 1D4 3E4 2C4");
+        extendTune("bearMountain", "1D4 2E4 1E4 1E4 1D4 1E4 2F4 1G4 5A4");
+        extendTune("bearMountain", "1A4 2G4 1F4 2E4 1D4 4C4");
+
+        composeTune("popWeasel", "2C4 1E4 2D4 1F4 1E4 1G4 1E4 3C4");
+        extendTune("popWeasel", "2C4 1E4 2D4 1F4 3E4 3C4");
+        extendTune("popWeasel", "2C4 1E4 2D4 1F4 1E4 1G4 1E4 3C4");
+        extendTune("popWeasel", "3A4 2D4 1F4 3E4 3C4");
+
+        composeTune("thisOldMan", "2G4 2E4 2G4 2R 2G4 2E4 2G4 2R");
+        extendTune("thisOldMan", "2A4 2G4 2F4 2E4 2D4 2E4 2F4");
+        extendTune("thisOldMan", "1E4 1F4 2G4 2C4 2C4 2C4 1C4 1D4 1E4 1F4 2G4 2R");
+        extendTune("thisOldMan", "2G4 2D4 2D4 2F4 2E4 2D4 4C4");
+
+        composeTune("roundMountain", "2D4 2E4 2G4 2G4 2G4 2G4 2E4 2D4 2B3 2D4 8G4 4R");
+        extendTune("roundMountain", "2G4 2A4 2B4 2B4 2B4 2B4 2D5 2D5 2D5 2B4 8A4 4R");
+        extendTune("roundMountain", "2D5 2C5 2B4 2B4 2B4 2B4 2A4 6G4 2E4 2E4 2E4 2E4 2C5 2C5");
+        extendTune("roundMountain", "2D5 2C5 2B4 2B4 2B4 2B4 2A4 2A4 2B4 2A4 12G4");
+
+        composeTune("edelweiss", "4E4 2G4 6D5 4C5 2G4 6F4");
+        extendTune("edelweiss", "4E4 2E4 2E4 2F4 2G4 6A4 6G4");
+        extendTune("edelweiss", "4E4 2G4 6D5 4C5 2G4 6F4");
+        extendTune("edelweiss", "4E4 2G4 2G4 2A4 2B4 6C5 6C5");
+        extendTune("edelweiss", "3D5 1G4 2G4 3B4 1A4 2G4 4E4 2G4 6C5");
+        extendTune("edelweiss", "4A4 2C5 4D5 2C5 6B4 6G4");
+        extendTune("edelweiss", "4E4 2G4 6D5 4C5 2G#4 6F5");
+        extendTune("edelweiss", "4E4 2G4 2G4 2A4 2B4 6C5 6C5");
+
+        composeTune("newWorld", "6E4 2G4 8G4 6E4 2D4 8C4");
+        extendTune("newWorld", "4D4 4E4 4G4 4E4 8D4 8R");
+        extendTune("newWorld", "6E4 2G4 8G4 6E4 2D4 8C4");
+        extendTune("newWorld", "4D4 4E4 6D4 2C4 8C4 8R");
+
         composeTune("odeToJoy", "4B4 4B4 4C5 4D5 4D5 4C5 4B4 4A4");
         extendTune("odeToJoy", "4G4 4G4 4A4 4B4 6B4 2A4 8A4");
         extendTune("odeToJoy", "4B4 4B4 4C5 4D5 4D5 4C5 4B4 4A4");
@@ -1103,36 +1175,11 @@ namespace flexFX {
         extendTune("odeToJoy", "8B4 4B4 4C5 4D5 4D5 4C5 4B4 4A4");
         extendTune("odeToJoy", "4G4 4G4 4A4 4B4 6A4 2G4 8G4");
 
-
-        composeTune("thisOldMan", "2G4 2E4 2G4 2R 2G4 2E4 2G4 2R");
-        extendTune("thisOldMan", "2A4 2G4 2F4 2E4 2D4 2E4 2F4 2R");
-        extendTune("thisOldMan", "2G4 2C4 2C4 2C4 1C4 1D4 1E4 1F4 2G4 2R");
-        extendTune("thisOldMan", "2G4 2D4 2D4 2F4 2E4 2D4 4C4");
-
-        composeTune("bearMountain","1D4 2E4 1E4 1E4 1D4 1E4 3F4 2E4");
-        extendTune("bearMountain", "1E4 2D4 1D4 1D4 1C4 1D4 3E4 2C4");
-        extendTune("bearMountain", "1D4 2E4 1E4 1E4 1D4 1E4 2F4 1G4 5A4");
-        extendTune("bearMountain", "1A4 2G4 1F4 2E4 1D4 4C4");
-
-        composeTune("roundMountain", "1D4 1E4 1G4 1G4 1G4 1G4 1E4 1D4 1B3 1D4 4G4 2R");
-        extendTune("roundMountain", "1G4 1A4 1B4 1B4 1B4 1B4 1D5 1D5 1D5 1B4 4A4 2R");
-        extendTune("roundMountain", "1B5 1C5 1B4 1B4 1B4 1B4 1A4 3G4 1E4 1E4 1E4 1E4 1C5 1C5");
-        extendTune("roundMountain", "1D5 1C5 1B4 1B4 1B4 1B4 1A4 1A4 1B4 1A4 6C4");
-
-        composeTune("OldMacdonald", "2G4 2G4 2G4 2D4 2E4 2E4 4D4 2B4 2B4 2A4 2A4 4G4 2R");
-        extendTune("OldMacdonald", "2D4 2G4 2G4 2G4 2D4 2E4 2E4 4D4 2B4 2B4 2A4 2A4 4G4 2R");
-        extendTune("OldMacdonald", "1D4 1D4 2G4 2G4 2G4 1D4 1D4 2G4 2G4 2G4 2R");
-        extendTune("OldMacdonald", "1G4 1G4 2G4 1G4 1G4 2G4 1G4 1G4 1G4 1G4 2G4 2G4");
-        extendTune("OldMacdonald", "2G4 2G4 2G4 2D4 2E4 2E4 4D4 2B4 2B4 2A4 2A4 4G4");
-
-        composeTune("xxx", "");
-        extendTune("xxx", "");
-
-        composeTune("xxx", "");
-        extendTune("xxx", "");
-
-        composeTune("xxx", "");
-        extendTune("xxx", "");
+        composeTune("bachViolin", "2E5 6A5 2E5 6F5 2D5 1E5 1D5 1C5 1E5");
+        extendTune("bachViolin", "1D5 1C5 1B4 1D5 2C5 4A4 1R 1A4 1G#4 1A4");
+        extendTune("bachViolin", "1B4 1A4 1G#4 1A4 1C5 1A4 1G#4 1A4");
+        extendTune("bachViolin", "1D5 1A4 1G#4 1A4 1E5 1A4 1G#4 1A4");
+        extendTune("bachViolin", "1F5 1G5 1F5 1E5 1D5 1C5 1B4 1A4 2G#4 6E4");
 
     }
 

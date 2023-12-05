@@ -1,4 +1,19 @@
 // *********** test codes **********
+//flexFX.playTune("birthday", "chime");
+//flexFX.playTune("jingleBells", "chime");
+//flexFX.playTune("teaPot", "chime");
+//flexFX.playTune("ifYoureHappy", "chime");
+//flexFX.playTune("londonBridge", "chime");
+//flexFX.playTune("oldMacdonald", "chime");
+//flexFX.playTune("bearMountain", "chime");
+//flexFX.playTune("popWeasel", "chime");
+//flexFX.playTune("thisOldMan", "chime");
+//flexFX.playTune("roundMountain", "chime");
+//flexFX.playTune("edelweiss", "chime");
+//flexFX.playTune("newWorld", "horn");
+//flexFX.playTune("odeToJoy", "hum");
+flexFX.setNextTempo(180);
+flexFX.playTune("bachViolin", "violin");
 // perform a built-in FlexFX with all the defaults
 basic.showIcon(IconNames.Target); 
 flexFX.playFlexFX("uhoh");

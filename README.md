@@ -266,7 +266,13 @@ which this runs out!
 
 Sometimes you might want tighter control over exactly when each queued Play occurs, so various advanced blocks are provided 
 (under ``||flexFX:... more||``) that let you interact with the Play-list. 
-  
+
+## Checking whether the background Player is running
+ ```sig 
+flexFX.isActive(): boolean
+ ``` 
+This reporter block returns **true** if the background Player is running.
+
 ## Spacing-out background Plays  #flexFX-playSilence                 
 ```sig 
 flexFX.playSilence(ms) 
@@ -302,7 +308,13 @@ Awaits start of the next FlexFX performance on the Play-list. (Returns immediate
 flexFX.awaitPlayFinish()  
  ``` 
 Awaits completion of the FlexFX performance currently playing. (Returns immediately if there are none.) 
-  
+
+## Checking whether something currently playing
+ ```sig 
+flexFX.isPlaying(): boolean
+ ``` 
+This reporter block returns **true** if there is a ``||flexFX:FlexFX||`` currently being played in the background.
+
 ## Waiting for the whole Play-list to finish  #flexFX-awaitAllFinished 
  ```sig 
 flexFX.awaitAllFinished()   
@@ -321,7 +333,13 @@ You can also pause (and later re-start) the background Play-list. This block sus
 flexFX.startPlaying()  
  ``` 
 This unlocks the Play-list, resuming background playing of any queued (or future) Plays.   
-  
+
+## Checking whether playing is paused or allowed
+ ```sig 
+flexFX.isStopped(): boolean
+ ``` 
+This reporter block returns **true** if the background Player is currently paused.
+
 ## Checking how many Plays remain on the Play-list  #flexFX-waitingToPlay 
  ```sig 
 flexFX.waitingToPlay(): number  

@@ -5,46 +5,46 @@
  * (either directly or queued-up) as defined; or with scaled pitch, volume or duration.
  */
 
-//% color=#70e030
+//% color=#7c68b4
 //% icon="\uf0a1"
 //% block="FlexFX"
-//% groups="['Playing', 'Play-list', 'Creating']"
+//% groups="['micro:bit(V2) Playing', 'micro:bit(V2) Play-list', 'micro:bit(V2) Creating']"
 namespace flexFX {  
     // Simplify the selection of wave-shape...
     export enum Wave {
-        //%block="Silence"
+        //%block="silence"
         Silence = -1,    // (special case for queueing silent gaps onto the Play-list) 
-        //%block="Pure"
+        //%block="pure"
         Sine = WaveShape.Sine,
-        //%block="Buzzy"
+        //%block="buzzy"
         Square = WaveShape.Square,
-        //%block="Bright"
+        //%block="bright"
         Triangle = WaveShape.Triangle,
-        //%block="Harsh"
+        //%block="harsh"
         Sawtooth = WaveShape.Sawtooth,
-        //%block="Noisy"
+        //%block="nNoisy"
         Noise = WaveShape.Noise
     }
     // Simplify the selection of frequency interpolation trajectory...
     export enum Attack {
-        //% block="Fast"
+        //% block="fast"
         Fast = InterpolationCurve.Logarithmic,
-        //% block="Medium"
+        //% block="medium"
         Medium = InterpolationCurve.Curve,
-        //% block="Even"
+        //% block="even"
         Even = InterpolationCurve.Linear,
-        //% block="Delayed"   *** option temporarily removed...
+        //% block="delayed"   *** option temporarily removed...
         // Delayed = 99 later, mapped to Sine or Cosine, depending on slope of profile
     }
     // Simplify (slightly) the selection of modulation-style...
     export enum Effect {
-        //% block="None"
+        //% block="none"
         None = SoundExpressionEffect.None,
-        //% block="Vibrato"
+        //% block="vibrato"
         Vibrato = SoundExpressionEffect.Vibrato,
-        //% block="Tremolo"
+        //% block="tremolo"
         Tremolo = SoundExpressionEffect.Tremolo,
-        //% block="Warble"
+        //% block="warble"
         Warble = SoundExpressionEffect.Warble
     }
 
@@ -142,13 +142,13 @@ namespace flexFX {
  
     // convert a frequency in Hz to its Midi note-number 
     // (retaining microtonal fractions)
-    export function hertzToMidi(pitch: number): number {
+    function hertzToMidi(pitch: number): number {
         return ((Math.log(pitch) / SEMILOG) - DELTA);
     }
 
     // convert a Midi note-number to nearest integer frequency in Hz
     // (based on A4 = 440 Hz = MIDI 69)
-    export function midiToHertz(midi: number): number {
+    function midiToHertz(midi: number): number {
         return (Math.round(440 * (2 ** ((midi - 69) / 12))));
     }
 
@@ -549,7 +549,7 @@ namespace flexFX {
      * @tuneDuration  how long (in milliseconds) the overall performance will last .
      */
     //% block="play FlexFX $id waiting? $wait||at pitch $pitch|with maximum volume: $volumeLimit| lasting (ms) $newDuration"
-    //% group="Playing"
+    //% group="micro:bit(V2) Playing"
     //% inlineInputMode=external
     //% expandableArgumentMode="toggle"
     //% weight=990
@@ -583,7 +583,7 @@ namespace flexFX {
     * Selector block to choose and return the name of a built-in FlexFx
     */
     //% blockId="builtin_name" block="$flexFX"
-    //% group="Playing"
+    //% group="micro:bit(V2) Playing"
     //% weight=980
     export function builtInFlexFX(flexFX: BuiltInFlexFX): string {
         switch (flexFX) {
@@ -628,7 +628,7 @@ namespace flexFX {
      */
 
     //% block="play tune $tuneId using FlexFX $flexId waiting? $wait||transposed by (semitones): $transpose|with maximum volume: $volumeLimit|performance lasting (ms) $tuneDuration"    
-    //% group="Playing"
+    //% group="micro:bit(V2) Playing"
     //% weight=970
     //% inlineInputMode=external
     //% expandableArgumentMode="enabled"
@@ -686,7 +686,7 @@ namespace flexFX {
      * Selector block to choose and return the name of a built-in Tune
      */
     //% blockId="builtin_tune" block="$tune"
-    //% group="Playing"
+    //% group="micro:bit(V2) Playing"
     //% weight=960
     export function builtInTune(tune: BuiltInTune): string {
         switch (tune) {
@@ -714,7 +714,7 @@ namespace flexFX {
      *              (valid range is 30 to 480)
      */
     //% block="set tempo (beats/minute): %bpm"
-    //% group="Playing"
+    //% group="micro:bit(V2) Playing"
     //% weight=950
     //% bpm.min=30 bpm.max=480 bpm.defl=120
     export function setNextTempo(bpm: number) {  // CHANGES GLOBAL SETTING
@@ -730,7 +730,7 @@ namespace flexFX {
          */
 
     //% block="compose Tune: $tuneId with notes: $score"
-    //% group="Playing"
+    //% group="micro:bit(V2) Playing"
     //% weight=940
     //% tuneId.defl="beethoven5"
     //% score.defl="2R 2G4 2G4 2G4 8Eb4"
@@ -749,7 +749,7 @@ namespace flexFX {
           */
 
     //% block="extend Tune: $tuneId with extra notes: $score"
-    //% group="Playing"
+    //% group="micro:bit(V2) Playing"
     //% weight=930
     //% tuneId.defl="beethoven5"
     //% score.defl="2R 2F4 2F4 2F4 8D4"
@@ -767,12 +767,12 @@ namespace flexFX {
 
     // ---- UI BLOCKS: PLAY-LIST ----
 
-
+  
     /**
      * Await start of next FlexFX on the play-list
      */
     //% block="wait until next FlexFX starts"
-    //% group="Play-list"
+    //% group="micro:bit(V2) Play-list"
     //% weight=890
     //% advanced=true
     export function awaitPlayStart() {
@@ -787,7 +787,7 @@ namespace flexFX {
      * Await completion of FLexFX currently playing
      */
     //% block="wait until current FlexFX finishes"
-    //% group="Play-list"
+    //% group="micro:bit(V2) Play-list"
     //% weight=880
     //% advanced=true
     export function awaitPlayFinish() {
@@ -800,7 +800,7 @@ namespace flexFX {
      * Await completion of everything on the play-list
      */
     //% block="wait until everything played"
-    //% group="Play-list"
+    //% group="micro:bit(V2) Play-list"
     //% weight=870
     //% advanced=true
     export function awaitAllFinished() {
@@ -816,7 +816,7 @@ namespace flexFX {
      * @param ms  length of pause (in millisecs)
      */
     //% block="add a pause of $ms ms next in the play-list"
-    //% group="Play-list"
+    //% group="micro:bit(V2) Play-list"
     //% weight=860
     //% advanced=true
     //% ms.defl=500
@@ -834,7 +834,7 @@ namespace flexFX {
      * Check the length of the play-list
      */
     //% block="length of play-list"
-    //% group="Play-list"
+    //% group="micro:bit(V2) Play-list"
     //% weight=850
     //% advanced=true
     export function waitingToPlay(): number {
@@ -845,7 +845,7 @@ namespace flexFX {
      * Suspend background playing from the play-list
      */
     //% block="pause play-list"
-    //% group="Play-list"
+    //% group="micro:bit(V2) Play-list"
     //% weight=840
     //% advanced=true
     export function stopPlaying() {
@@ -856,7 +856,7 @@ namespace flexFX {
      * Resume background playing from the play-list
      */
     //% block="play play-list"
-    //% group="Play-list"
+    //% group="micro:bit(V2) Play-list"
     //% weight=830
     //% advanced=true
     export function startPlaying() {
@@ -868,12 +868,41 @@ namespace flexFX {
      * Delete from the play-list everything left unplayed
      */
     //% block="forget play-list"
-    //% group="Play-list"
+    //% group="micro:bit(V2) Play-list"
     //% weight=820
     //% advanced=true
     export function deletePlaylist() {
         while (playList.length > 0) { playList.pop() }
     }
+
+  // Accessors for internal flags...
+    /**
+     * returns "true" if playing is currently inhibited
+     */
+    //% block="is paused"
+    //% group="micro:bit(V2) Play-list"
+    //% weight=815
+    //% advanced=true
+      export function isStopped(): boolean { return playerStopped; } // accessor
+
+    /**
+     *  returns "true" if a FlexFX is currently being played
+     */
+    //% block="is playing"
+    //% group="micro:bit(V2) Play-list"
+    //% weight=810
+    //% advanced=true
+   export function isPlaying(): boolean { return playerPlaying; } // accessor
+ 
+    /**
+     * returns "true" if the background player is running
+     */
+    //% block="is active"
+    //% group="micro:bit(V2) Play-list"
+    //% weight=805
+    //% advanced=true
+   export function isActive(): boolean { return playerActive; } // accessor
+
 
     // ---- UI BLOCKS: CREATING --
 
@@ -892,7 +921,7 @@ namespace flexFX {
      */
 
     //% block="define FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes from $startPitch|               to $endPitch|volume goes from $startVolume|               to $endVolume|default duration=$duration"
-    //% group="Creating"
+    //% group="micro:bit(V2) Creating"
     //% weight=790
     //% advanced=true
     //% inlineInputMode=external
@@ -938,7 +967,7 @@ namespace flexFX {
      */
 
     //% block="continue FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes to $endPitch|volume goes to $endVolume| extended by (ms) $duration"
-    //% group="Creating"
+    //% group="micro:bit(V2) Creating"
     //% weight=780
     //% advanced=true
     //% inlineInputMode=external
@@ -983,15 +1012,9 @@ namespace flexFX {
 
     // control flags:
     let playerPlaying = false; // a performance is being played
-    export function isPlaying(): boolean { return playerPlaying; } // accessor
-
     let playerActive = false;
-    export function isActive(): boolean { return playerActive; } // accessor
-
     let playerStopped = false; // activation of player inhibited for now
-    export function isStopped(): boolean { return playerStopped; } // accessor
-
-
+    
     // Populate the FlexFX array with the selection of built-in sounds
     function populateBuiltInFlexFXs() {
         // error FlexFX

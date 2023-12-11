@@ -580,8 +580,8 @@ namespace flexFX {
     }
 
     /** builtInFlexFX()
-    * Selector block to choose and return the name of a built-in FlexFx
-    */
+     * Selector block to choose and return the name of a built-in FlexFx
+     */
     //% blockId="builtin_name" block="$flexFX"
     //% group="micro:bit(V2) Playing"
     //% weight=980
@@ -723,11 +723,11 @@ namespace flexFX {
     }
 
     /**
-         * Compose a Tune using EKO-notation (Extent-Key-Octave).
-         *
-         * @param id  the identifier of the Tune to be created or replaced
-         * @param score  a text-string listing the notes in the Tune
-         */
+     * Compose a Tune using EKO-notation (Extent-Key-Octave).
+     *
+     * @param id  the identifier of the Tune to be created or replaced
+     * @param score  a text-string listing the notes in the Tune
+     */
 
     //% block="compose Tune: $tuneId with notes: $score"
     //% group="micro:bit(V2) Playing"
@@ -883,7 +883,9 @@ namespace flexFX {
     //% group="micro:bit(V2) Play-list"
     //% weight=815
     //% advanced=true
-      export function isStopped(): boolean { return playerStopped; } // accessor
+    export function isStopped(): boolean { 
+        return playerStopped; 
+    }
 
     /**
      *  returns "true" if a FlexFX is currently being played
@@ -892,7 +894,9 @@ namespace flexFX {
     //% group="micro:bit(V2) Play-list"
     //% weight=810
     //% advanced=true
-   export function isPlaying(): boolean { return playerPlaying; } // accessor
+    export function isPlaying(): boolean {
+       return playerPlaying; 
+    } 
  
     /**
      * returns "true" if the background player is running
@@ -901,8 +905,9 @@ namespace flexFX {
     //% group="micro:bit(V2) Play-list"
     //% weight=805
     //% advanced=true
-   export function isActive(): boolean { return playerActive; } // accessor
-
+    export function isActive(): boolean { 
+       return playerActive; 
+    }
 
     // ---- UI BLOCKS: CREATING --
 

@@ -266,8 +266,8 @@ namespace flexFX {
         // dynamic: number[]; // ? but how to specify dynamics ?
 
         // deconstruct the source-string of EKO note-specifiers
-        constructor(tuneId: string, source: string) {
-            this.id = tuneId;
+        constructor(title: string, source: string) {
+            this.id = title;
             this.notes = [];
             this.nTicks = 0;
             let specs = source.trim().split(" ");
@@ -537,35 +537,33 @@ namespace flexFX {
     }
 
     // ---- UI BLOCKS: PLAYING ----
-    
-    /*
-     * Perform a FlexFX
-     * @flexId  is the name of the FlexFX to be played.
-     * @wait  if "true", the FlexFX is played straightaway; else it will be played in the background.
-     * 
-     * optional parameters (if left as 0, defaults will apply):
-     * @pitch  different base-frequency to use (in Hz)
-     * @volumeLimit  peak volume, as a number in the range 0-255.
-     * @tuneDuration  how long (in milliseconds) the overall performance will last .
+
+    /**
+     * perform a FlexFX
+     * @param flexId  the identifier of the FlexFX to be played
+     * @param wait  if true, it is played straightaway, else in the background
+     * @param pitch  different base-frequency to use (in Hz)
+     * @param volumeLimit  peak volume, as a number in the range 0-255
+     * @param newDuration  how long (ms) the overall performance will last
      */
-    //% block="play FlexFX $id waiting? $wait||at pitch $pitch|with maximum volume: $volumeLimit| lasting (ms) $newDuration"
+    //% block="play FlexFX $flexId waiting? $wait||at pitch $pitch|with maximum volume: $volumeLimit| lasting (ms) $newDuration"
     //% group="micro:bit(V2) Playing"
     //% inlineInputMode=external
     //% expandableArgumentMode="toggle"
     //% weight=990
-    //% id.defl="ting"
+    //% flexId.defl="ting"
     //% wait.defl=true
     //% pitch.min=50 pitch.max=2000 pitch.defl=0
     //% volumeLimit.min=0 volumeLimit.max=255 volumeLimit.defl=200
     //% newDuration.min=0 newDuration.max=10000 newDuration.defl=800
-    export function playFlexFX(id: string, wait: boolean = true,
+    export function playFlexFX(flexId: string, wait: boolean = true,
         pitch: number = 0, volumeLimit: number = 0, newDuration: number = 0) {
 
         pitch = clamp(0, pitch, 2000);
         volumeLimit = clamp(0, volumeLimit, 255);
         newDuration = clamp(0, newDuration, 10000);
        
-        let target: FlexFX = flexFXList.find(i => i.id === id);
+        let target: FlexFX = flexFXList.find(i => i.id === flexId);
         if (target == null) {
             target= flexFXList.find(i => i.id === "***"); // "alert" sound
         }
@@ -579,8 +577,9 @@ namespace flexFX {
         }
     }
 
-    /** builtInFlexFX()
-     * Selector block to choose and return the name of a built-in FlexFx
+    /**
+     * selector block to choose a FlexFX
+     * @returns the name of a built-in FlexFX
      */
     //% blockId="builtin_name" block="$flexFX"
     //% group="micro:bit(V2) Playing"
@@ -615,30 +614,28 @@ namespace flexFX {
     }
 
 
-    /*
-     * Use a FlexFX to play a Tune  
-     * @title  is the name of the Tune to be played.
-     * @flexId  is the name of the FlexFX to be used to play it.
-     * @wait  if "true", the Tune is played to completion; else it will be played in the background.
-     * 
-     * optional parameters (if left as 0, defaults will apply):
-     * @transpose  semitone steps by which to raise (or, if negative, lower) all notes in the Tune.
-     * @volumeLimit  peak volume for every note, as a number in the range 0-255.
-     * @tuneDuration  how long (in milliseconds) the overall performance should last .
+    /**
+     * use a FlexFX to play a Tune  
+     * @title  the title of the Tune to be played
+     * @flexId  the identifier of the FlexFX to be used to play it
+     * @wait  if true, it is played to completion; else in the background
+     * @transpose  semitone steps by which to raise or lower all notes
+     * @volumeLimit  peak volume for every note, in the range 0-255
+     * @tuneDuration  how long (in ms) the overall performance should last
      */
 
-    //% block="play tune $tuneId using FlexFX $flexId waiting? $wait||transposed by (semitones): $transpose|with maximum volume: $volumeLimit|performance lasting (ms) $tuneDuration"    
+    //% block="play tune $title using FlexFX $flexId waiting? $wait||transposed by (semitones): $transpose|with maximum volume: $volumeLimit|performance lasting (ms) $tuneDuration"
     //% group="micro:bit(V2) Playing"
     //% weight=970
     //% inlineInputMode=external
     //% expandableArgumentMode="enabled"
-    //% tuneId.defl="birthday"
+    //% title.defl="birthday"
     //% flexId.defl="ting"
     //% wait.defl=true
     //% transpose.min=-60 transpose.max=60 transpose.defl=0
     //% volumeLimit.min=0 volumeLimit.max=255 volumeLimit.defl=200
     //% tuneDuration.min=50 tuneDuration.max=300000 tuneDuration.defl=0
-    export function playTune(tuneId: string, flexId: string, wait: boolean = true, 
+    export function playTune(title: string, flexId: string, wait: boolean = true,
         transpose: number = 0, volumeLimit: number = 0, tuneDuration: number = 0) {
 
         transpose = clamp(-60, transpose, 60); // +/- 5 octaves
@@ -649,7 +646,7 @@ namespace flexFX {
         if (flex == null) {
             flex = flexFXList.find(i => i.id === "***"); // error-sound
         }
-        let tune: Tune = tuneList.find(i => i.id === tuneId);
+        let tune: Tune = tuneList.find(i => i.id === title);
         if (tune == null) {
             flex = flexFXList.find(i => i.id === "***"); // error-sound
             tune = tuneList.find(i => i.id === "***"); // triple error-sound "tune"
@@ -683,7 +680,8 @@ namespace flexFX {
     }
 
     /**
-     * Selector block to choose and return the name of a built-in Tune
+     * selector block to choose a Tune
+     * @returns the title of a built-in Tune
      */
     //% blockId="builtin_tune" block="$tune"
     //% group="micro:bit(V2) Playing"
@@ -709,9 +707,8 @@ namespace flexFX {
     }
 
     /**
-     * Set the speed for playing future Tunes
-     * @param bpm   the beats-per-minute(BPM) for playTune() to use
-     *              (valid range is 30 to 480)
+     * set the speed for playing future Tunes
+     * @param bpm   the beats-per-minute (BPM) for playTune() to use
      */
     //% block="set tempo (beats/minute): %bpm"
     //% group="micro:bit(V2) Playing"
@@ -723,42 +720,40 @@ namespace flexFX {
     }
 
     /**
-     * Compose a Tune using EKO-notation (Extent-Key-Octave).
-     *
-     * @param id  the identifier of the Tune to be created or replaced
+     * compose a Tune using EKO-notation (Extent-Key-Octave).
+     * @param id  the name of the Tune to be created or replaced
      * @param score  a text-string listing the notes in the Tune
      */
 
-    //% block="compose Tune: $tuneId with notes: $score"
+    //% block="compose Tune: $title with notes: $score"
     //% group="micro:bit(V2) Playing"
     //% weight=940
-    //% tuneId.defl="beethoven5"
+    //% title.defl="beethoven5"
     //% score.defl="2R 2G4 2G4 2G4 8Eb4"
-    export function composeTune(tuneId: string, score: string) {
+    export function composeTune(title: string, score: string) {
         // first delete any existing definition having this id (works even when missing!)
-        tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === tuneId), 1), 1);
+        tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === title), 1), 1);
         // add this new definition
-        tuneList.push(new Tune(tuneId, score));
+        tuneList.push(new Tune(title, score));
     }
 
     /**
-          * Add notes to a Tune using EKO-notation (Extent-Key-Octave).
-          *
-          * @param id  the identifier of the Tune to be extended
-          * @param score  a text-string listing the notes to be added
-          */
+     * add notes to a Tune using EKO-notation (Extent-Key-Octave).
+     * @param title  the name of the Tune to be extended
+     * @param score  a text-string listing the notes to be added
+    */
 
-    //% block="extend Tune: $tuneId with extra notes: $score"
+    //% block="extend Tune: $title with extra notes: $score"
     //% group="micro:bit(V2) Playing"
     //% weight=930
-    //% tuneId.defl="beethoven5"
+    //% title.defl="beethoven5"
     //% score.defl="2R 2F4 2F4 2F4 8D4"
-    export function extendTune(tuneId: string, score: string) {
-        let target: Tune = tuneList.find(i => i.id === tuneId);
+    export function extendTune(title: string, score: string) {
+        let target: Tune = tuneList.find(i => i.id === title);
         if (target == null) {
             // OOPS! trying to extend a non-existent Tune: 
             // rather than fail, just create a new one
-            tuneList.push(new Tune(tuneId, score));
+            tuneList.push(new Tune(title, score));
         } else {
             target.extend(score);
         }
@@ -769,7 +764,7 @@ namespace flexFX {
 
   
     /**
-     * Await start of next FlexFX on the play-list
+     * await start of next FlexFX on the play-list (unless none)
      */
     //% block="wait until next FlexFX starts"
     //% group="micro:bit(V2) Play-list"
@@ -784,9 +779,9 @@ namespace flexFX {
     }
 
     /**
-     * Await completion of FLexFX currently playing
+     * await completion of FlexFX currently playing
      */
-    //% block="wait until current FlexFX finishes"
+    //% block="wait until current FlexFX finishes (unless none)"
     //% group="micro:bit(V2) Play-list"
     //% weight=880
     //% advanced=true
@@ -797,7 +792,7 @@ namespace flexFX {
     }
 
     /**
-     * Await completion of everything on the play-list
+     * await completion of everything on the play-list
      */
     //% block="wait until everything played"
     //% group="micro:bit(V2) Play-list"
@@ -812,7 +807,7 @@ namespace flexFX {
     }
 
     /**
-     * Add a silent pause to the play-list
+     * add a silent pause to the play-list
      * @param ms  length of pause (in millisecs)
      */
     //% block="add a pause of $ms ms next in the play-list"
@@ -831,7 +826,8 @@ namespace flexFX {
     }
 
     /**
-     * Check the length of the play-list
+     * check how many Plays are waiting
+     * @returns  length of the play-list
      */
     //% block="length of play-list"
     //% group="micro:bit(V2) Play-list"
@@ -842,7 +838,7 @@ namespace flexFX {
     }
 
     /**
-     * Suspend background playing from the play-list
+     * suspend background playing from the play-list
      */
     //% block="pause play-list"
     //% group="micro:bit(V2) Play-list"
@@ -853,7 +849,7 @@ namespace flexFX {
     }
 
     /**
-     * Resume background playing from the play-list
+     * resume background playing from the play-list
      */
     //% block="play play-list"
     //% group="micro:bit(V2) Play-list"
@@ -865,7 +861,7 @@ namespace flexFX {
     }
 
     /**
-     * Delete from the play-list everything left unplayed
+     * delete from the play-list everything left unplayed
      */
     //% block="forget play-list"
     //% group="micro:bit(V2) Play-list"
@@ -877,7 +873,7 @@ namespace flexFX {
 
   // Accessors for internal flags...
     /**
-     * returns "true" if playing is currently inhibited
+     * @returns "true" if playing is currently inhibited
      */
     //% block="is paused"
     //% group="micro:bit(V2) Play-list"
@@ -888,7 +884,7 @@ namespace flexFX {
     }
 
     /**
-     *  returns "true" if a FlexFX is currently being played
+     * @returns "true" if a FlexFX is currently being played
      */
     //% block="is playing"
     //% group="micro:bit(V2) Play-list"
@@ -899,7 +895,7 @@ namespace flexFX {
     } 
  
     /**
-     * returns "true" if the background player is running
+     * @returns "true" if the background player is running
      */
     //% block="is active"
     //% group="micro:bit(V2) Play-list"
@@ -912,14 +908,13 @@ namespace flexFX {
     // ---- UI BLOCKS: CREATING --
 
     /**
-     * Specify the first (or only) part of a new FlexFX.
-     * Any existing FlexFX with the same "id" is first deleted.
+     * specify the first (or only) part of a new FlexFX
      * @param id  the identifier of the flexFX to be created or changed
      * @param startPitch  the initial frequency of the sound (in Hz)
      * @param startVolume  the initial volume of the sound (0 to 255)
      * @param wave  chooses the wave-form that characterises this sound
-     * @param attack  chooses how fast the sound moves from its initial to final pitch
-     * @param effect  chooses a possible modification to the sound, such as vibrato
+     * @param attack  how fast the sound moves from its initial to final pitch
+     * @param effect  a possible modification to the sound, such as vibrato
      * @param endPitch  the final frequency of the sound (in Hz)
      * @param endVolume  the final volume of the sound (0 to 255)
      * @param duration  the duration of the sound (in ms) 
@@ -960,12 +955,12 @@ namespace flexFX {
     }
 
     /**
-     * Add another part to an existing FlexFX, continuing from its current final frequency and volume.
+     * continue an existing FlexFX from its current final frequency and volume
      * 
      * @param id  the identifier of the flexFX to be extended
      * @param wave  chooses the wave-form that characterises this next part
-     * @param attack  chooses how fast this part moves from its initial to final pitch
-     * @param effect  chooses a possible modification to this part, such as vibrato
+     * @param attack  how fast this part moves from its initial to final pitch
+     * @param effect  a possible modification to this part, such as vibrato
      * @param endPitch  the new final frequency of the FlexFX (in Hz)
      * @param endVolume  the new final volume of the FlexFX (0 to 255)
      * @param duration  the additional duration of this new part (in ms)
@@ -1011,7 +1006,7 @@ namespace flexFX {
     // Performances get queued onto the play-list to ensure proper asynchronous sequencing
     let playList: Play[] = [];
     // Tunes can be registered separately from FlexFXs
-    // You can then mix & match them using playTune(flexId,tuneId)
+    // You can then mix & match them using playTune(flexId,title)
     let tuneList: Tune[] = [];
     let tickMs = DEFAULT_TICKMS; // default tune speed
 

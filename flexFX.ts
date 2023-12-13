@@ -9,7 +9,7 @@
 //% icon="\uf0a1"
 //% block="FlexFX"
 //% groups="['micro:bit(V2) Playing', 'micro:bit(V2) Play-list', 'micro:bit(V2) Creating']"
-namespace flexFX {  
+namespace flexFX {
     // Simplify the selection of wave-shape...
     export enum Wave {
         //%block="silence"
@@ -130,16 +130,16 @@ namespace flexFX {
     }
 
     // range-clamper:
-    function clamp(bottom: number, input: number, top:number): number {
-        return (Math.max(bottom,Math.min(input,top)));
+    function clamp(bottom: number, input: number, top: number): number {
+        return (Math.max(bottom, Math.min(input, top)));
     }
-    
+
     // constants used in conversions between frequency & MIDI note-number:
     // a SEMITONE ratio = 12th root of 2 (as 12 semitones make an octave, which doubles the frequency)
     const SEMILOG = 0.057762265047;    // =  Math.log(2) / 12;
     const SEMITONE = 1.0594630943593;  // = Math.exp(SEMILOG) 
     const DELTA = 36.3763165623;       // = (Math.log(440) / SEMILOG) - 69;
- 
+
     // convert a frequency in Hz to its Midi note-number 
     // (retaining microtonal fractions)
     function hertzToMidi(pitch: number): number {
@@ -153,7 +153,7 @@ namespace flexFX {
     }
 
     // note-lengths in ticks (quarter-beats)
-    const QUAVER_TICKS = 2;  
+    const QUAVER_TICKS = 2;
     const CROTCHET_TICKS = 4;
     const MINIM_TICKS = 8;
     const SEMIBREVE_TICKS = 16;
@@ -167,7 +167,7 @@ namespace flexFX {
         midi: number = -1; // standard MIDI note-number
         pitch: number = 0; // frequency in Hz
         volume: number = 0;  // UI volume [0..255] (gets quadrupled internally)
-    
+
         //debug: string = ""; // saves the EKO source, (just for debug)
 
         // create using a 3-part EKO-notation specifier: {extent}{key}{octave}
@@ -187,7 +187,7 @@ namespace flexFX {
                 if ((key > -1) && (key < 12)) { // good Key-letter; not a Rest
                     this.volume = 255; // (as yet, EKO offers no way of adding dynamics)
                     // adjust for accidentals [# or b] ?
-                    let nOctave = this.countDigits(chars, here); 
+                    let nOctave = this.countDigits(chars, here);
                     if (nOctave == 0) { // no Octave digits found yet
                         let asc = chars.charCodeAt(here); // =the character after Key=letter
                         switch (asc) {
@@ -196,11 +196,11 @@ namespace flexFX {
                             case 66: key--; // "B"
                                 break;
                             default: key = -999; // midi will be end up negative!
-                        }   
-                        here++; 
+                        }
+                        here++;
                         // keep looking for Octave digits
-                        nOctave = this.countDigits(chars, here); 
-                    }  
+                        nOctave = this.countDigits(chars, here);
+                    }
                     let octave = -1;
                     if (nOctave > 0) {
                         octave = Math.min(parseInt(chars.substr(here, nOctave)), 10); // quite high enough!
@@ -209,18 +209,18 @@ namespace flexFX {
                         this.midi = 12 * (octave + 1) + key;
                         here += nOctave;
                     } else {
-                        
+
                     }
                 } // else a bad Key-letter, or a Rest
-                if (key ===12) { // for a Rest...
+                if (key === 12) { // for a Rest...
                     this.midi = 0; // ...lack of octave is OK
                 }
             } // else a missing Extent
 
             // check for errors and substitute an alert
-            if (   (this.ticks < 0)  // bad Extent?
+            if ((this.ticks < 0)  // bad Extent?
                 || (this.midi < 0)   // bad Key or Octave?
-                || (here < chars.length) ) { // spurious extra chars?
+                || (here < chars.length)) { // spurious extra chars?
                 // insert a long high-pitched C8 error-tone
                 this.ticks = 16;
                 this.midi = 108;
@@ -230,7 +230,7 @@ namespace flexFX {
 
         }
 
-// count consecutive digits in text from start onwards
+        // count consecutive digits in text from start onwards
         countDigits(text: string, start: number): number {
             let i = start;
             while (i < text.length) {
@@ -241,7 +241,7 @@ namespace flexFX {
             return (i - start);
         }
 
-// parse the key as semitone-in-octave [0 to 11] or 12 for a Rest
+        // parse the key as semitone-in-octave [0 to 11] or 12 for a Rest
         parseKey(asc: number): number {
             let semi = -1;
             if (asc == 82) { // an "R" means a Rest
@@ -252,7 +252,7 @@ namespace flexFX {
                     semi = 2 * ((asc - 60) % 7);
                     if (semi > 4) semi--;
                 } // else bad Key-letter
-            } 
+            }
             return (semi);
         }
     }
@@ -282,21 +282,21 @@ namespace flexFX {
             let count = specs.length;
             for (let i = 0; i < count; i++) {
                 let nextNote = new TuneStep(specs[i]);
-                this.nNotes ++;
+                this.nNotes++;
                 this.nTicks += nextNote.ticks;
                 this.notes.push(nextNote);
             }
         }
     }
 
-   // just a wrapper for the performance...
+    // just a wrapper for the performance...
     class Play {
         parts: SoundExpression[]; // the sound-strings for each of its parts
         constructor() {
             this.parts = [];
         }
     }
-   
+
 
     // activity events (for other components to synchronise with)
     const FLEXFX_ACTIVITY_ID = 9050 // TODO: Check (somehow?) that this is a permissable value!
@@ -306,14 +306,14 @@ namespace flexFX {
         ALLPLAYED = 3,
     }
 
-/* 
-    A FlexFX is a potentially composite sound-effect.
-    It can specify several component soundExpressions called "parts" that get played consecutively.
-    Each part has a [frequency,volume] start-point and end-point.
-    Apart from the first part, the start-point gets inherited from the previous end-point,
-    so an n-part FlexFX moves through (n+1) [frequency,volume] points.
-    It is built, one part at a time, using defineFlexFX() followed by zero or more extendFlexFX() calls.
-*/
+    /* 
+        A FlexFX is a potentially composite sound-effect.
+        It can specify several component soundExpressions called "parts" that get played consecutively.
+        Each part has a [frequency,volume] start-point and end-point.
+        Apart from the first part, the start-point gets inherited from the previous end-point,
+        so an n-part FlexFX moves through (n+1) [frequency,volume] points.
+        It is built, one part at a time, using defineFlexFX() followed by zero or more extendFlexFX() calls.
+    */
 
     class FlexFX {
         // properties
@@ -344,8 +344,8 @@ namespace flexFX {
             this.pitchProfile = [];
             this.volumeProfile = [];
             this.durationProfile = [];
-        }        
-        
+        }
+
         // internal tools...
 
         protected goodPitch(pitch: number): number {
@@ -361,20 +361,20 @@ namespace flexFX {
         // methods...
 
         // begin setting up the very first part of a new FlexFX
-        startWith(startPitch:number, startVolume: number){
+        startWith(startPitch: number, startVolume: number) {
             this.pitchProfile.push(this.goodPitch(startPitch)); // pitchProfile[0]
-            let v = this.goodVolume(startVolume*4); // internally, volumes are [0-1020]
+            let v = this.goodVolume(startVolume * 4); // internally, volumes are [0-1020]
             this.volumeProfile.push(v);                         // volumeProfile[0]
             this.peakVolume = v; // ...until proven otherwise
-            this.pitchAverage = startPitch;  
+            this.pitchAverage = startPitch;
         }
 
         // add the details of the next part (ensuring all parameters are sensible)
         addPart(wave: Wave, attack: Attack, effect: Effect, endPitch: number, endVolume: number, duration: number) {
 
             this.pitchProfile.push(this.goodPitch(endPitch));
-            
-            let bigEndVol = this.goodVolume(endVolume*4);
+
+            let bigEndVol = this.goodVolume(endVolume * 4);
             this.volumeProfile.push(bigEndVol);
             this.peakVolume = Math.max(this.peakVolume, bigEndVol);
 
@@ -390,7 +390,7 @@ namespace flexFX {
             // (this.nParts hasn't yet been incremented, so indexes the previous part)
             let startPitch = this.pitchProfile[this.nParts];
             let startVolume = this.volumeProfile[this.nParts]
-    
+
             if (wave == Wave.Silence) {
                 // ensure this part plays silently, while preserving the end-point of the previous part 
                 // and the start-point of any following part
@@ -407,12 +407,12 @@ namespace flexFX {
                         break;
                     case Attack.Even: blend = 0.5; // fifty-fifty
                         break;
-                //  case Attack.Delayed: blend = 0.8; // mostly Start pitch
-                //      break;   *** option temporarily removed...
+                    //  case Attack.Delayed: blend = 0.8; // mostly Start pitch
+                    //      break;   *** option temporarily removed...
                 }
-                let pitch = (blend * startPitch) + ((1-blend) * endPitch);
+                let pitch = (blend * startPitch) + ((1 - blend) * endPitch);
                 // update overall average pitch, weighted by duration of each part
-                let kilocycles = (this.pitchAverage*this.fullDuration + pitch*d);
+                let kilocycles = (this.pitchAverage * this.fullDuration + pitch * d);
                 this.pitchAverage = kilocycles / (this.fullDuration + d);
                 // update its MIDI equivalent (including microtonal fractions)
                 this.pitchMidi = hertzToMidi(this.pitchAverage);
@@ -421,8 +421,8 @@ namespace flexFX {
 
             // create the SoundExpression
             let soundExpr = music.createSoundExpression(waveNumber, startPitch, endPitch,
-                startVolume, bigEndVol, duration, effectNumber, attackNumber);      
-    
+                startVolume, bigEndVol, duration, effectNumber, attackNumber);
+
             /* FUTURE ENHANCEMENT 
             The underlying implementation in "codal-microbit-v2/source/SoundSynthesizerEffects.cpp"
             of the functions: 
@@ -457,9 +457,9 @@ namespace flexFX {
             let sound = new soundExpression.Sound;
             let pitchRatio = 1.0;
             let volumeRatio = 1.0;
-            let durationRatio = 1.0;  
+            let durationRatio = 1.0;
             // code defensively!
-            if (pitch*this.pitchAverage != 0) pitchRatio = pitch / this.pitchAverage;
+            if (pitch * this.pitchAverage != 0) pitchRatio = pitch / this.pitchAverage;
             if (scaledVolumeLimit * this.peakVolume != 0) volumeRatio = scaledVolumeLimit / this.peakVolume;
             if (newDuration * this.fullDuration != 0) durationRatio = newDuration / this.fullDuration;
             // apply ratios (where changed from 1.0) to relevant fields of each part in turn
@@ -467,7 +467,7 @@ namespace flexFX {
                 sound.src = this.prototype.parts[i].getNotes(); // current string
                 sound.frequency = this.goodPitch(this.pitchProfile[i] * pitchRatio);
                 sound.endFrequency = this.goodPitch(this.pitchProfile[i + 1] * pitchRatio);
-                
+
                 if (volumeRatio != 1.0) {
                     sound.volume = this.goodVolume(this.volumeProfile[i] * volumeRatio);
                     sound.endVolume = this.goodVolume(this.volumeProfile[i + 1] * volumeRatio);
@@ -485,14 +485,14 @@ namespace flexFX {
     // Store a flexFX (overwriting any previous instance)
     function storeFlexFX(target: FlexFX) {
         // first delete any existing definition having this id (works even when missing!)
-        flexFXList.splice(flexFXList.indexOf(flexFXList.find(i => i.id === target.id), 1), 1); 
+        flexFXList.splice(flexFXList.indexOf(flexFXList.find(i => i.id === target.id), 1), 1);
         // add this new definition
-        flexFXList.push(target); 
+        flexFXList.push(target);
     }
 
     // kick off the background player (if not already running)
     function activatePlayer() {
-        if (!(playerActive || playerStopped)){ 
+        if (!(playerActive || playerStopped)) {
             playerActive = true;
             control.inBackground(() => player());
         }
@@ -510,15 +510,15 @@ namespace flexFX {
                 let time = parseInt("0" + sound.slice(1).trim());
                 basic.pause(time); // just wait around... 
             } else {
-            // flatten the parts[] of sound-strings into a single comma-separated string
-                while (play.parts.length > 0) { 
+                // flatten the parts[] of sound-strings into a single comma-separated string
+                while (play.parts.length > 0) {
                     soundString += play.parts.shift().getNotes();
                     if (play.parts.length > 0) {
                         soundString += ",";
                     }
                 }
                 // now play it synchronously (from the player fiber's perspective!)
-                if (soundString.length > 0) { 
+                if (soundString.length > 0) {
                     control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
                     playerPlaying = true;
                     music.playSoundEffect(soundString, SoundExpressionPlayMode.UntilDone);
@@ -529,7 +529,7 @@ namespace flexFX {
             basic.pause(10); // always cede control briefly to scheduler 
         }
         if (playList.length == 0) {
-             control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
+            control.raiseEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);
         } // else we were prematurely stopped by the playerStopped global flag
         playerActive = false;
     }
@@ -544,9 +544,10 @@ namespace flexFX {
      * @param volumeLimit  peak volume, as a number in the range 0-255
      * @param newDuration  how long (ms) the overall performance will last
      */
+
     //% block="play FlexFX $flexId waiting? $wait||at pitch $pitch|with maximum volume: $volumeLimit| lasting (ms) $newDuration"
     //% group="micro:bit(V2) Playing"
-    //% inlineInputMode=external
+    //% inlineInputMode=inline
     //% expandableArgumentMode="toggle"
     //% weight=990
     //% flexId.defl="ting"
@@ -560,10 +561,10 @@ namespace flexFX {
         pitch = clamp(0, pitch, 2000);
         volumeLimit = clamp(0, volumeLimit, 255);
         newDuration = clamp(0, newDuration, 10000);
-       
+
         let target: FlexFX = flexFXList.find(i => i.id === flexId);
         if (target == null) {
-            target= flexFXList.find(i => i.id === "***"); // "alert" sound
+            target = flexFXList.find(i => i.id === "***"); // "alert" sound
         }
         if (target != null) {
             // compile and add our Play onto the playList 
@@ -577,8 +578,9 @@ namespace flexFX {
 
     /**
      * selector block to choose a FlexFX
-     * @returns the name of a built-in FlexFX
+     * @returns  the name of a built-in FlexFX
      */
+
     //% blockId="builtin_name" block="$flexFX"
     //% group="micro:bit(V2) Playing"
     //% weight=980
@@ -613,7 +615,7 @@ namespace flexFX {
 
 
     /**
-     * use a FlexFX to play a Tune  
+     * use a FlexFX to play a Tune
      * @title  the title of the Tune to be played
      * @flexId  the identifier of the FlexFX to be used to play it
      * @wait  if true, it is played to completion; else in the background
@@ -625,7 +627,7 @@ namespace flexFX {
     //% block="play tune $title using FlexFX $flexId waiting? $wait||transposed by (semitones): $transpose|with maximum volume: $volumeLimit|performance lasting (ms) $tuneDuration"
     //% group="micro:bit(V2) Playing"
     //% weight=970
-    //% inlineInputMode=external
+    //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
     //% title.defl="birthday"
     //% flexId.defl="ting"
@@ -639,7 +641,7 @@ namespace flexFX {
         transpose = clamp(-60, transpose, 60); // +/- 5 octaves
         volumeLimit = clamp(0, volumeLimit, 255);
         tuneDuration = clamp(0, tuneDuration, 300000); // max 5 mins!
-        
+
         let flex: FlexFX = flexFXList.find(i => i.id === flexId);
         if (flex == null) {
             flex = flexFXList.find(i => i.id === "***"); // error-sound
@@ -664,9 +666,9 @@ namespace flexFX {
                 } else {
                     if (transpose != 0) {
                         // apply transpose to MIDI then convert back to Hz
-                        pitch = midiToHertz(note.midi+transpose);
+                        pitch = midiToHertz(note.midi + transpose);
                     }
-                // compile and add our Play onto the playList 
+                    // compile and add our Play onto the playList 
                     playList.push(flex.makeTunedPlay(pitch, volumeLimit, ms));
                 }
             }
@@ -679,7 +681,7 @@ namespace flexFX {
 
     /**
      * selector block to choose a Tune
-     * @returns the title of a built-in Tune
+     * @return the title of a built-in Tune
      */
     //% blockId="builtin_tune" block="$tune"
     //% group="micro:bit(V2) Playing"
@@ -760,7 +762,7 @@ namespace flexFX {
 
     // ---- UI BLOCKS: PLAY-LIST ----
 
-  
+
     /**
      * await start of next FlexFX on the play-list (unless none)
      */
@@ -869,7 +871,7 @@ namespace flexFX {
         while (playList.length > 0) { playList.pop() }
     }
 
-  // Accessors for internal flags...
+    // Accessors for internal flags...
     /**
      * @returns "true" if playing is currently inhibited
      */
@@ -877,8 +879,8 @@ namespace flexFX {
     //% group="micro:bit(V2) Play-list"
     //% weight=815
     //% advanced=true
-    export function isStopped(): boolean { 
-        return playerStopped; 
+    export function isStopped(): boolean {
+        return playerStopped;
     }
 
     /**
@@ -889,9 +891,9 @@ namespace flexFX {
     //% weight=810
     //% advanced=true
     export function isPlaying(): boolean {
-       return playerPlaying; 
-    } 
- 
+        return playerPlaying;
+    }
+
     /**
      * @returns "true" if the background player is running
      */
@@ -899,8 +901,8 @@ namespace flexFX {
     //% group="micro:bit(V2) Play-list"
     //% weight=805
     //% advanced=true
-    export function isActive(): boolean { 
-       return playerActive; 
+    export function isActive(): boolean {
+        return playerActive;
     }
 
     // ---- UI BLOCKS: CREATING --
@@ -923,7 +925,7 @@ namespace flexFX {
     //% weight=790
     //% advanced=true
     //% inlineInputMode=external
-    //% id.defl="new"
+    //% flexId.defl="new"
     //% startPitch.min=25 startPitch.max=10000 startPitch.defl=1000
     //% startVolume.min=0 startVolume.max=255 startVolume.defl=200
     //% endPitch.min=25 endPitch.max=10000 endPitch.defl=500
@@ -931,15 +933,15 @@ namespace flexFX {
     //% duration.min=0 duration.max=10000 duration.defl=800
 
     export function defineFlexFX(flexId: string, startPitch: number, startVolume: number,
-                wave: Wave, attack: Attack, effect: Effect, 
-                endPitch: number, endVolume: number, duration: number) {
-        
+        wave: Wave, attack: Attack, effect: Effect,
+        endPitch: number, endVolume: number, duration: number) {
+
         startPitch = clamp(25, startPitch, 10000);
         startVolume = clamp(0, startVolume, 255);
         endPitch = clamp(25, endPitch, 10000);
         endVolume = clamp(0, endVolume, 255);
         duration = clamp(0, duration, 10000);
-        
+
         // are we re-defining an existing flexFX?
         let target: FlexFX = flexFXList.find(i => i.id === flexId);
         if (target != null) {
@@ -968,14 +970,14 @@ namespace flexFX {
     //% weight=780
     //% advanced=true
     //% inlineInputMode=external
-    //% id.defl="new"
+    //% flexId.defl="new"
     //% endPitch.min=25 endPitch.max=4000 endPitch.defl=500
     //% endVolume.min=0 endVolume.max=255 endVolume.defl=200
     //% duration.min=0 duration.max=10000 duration.defl=500
 
     export function extendFlexFX(flexId: string, wave: Wave, attack: Attack, effect: Effect,
-                endPitch: number, endVolume: number, duration: number) {
-        
+        endPitch: number, endVolume: number, duration: number) {
+
         endPitch = clamp(25, endPitch, 10000);
         endVolume = clamp(0, endVolume, 255);
         duration = clamp(0, duration, 10000);
@@ -988,7 +990,7 @@ namespace flexFX {
         if (target == null) {
             // OOPS! trying to extend a non-existent flexFX: 
             // rather than fail, just create a new one, but with flat profiles
-            defineFlexFX(flexId,waveNumber,endPitch,endPitch,endVolume,endVolume,duration,effectNumber,attackNumber);
+            defineFlexFX(flexId, waveNumber, endPitch, endPitch, endVolume, endVolume, duration, effectNumber, attackNumber);
         } else {
             // TODO: do we need to use waveNumber etc. ? Don't think so!
             target.addPart(wave, attack, effect, endPitch, endVolume, duration);
@@ -996,7 +998,7 @@ namespace flexFX {
         storeFlexFX(target);
     }
 
- // general initialisation...
+    // general initialisation...
     // lists...
     // Array of all defined FlexFX objects (built-in and user-defined)
     let flexFXList: FlexFX[] = [];
@@ -1011,12 +1013,12 @@ namespace flexFX {
     let playerPlaying = false; // a performance is being played
     let playerActive = false;
     let playerStopped = false; // activation of player inhibited for now
-    
+
     // Populate the FlexFX array with the selection of built-in sounds
     function populateBuiltInFlexFXs() {
         // error FlexFX
         defineFlexFX("***", 4000, 255, Wave.Triangle, Attack.Fast, Effect.None, 100, 255, 100);
-        
+
         // wailing sound
         defineFlexFX("cry", 400, 80, Wave.Square, Attack.Medium, Effect.None, 600, 250, 300);
         extendFlexFX("cry", Wave.Square, Attack.Even, Effect.None, 400, 30, 700);
@@ -1069,7 +1071,7 @@ namespace flexFX {
         extendFlexFX("snore", Wave.Noise, Attack.Even, Effect.Vibrato, 5000, 222, 500);
         // simplest bell
         defineFlexFX("ting", 2000, 255, Wave.Triangle, Attack.Fast, Effect.None, 2000, 20, 300);
-        
+
         // little birdie
         defineFlexFX("tweet", 960, 112, Wave.Sine, Attack.Fast, Effect.None, 1200, 250, 700);
         // trouble ahead! (includes a silent gap in the middle)
@@ -1089,7 +1091,7 @@ namespace flexFX {
         extendFlexFX("woof", Wave.Sawtooth, Attack.Medium, Effect.None, 450, 250, 200);
         extendFlexFX("woof", Wave.Sawtooth, Attack.Even, Effect.None, 150, 90, 75);
 
-   }
+    }
 
     function populateBuiltInTunes() {
         composeTune("***", "2C8 2R 2C8 2R 4C8") // error "Tune"

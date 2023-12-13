@@ -143,13 +143,13 @@ pause(2000);
 
 // synchronise a different way, by playing queued Plays one-at-a-time with explicit pauses...
 basic.showIcon(IconNames.Target);
-// first re-build the Play-list of 5 cries
+// first re-build the Play-list of 5 utterances
 flexFX.stopPlaying();  // inhibit Playing
 flexFX.playFlexFX("uhoh", false, 200, 250, 1000);
 flexFX.playFlexFX("cry", false, 300, 250, 1000);
-flexFX.playFlexFX("uhoh", false, 400, 250, 1000);
+flexFX.playFlexFX("shout", false, 400, 250, 1000);
 flexFX.playFlexFX("cry", false, 600, 250, 1000);
-flexFX.playFlexFX("wail", false, 800, 250, 1000);
+flexFX.playFlexFX("moan", false, 800, 250, 1000);
 basic.showNumber(flexFX.waitingToPlay());
 pause(1000)
 basic.showIcon(IconNames.Sad);
@@ -160,10 +160,10 @@ while (flexFX.waitingToPlay() > 0) {
     // as soon as the first Play begins, prevent any more being started
     flexFX.stopPlaying();
     basic.showIcon(IconNames.Surprised);  // open the mouth...
-    flexFX.awaitPlayFinish();
+    flexFX.awaitPlayFinish(); // play next utterance
     basic.showIcon(IconNames.Sad); // close the mouth again
     pause(delay);
-    delay -= 600; // decrease the silence in-between 
+    delay -= 600; // keep shortening the silence in-between 
 }
 pause(500);
 

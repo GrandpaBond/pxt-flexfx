@@ -258,16 +258,14 @@ namespace flexFX {
     }
 
     class Tune {
-        id: string; // identifier
+        title: string; // unique identifier
         nNotes: number; // number of notes (steps) in Tune
         nTicks: number; // overall duration of Tune in ticks
         notes: TuneStep[]; // array of notes
-        // TODO:For a more nuanced performance, add this per-note volumes array:
-        // dynamic: number[]; // ? but how to specify dynamics ?
 
         // deconstruct the source-string of EKO note-specifiers
         constructor(title: string, source: string) {
-            this.id = title;
+            this.title = title;
             this.notes = [];
             this.nTicks = 0;
             let specs = source.trim().split(" ");
@@ -646,10 +644,10 @@ namespace flexFX {
         if (flex == null) {
             flex = flexFXList.find(i => i.id === "***"); // error-sound
         }
-        let tune: Tune = tuneList.find(i => i.id === title);
+        let tune: Tune = tuneList.find(i => i.title === title);
         if (tune == null) {
             flex = flexFXList.find(i => i.id === "***"); // error-sound
-            tune = tuneList.find(i => i.id === "***"); // triple error-sound "tune"
+            tune = tuneList.find(i => i.title === "***"); // triple error-sound "tune"
         }
 
         if ((flex != null) && (flex != null)) {
@@ -721,7 +719,7 @@ namespace flexFX {
 
     /**
      * compose a Tune using EKO-notation (Extent-Key-Octave).
-     * @param id  the name of the Tune to be created or replaced
+     * @param title  the name of the Tune to be created or replaced
      * @param score  a text-string listing the notes in the Tune
      */
 
@@ -731,8 +729,8 @@ namespace flexFX {
     //% title.defl="beethoven5"
     //% score.defl="2R 2G4 2G4 2G4 8Eb4"
     export function composeTune(title: string, score: string) {
-        // first delete any existing definition having this id (works even when missing!)
-        tuneList.splice(tuneList.indexOf(tuneList.find(i => i.id === title), 1), 1);
+        // first delete any existing definition having this title (works even when missing!)
+        tuneList.splice(tuneList.indexOf(tuneList.find(i => i.title === title), 1), 1);
         // add this new definition
         tuneList.push(new Tune(title, score));
     }
@@ -749,7 +747,7 @@ namespace flexFX {
     //% title.defl="beethoven5"
     //% score.defl="2R 2F4 2F4 2F4 8D4"
     export function extendTune(title: string, score: string) {
-        let target: Tune = tuneList.find(i => i.id === title);
+        let target: Tune = tuneList.find(i => i.title === title);
         if (target == null) {
             // OOPS! trying to extend a non-existent Tune: 
             // rather than fail, just create a new one
@@ -909,7 +907,7 @@ namespace flexFX {
 
     /**
      * specify the first (or only) part of a new FlexFX
-     * @param id  the identifier of the flexFX to be created or changed
+     * @param flexId  the identifier of the flexFX to be created or changed
      * @param startPitch  the initial frequency of the sound (in Hz)
      * @param startVolume  the initial volume of the sound (0 to 255)
      * @param wave  chooses the wave-form that characterises this sound
@@ -920,7 +918,7 @@ namespace flexFX {
      * @param duration  the duration of the sound (in ms) 
      */
 
-    //% block="define FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes from $startPitch|               to $endPitch|volume goes from $startVolume|               to $endVolume|default duration=$duration"
+    //% block="define FlexFX: $flexId| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes from $startPitch|               to $endPitch|volume goes from $startVolume|               to $endVolume|default duration=$duration"
     //% group="micro:bit(V2) Creating"
     //% weight=790
     //% advanced=true
@@ -932,7 +930,7 @@ namespace flexFX {
     //% endVolume.min=0 endVolume.max=255 endVolume.defl=100
     //% duration.min=0 duration.max=10000 duration.defl=800
 
-    export function defineFlexFX(id: string, startPitch: number, startVolume: number,
+    export function defineFlexFX(flexId: string, startPitch: number, startVolume: number,
                 wave: Wave, attack: Attack, effect: Effect, 
                 endPitch: number, endVolume: number, duration: number) {
         
@@ -943,11 +941,11 @@ namespace flexFX {
         duration = clamp(0, duration, 10000);
         
         // are we re-defining an existing flexFX?
-        let target: FlexFX = flexFXList.find(i => i.id === id);
+        let target: FlexFX = flexFXList.find(i => i.id === flexId);
         if (target != null) {
             target.initialise(); // yes, so clear it down
         } else {
-            target = new FlexFX(id);    // no, so get a new one
+            target = new FlexFX(flexId);    // no, so get a new one
         }
         target.startWith(startPitch, startVolume);
         target.addPart(wave, attack, effect, endPitch, endVolume, duration);
@@ -956,8 +954,7 @@ namespace flexFX {
 
     /**
      * continue an existing FlexFX from its current final frequency and volume
-     * 
-     * @param id  the identifier of the flexFX to be extended
+     * @param flexId  the identifier of the flexFX to be extended
      * @param wave  chooses the wave-form that characterises this next part
      * @param attack  how fast this part moves from its initial to final pitch
      * @param effect  a possible modification to this part, such as vibrato
@@ -966,7 +963,7 @@ namespace flexFX {
      * @param duration  the additional duration of this new part (in ms)
      */
 
-    //% block="continue FlexFX: $id| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes to $endPitch|volume goes to $endVolume| extended by (ms) $duration"
+    //% block="continue FlexFX: $flexId| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes to $endPitch|volume goes to $endVolume| extended by (ms) $duration"
     //% group="micro:bit(V2) Creating"
     //% weight=780
     //% advanced=true
@@ -976,7 +973,7 @@ namespace flexFX {
     //% endVolume.min=0 endVolume.max=255 endVolume.defl=200
     //% duration.min=0 duration.max=10000 duration.defl=500
 
-    export function extendFlexFX(id: string, wave: Wave, attack: Attack, effect: Effect,
+    export function extendFlexFX(flexId: string, wave: Wave, attack: Attack, effect: Effect,
                 endPitch: number, endVolume: number, duration: number) {
         
         endPitch = clamp(25, endPitch, 10000);
@@ -987,11 +984,11 @@ namespace flexFX {
         let waveNumber: number = wave;
         let effectNumber: number = effect;
         let attackNumber: number = attack;
-        let target: FlexFX = flexFXList.find(i => i.id === id);
+        let target: FlexFX = flexFXList.find(i => i.id === flexId);
         if (target == null) {
             // OOPS! trying to extend a non-existent flexFX: 
             // rather than fail, just create a new one, but with flat profiles
-            defineFlexFX(id,waveNumber,endPitch,endPitch,endVolume,endVolume,duration,effectNumber,attackNumber);
+            defineFlexFX(flexId,waveNumber,endPitch,endPitch,endVolume,endVolume,duration,effectNumber,attackNumber);
         } else {
             // TODO: do we need to use waveNumber etc. ? Don't think so!
             target.addPart(wave, attack, effect, endPitch, endVolume, duration);
@@ -1018,7 +1015,7 @@ namespace flexFX {
     // Populate the FlexFX array with the selection of built-in sounds
     function populateBuiltInFlexFXs() {
         // error FlexFX
-        defineFlexFX("***", 4000, 255, Wave.Triangle, Attack.Fast, Effect.None, 100, 255, 10);
+        defineFlexFX("***", 4000, 255, Wave.Triangle, Attack.Fast, Effect.None, 100, 255, 100);
         
         // wailing sound
         defineFlexFX("cry", 400, 80, Wave.Square, Attack.Medium, Effect.None, 600, 250, 300);

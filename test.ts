@@ -1,8 +1,8 @@
 // *********** test codes **********
 
-
-
+flexFX.awaitPlayStart()
 basic.showNumber(flexFX.waitingToPlay());
+
 basic.pause(500);
 
 // perform a built-in FlexFX with all the defaults

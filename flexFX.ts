@@ -7,7 +7,7 @@
 
 //% color=#7c68b4
 //% icon="\uf0a1"
-//% block="FlexFX"
+//% block="FlexFX(V2)"
 //% groups="['micro:bit(V2) Playing', 'micro:bit(V2) Play-list', 'micro:bit(V2) Creating']"
 namespace flexFX {
     // Simplify the selection of wave-shape...
@@ -616,12 +616,12 @@ namespace flexFX {
 
     /**
      * use a FlexFX to play a Tune
-     * @title  the title of the Tune to be played
-     * @flexId  the identifier of the FlexFX to be used to play it
-     * @wait  if true, it is played to completion; else in the background
-     * @transpose  semitone steps by which to raise or lower all notes
-     * @volumeLimit  peak volume for every note, in the range 0-255
-     * @tuneDuration  how long (in ms) the overall performance should last
+     * @param title  the title of the Tune to be played
+     * @param flexId  the identifier of the FlexFX to be used to play it
+     * @param wait  if true, it is played to completion; else in the background
+     * @param transpose  semitone steps by which to raise or lower all notes
+     * @param volumeLimit  peak volume for every note, in the range 0-255
+     * @param tuneDuration  how long (in ms) the overall performance should last
      */
 
     //% block="play tune $title using FlexFX $flexId waiting? $wait||transposed by (semitones): $transpose|with maximum volume: $volumeLimit|performance lasting (ms) $tuneDuration"
@@ -681,7 +681,7 @@ namespace flexFX {
 
     /**
      * selector block to choose a Tune
-     * @return the title of a built-in Tune
+     * @returns the title of a built-in Tune
      */
     //% blockId="builtin_tune" block="$tune"
     //% group="micro:bit(V2) Playing"
@@ -771,7 +771,7 @@ namespace flexFX {
     //% weight=890
     //% advanced=true
     export function awaitPlayStart() {
-        if (playList.length >= 0) {
+        if (playList.length > 0) {
             playerStopped = false; // in case it was
             activatePlayer(); // it case it wasn't
             control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.STARTING);
@@ -799,7 +799,7 @@ namespace flexFX {
     //% weight=870
     //% advanced=true
     export function awaitAllFinished() {
-        if (playList.length >= 0) {
+        if (playList.length > 0) {
             playerStopped = false; // in case it was
             activatePlayer(); // in case it wasn't
             control.waitForEvent(FLEXFX_ACTIVITY_ID, PLAYER.ALLPLAYED);

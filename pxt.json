@@ -1,6 +1,6 @@
 {
     "name": "pxt-flexFX",
-    "version": "2.2.1",
+    "version": "2.2.2",
     "description": "micro:bit (V2) extension for flexible re-usable sound effects",
     "license": "MIT",
     "dependencies": {

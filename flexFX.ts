@@ -7,8 +7,8 @@
 
 //% color=#7c68b4
 //% icon="\uf0a1"
-//% block="FlexFX(V2)"
-//% groups="['micro:bit(V2) Playing', 'micro:bit(V2) Play-list', 'micro:bit(V2) Creating']"
+//% block="FLEXFX_ACTIVITY_ID"
+//% groups="['Playing (micro:bit V2)', 'Play-list (micro:bit V2)', 'Creating (micro:bit V2)']"
 namespace flexFX {
     // Simplify the selection of wave-shape...
     export enum Wave {
@@ -546,7 +546,7 @@ namespace flexFX {
      */
 
     //% block="play FlexFX $flexId waiting? $wait||at pitch $pitch|with maximum volume: $volumeLimit| lasting (ms) $newDuration"
-    //% group="micro:bit(V2) Playing"
+    //% group="Playing (micro:bit V2)"
     //% inlineInputMode=inline
     //% expandableArgumentMode="toggle"
     //% weight=990
@@ -582,7 +582,7 @@ namespace flexFX {
      */
 
     //% blockId="builtin_name" block="$flexFX"
-    //% group="micro:bit(V2) Playing"
+    //% group="Playing (micro:bit V2)"
     //% weight=980
     export function builtInFlexFX(flexFX: BuiltInFlexFX): string {
         switch (flexFX) {
@@ -625,7 +625,7 @@ namespace flexFX {
      */
 
     //% block="play tune $title using FlexFX $flexId waiting? $wait||transposed by (semitones): $transpose|with maximum volume: $volumeLimit|performance lasting (ms) $tuneDuration"
-    //% group="micro:bit(V2) Playing"
+    //% group="Playing (micro:bit V2)"
     //% weight=970
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
@@ -684,7 +684,7 @@ namespace flexFX {
      * (returns the title of a built-in Tune)
      */
     //% blockId="builtin_tune" block="$tune"
-    //% group="micro:bit(V2) Playing"
+    //% group="Playing (micro:bit V2)"
     //% weight=960
     export function builtInTune(tune: BuiltInTune): string {
         switch (tune) {
@@ -711,7 +711,7 @@ namespace flexFX {
      * @param bpm   the beats-per-minute (BPM) for playTune() to use
      */
     //% block="set tempo (beats/minute): %bpm"
-    //% group="micro:bit(V2) Playing"
+    //% group="Playing (micro:bit V2)"
     //% weight=950
     //% bpm.min=30 bpm.max=480 bpm.defl=120
     export function setNextTempo(bpm: number) {  // CHANGES GLOBAL SETTING
@@ -726,7 +726,7 @@ namespace flexFX {
      */
 
     //% block="compose Tune: $title with notes: $score"
-    //% group="micro:bit(V2) Playing"
+    //% group="Playing (micro:bit V2)"
     //% weight=940
     //% title.defl="beethoven5"
     //% score.defl="2R 2G4 2G4 2G4 8Eb4"
@@ -744,7 +744,7 @@ namespace flexFX {
     */
 
     //% block="extend Tune: $title with extra notes: $score"
-    //% group="micro:bit(V2) Playing"
+    //% group="Playing (micro:bit V2)"
     //% weight=930
     //% title.defl="beethoven5"
     //% score.defl="2R 2F4 2F4 2F4 8D4"
@@ -767,7 +767,7 @@ namespace flexFX {
      * await start of next FlexFX on the play-list (unless none)
      */
     //% block="wait until next FlexFX starts"
-    //% group="micro:bit(V2) Play-list"
+    //% group="Play-list (micro:bit V2)"
     //% weight=890
     //% advanced=true
     export function awaitPlayStart() {
@@ -782,7 +782,7 @@ namespace flexFX {
      * await completion of FlexFX currently playing
      */
     //% block="wait until current FlexFX finishes (unless none)"
-    //% group="micro:bit(V2) Play-list"
+    //% group="Play-list (micro:bit V2)"
     //% weight=880
     //% advanced=true
     export function awaitPlayFinish() {
@@ -795,7 +795,7 @@ namespace flexFX {
      * await completion of everything on the play-list
      */
     //% block="wait until everything played"
-    //% group="micro:bit(V2) Play-list"
+    //% group="Play-list (micro:bit V2)"
     //% weight=870
     //% advanced=true
     export function awaitAllFinished() {
@@ -811,7 +811,7 @@ namespace flexFX {
      * @param ms  length of pause (in millisecs)
      */
     //% block="add a pause of $ms ms next in the play-list"
-    //% group="micro:bit(V2) Play-list"
+    //% group="Play-list (micro:bit V2)"
     //% weight=860
     //% advanced=true
     //% ms.defl=500
@@ -830,7 +830,7 @@ namespace flexFX {
      * (returns length of the play-list)
      */
     //% block="length of play-list"
-    //% group="micro:bit(V2) Play-list"
+    //% group="Play-list (micro:bit V2)"
     //% weight=850
     //% advanced=true
     export function waitingToPlay(): number {
@@ -841,7 +841,7 @@ namespace flexFX {
      * suspend background playing from the play-list
      */
     //% block="pause play-list"
-    //% group="micro:bit(V2) Play-list"
+    //% group="Play-list (micro:bit V2)"
     //% weight=840
     //% advanced=true
     export function stopPlaying() {
@@ -852,7 +852,7 @@ namespace flexFX {
      * resume background playing from the play-list
      */
     //% block="play play-list"
-    //% group="micro:bit(V2) Play-list"
+    //% group="Play-list (micro:bit V2)"
     //% weight=830
     //% advanced=true
     export function startPlaying() {
@@ -864,7 +864,7 @@ namespace flexFX {
      * delete from the play-list everything left unplayed
      */
     //% block="forget play-list"
-    //% group="micro:bit(V2) Play-list"
+    //% group="Play-list (micro:bit V2)"
     //% weight=820
     //% advanced=true
     export function deletePlaylist() {
@@ -876,7 +876,7 @@ namespace flexFX {
      * return "true" if playing is currently inhibited
      */
     //% block="is paused"
-    //% group="micro:bit(V2) Play-list"
+    //% group="Play-list (micro:bit V2)"
     //% weight=815
     //% advanced=true
     export function isStopped(): boolean {
@@ -887,7 +887,7 @@ namespace flexFX {
      * return "true" if a FlexFX is currently being played
      */
     //% block="is playing"
-    //% group="micro:bit(V2) Play-list"
+    //% group="Play-list (micro:bit V2)"
     //% weight=810
     //% advanced=true
     export function isPlaying(): boolean {
@@ -898,7 +898,7 @@ namespace flexFX {
      * return "true" if the background player is running
      */
     //% block="is active"
-    //% group="micro:bit(V2) Play-list"
+    //% group="Play-list (micro:bit V2)"
     //% weight=805
     //% advanced=true
     export function isActive(): boolean {
@@ -921,7 +921,7 @@ namespace flexFX {
      */
 
     //% block="define FlexFX: $flexId| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes from $startPitch|               to $endPitch|volume goes from $startVolume|               to $endVolume|default duration=$duration"
-    //% group="micro:bit(V2) Creating"
+    //% group="Creating (micro:bit V2)"
     //% weight=790
     //% advanced=true
     //% inlineInputMode=external
@@ -966,7 +966,7 @@ namespace flexFX {
      */
 
     //% block="continue FlexFX: $flexId| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes to $endPitch|volume goes to $endVolume| extended by (ms) $duration"
-    //% group="micro:bit(V2) Creating"
+    //% group="Creating (micro:bit V2)"
     //% weight=780
     //% advanced=true
     //% inlineInputMode=external

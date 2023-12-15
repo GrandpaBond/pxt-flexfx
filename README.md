@@ -267,7 +267,7 @@ which this runs out!
 Sometimes you might want tighter control over exactly when each queued Play occurs, so various advanced blocks are provided 
 (under ``||flexFX:... more||``) that let you interact with the Play-list. 
 
-## Checking whether the background Player is running
+## Checking whether the background Player is running  #flexFX-isActive
  ```sig 
 flexFX.isActive(): boolean
  ``` 
@@ -309,7 +309,7 @@ flexFX.awaitPlayFinish()
  ``` 
 Awaits completion of the FlexFX performance currently playing. (Returns immediately if there are none.) 
 
-## Checking whether something currently playing
+## Checking whether something currently playing  #flexFX-isPlaying
  ```sig 
 flexFX.isPlaying(): boolean
  ``` 
@@ -334,7 +334,7 @@ flexFX.startPlaying()
  ``` 
 This unlocks the Play-list, resuming background playing of any queued (or future) Plays.   
 
-## Checking whether playing is paused or allowed
+## Checking whether playing is paused or allowed  #flexFX-isStopped
  ```sig 
 flexFX.isStopped(): boolean
  ``` 

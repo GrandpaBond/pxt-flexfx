@@ -7,7 +7,7 @@
 
 //% color=#7c68b4
 //% icon="\uf0a1"
-//% block="FLEXFX_ACTIVITY_ID"
+//% block="FlexFX"
 //% groups="['Playing (micro:bit V2)', 'Play-list (micro:bit V2)', 'Creating (micro:bit V2)']"
 namespace flexFX {
     // Simplify the selection of wave-shape...

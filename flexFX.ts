@@ -578,7 +578,7 @@ namespace flexFX {
 
     /**
      * selector block to choose a FlexFX
-     * @returns  the name of a built-in FlexFX
+     * (returns the name of a built-in FlexFX)
      */
 
     //% blockId="builtin_name" block="$flexFX"
@@ -681,7 +681,7 @@ namespace flexFX {
 
     /**
      * selector block to choose a Tune
-     * @returns the title of a built-in Tune
+     * (returns the title of a built-in Tune)
      */
     //% blockId="builtin_tune" block="$tune"
     //% group="micro:bit(V2) Playing"
@@ -827,7 +827,7 @@ namespace flexFX {
 
     /**
      * check how many Plays are waiting
-     * @returns  length of the play-list
+     * (returns length of the play-list)
      */
     //% block="length of play-list"
     //% group="micro:bit(V2) Play-list"
@@ -873,7 +873,7 @@ namespace flexFX {
 
     // Accessors for internal flags...
     /**
-     * @returns "true" if playing is currently inhibited
+     * return "true" if playing is currently inhibited
      */
     //% block="is paused"
     //% group="micro:bit(V2) Play-list"
@@ -884,7 +884,7 @@ namespace flexFX {
     }
 
     /**
-     * @returns "true" if a FlexFX is currently being played
+     * return "true" if a FlexFX is currently being played
      */
     //% block="is playing"
     //% group="micro:bit(V2) Play-list"
@@ -895,7 +895,7 @@ namespace flexFX {
     }
 
     /**
-     * @returns "true" if the background player is running
+     * return "true" if the background player is running
      */
     //% block="is active"
     //% group="micro:bit(V2) Play-list"

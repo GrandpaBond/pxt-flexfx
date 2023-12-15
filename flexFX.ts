@@ -22,7 +22,7 @@ namespace flexFX {
         Triangle = WaveShape.Triangle,
         //%block="harsh"
         Sawtooth = WaveShape.Sawtooth,
-        //%block="nNoisy"
+        //%block="noisy"
         Noise = WaveShape.Noise
     }
     // Simplify the selection of frequency interpolation trajectory...
@@ -548,7 +548,7 @@ namespace flexFX {
     //% block="play FlexFX $flexId waiting? $wait||at pitch $pitch|with maximum volume: $volumeLimit| lasting (ms) $newDuration"
     //% group="Playing (micro:bit V2)"
     //% inlineInputMode=inline
-    //% expandableArgumentMode="toggle"
+    //% expandableArgumentMode="enabled"
     //% weight=990
     //% flexId.defl="ting"
     //% wait.defl=true

@@ -545,7 +545,7 @@ namespace flexFX {
      * @param newDuration  how long (ms) the overall performance will last
      */
 
-    //% block="play FlexFX $flexId waiting? $wait||at pitch $pitch|with maximum volume: $volumeLimit| lasting (ms) $newDuration"
+    //% block="play FlexFX $flexId waiting? $wait||at pitch $pitch|with maximum volume $volumeLimit| lasting (ms) $newDuration"
     //% group="Playing (micro:bit V2)"
     //% inlineInputMode=inline
     //% expandableArgumentMode="enabled"
@@ -624,7 +624,7 @@ namespace flexFX {
      * @param tuneDuration  how long (in ms) the overall performance should last
      */
 
-    //% block="play tune $title using FlexFX $flexId waiting? $wait||transposed by (semitones): $transpose|with maximum volume: $volumeLimit|performance lasting (ms) $tuneDuration"
+    //% block="play tune $title using FlexFX $flexId waiting? $wait||transposed by (semitones) $transpose|with maximum volume $volumeLimit|performance lasting (ms) $tuneDuration"
     //% group="Playing (micro:bit V2)"
     //% weight=970
     //% inlineInputMode=inline
@@ -710,7 +710,7 @@ namespace flexFX {
      * set the speed for playing future Tunes
      * @param bpm   the beats-per-minute (BPM) for playTune() to use
      */
-    //% block="set tempo (beats/minute): %bpm"
+    //% block="set tempo (beats/minute) %bpm"
     //% group="Playing (micro:bit V2)"
     //% weight=950
     //% bpm.min=30 bpm.max=480 bpm.defl=120
@@ -725,7 +725,7 @@ namespace flexFX {
      * @param score  a text-string listing the notes in the Tune
      */
 
-    //% block="compose Tune: $title with notes: $score"
+    //% block="compose tune $title with notes $score"
     //% group="Playing (micro:bit V2)"
     //% weight=940
     //% title.defl="beethoven5"
@@ -743,7 +743,7 @@ namespace flexFX {
      * @param score  a text-string listing the notes to be added
     */
 
-    //% block="extend Tune: $title with extra notes: $score"
+    //% block="extend tune $title with extra notes $score"
     //% group="Playing (micro:bit V2)"
     //% weight=930
     //% title.defl="beethoven5"
@@ -920,7 +920,7 @@ namespace flexFX {
      * @param duration  the duration of the sound (in ms) 
      */
 
-    //% block="define FlexFX: $flexId| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes from $startPitch|               to $endPitch|volume goes from $startVolume|               to $endVolume|default duration=$duration"
+    //% block="define FlexFX $flexId| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes from $startPitch|               to $endPitch|volume goes from $startVolume|               to $endVolume|default duration=$duration"
     //% group="Creating (micro:bit V2)"
     //% weight=790
     //% advanced=true
@@ -965,7 +965,7 @@ namespace flexFX {
      * @param duration  the additional duration of this new part (in ms)
      */
 
-    //% block="continue FlexFX: $flexId| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes to $endPitch|volume goes to $endVolume| extended by (ms) $duration"
+    //% block="continue FlexFX $flexId| using wave-shape $wave|      with attack $attack|       and effect $effect|  pitch goes to $endPitch|volume goes to $endVolume| extended by (ms) $duration"
     //% group="Creating (micro:bit V2)"
     //% weight=780
     //% advanced=true

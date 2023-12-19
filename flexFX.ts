@@ -744,7 +744,8 @@ namespace flexFX {
     */
 
     //% block="extend tune $title with extra notes $score"
-    //% group="Playing (micro:bit V2)"
+    //    % group="Playing (micro:bit V2)" 
+    //(group is deliberately commented-out to force showing sub-heading)
     //% weight=930
     //% title.defl="beethoven5"
     //% score.defl="2R 2F4 2F4 2F4 8D4"
